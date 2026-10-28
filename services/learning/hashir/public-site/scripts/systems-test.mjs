@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {DatabaseSync} from 'node:sqlite';
 import {localDB,localBucket} from './d1-local.mjs';
-import {AppError,assessmentResult,budgetSummary,cost,groundedLesson,metaJSON,providerJSON,reserve,settle} from '../src/core.mjs';
+import {AppError,assessPhoto,assessmentResult,budgetSummary,cost,groundedLesson,metaJSON,providerJSON,reserve,settle} from '../src/core.mjs';
 
 const built=await readFile(new URL('../dist/server/index.js',import.meta.url),'utf8');
 const worker=(await import('data:text/javascript;base64,'+Buffer.from(built).toString('base64'))).default;
@@ -111,4 +111,15 @@ test('invalid token preflight is a provider error and cannot reserve generation 
 });
 test('rate limiting does not cause automatic retries and retains a post-reservation hold',async()=>{
  const db=localDB(),original=globalThis.fetch;let calls=0;try{globalThis.fetch=async url=>{calls++;return url.endsWith('input_tokens')?Response.json({input_tokens:100}):new Response('PRIVATE_RATE_DIAGNOSTIC',{status:429});};await assert.rejects(()=>metaJSON({DB:db,MODEL_API_KEY:'TEST_ONLY'},modelOptions),code('provider_rate_limited',429));assert.equal(calls,2);assert.equal((await budgetSummary(db)).unresolved_reservations_usd,cost(1124,100)/1e6);}finally{globalThis.fetch=original;db.close();}
+});
+
+
+test('picture checks send the selected image and authoritative step to vision, without provider keys in the prompt',async()=>{
+ const DB=localDB(),original=globalThis.fetch,seen=[],secret='TEST_ONLY_PRIVATE',step={id:'visible_step',photo_assessable:true,assessment_criteria:['A circle is visible']};
+ const images=[png,(await readFile(new URL('../web/fixtures/images/cup_01_mistake.png',import.meta.url))).toString('base64')];
+ try{
+  globalThis.fetch=async(url,options)=>{assert.equal(options.headers.Authorization,'Bearer '+secret);const payload=JSON.parse(options.body);seen.push(payload);return url.endsWith('/input_tokens')?Response.json({input_tokens:100}):envelope(raw);};
+  for(const image_base64 of images){const result=await assessPhoto({DB,MODEL_API_KEY:secret},{lesson:{id:'lesson_current'},step,body:{mime_type:'image/png',image_base64,submission_id:'picture_test'}});assert.equal(result.provider,'meta');assert.equal(result.is_mock,false);assert.equal(result.step_id,step.id);}
+  assert.equal(seen.length,4);for(let i=0;i<seen.length;i++){const content=seen[i].input[1].content;assert.equal(content.find(item=>item.type==='input_image').image_url,'data:image/png;base64,'+images[Math.floor(i/2)]);assert.ok(content.find(item=>item.type==='input_text').text.includes('visible_step'));assert.ok(!JSON.stringify(seen[i]).includes(secret));}assert.notEqual(images[0],images[1]);
+ }finally{globalThis.fetch=original;DB.close();}
 });

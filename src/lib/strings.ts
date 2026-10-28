@@ -233,7 +233,7 @@ export const strings = {
     },
     {
       heading: "What gets saved",
-      body: "Uploaded check photos are saved privately with your practice. You can delete individual photos from practice history. Progress and feedback are also saved. Live camera preview is not recorded; its temporary stills clear when you stop, leave the step or background the page. Show Once does not save camera frames sent for a one-frame AI check, but retains the feedback privately.",
+      body: "Photos submitted through Check my work are saved privately with your practice. You can delete individual photos from practice history. Progress and feedback are also saved. Live camera preview is not recorded; its temporary stills clear when you stop, leave the step or background the page. Show Once does not save camera frames or uploaded pictures sent through the live-practice AI check, but retains the feedback privately.",
     },
     {
       heading: "Where AI runs",
