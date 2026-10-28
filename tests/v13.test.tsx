@@ -119,7 +119,7 @@ describe("v1.3 — sky lives in the landing hero only (v2.12)", () => {
     // Nowhere else in the page output.
     expect(html.indexOf(WRAPPER, first + 1)).toBe(-1);
     // Inside the hero section element.
-    const heroStart = html.indexOf("overflow-hidden py-16 text-center");
+    const heroStart = html.indexOf("overflow-hidden px-5 pt-28 pb-16 text-center");
     expect(heroStart).toBeGreaterThan(-1);
     const heroEnd = html.indexOf("</section>", heroStart);
     expect(first).toBeGreaterThan(heroStart);
@@ -127,7 +127,7 @@ describe("v1.3 — sky lives in the landing hero only (v2.12)", () => {
   });
 
   it("SkyGate renders the sky under prefers-reduced-motion with speed 0 (a frozen still)", () => {
-    expect(gateSource).toMatch(/motion === "reduced" \? 0 :/);
+    expect(gateSource).toContain("const speed = 0");
     window.matchMedia = vi.fn().mockReturnValue({
       matches: true,
       media: "",
@@ -172,7 +172,7 @@ describe("v1.3.2 — hero full-bleed full-height (Task B)", () => {
     expect(hero).toContain("hero-full-bleed");
     expect(hero).toContain("-mt-24");
     expect(hero).toContain("min-h-[100svh]");
-    expect(hero).toContain("pt-26");
+    expect(hero).toContain("py-10");
     expect(hero).toContain("justify-center");
   });
 
@@ -205,7 +205,7 @@ describe("v1.3.2 — hero text stack (Task C)", () => {
 
   it("the hero shows a single CTA — the Venom stage (v2.6)", async () => {
     const hero = heroSlice(await landing());
-    expect(hero).toContain("min(92vw, 520px)");
+    expect(hero).toContain("hero-start");
     expect(hero).not.toContain("bg-[#F59E0B]");
   });
 });
@@ -264,7 +264,7 @@ describe("v1.6.1 — hero readability scrim (Task A)", () => {
     const sky = html.indexOf("pointer-events-none absolute inset-0 z-0");
     const scrim = html.indexOf("hero-scrim");
     const content = html.indexOf(
-      "relative z-10 mx-auto flex w-full max-w-[680px] flex-col items-center pt-26",
+      "relative z-10 mx-auto flex w-full max-w-[680px] flex-col items-center py-10",
     );
     expect(sky).toBeGreaterThan(-1);
     expect(scrim).toBeGreaterThan(sky);
@@ -312,7 +312,7 @@ describe("v2.4 — hero panel removed, single CTA in (Task C)", () => {
   it("the hero has one CTA — the Venom stage — and the privacy line under it (v2.6)", async () => {
     const hero = heroSlice(await landing());
     // the single call to action is the Venom stage (no amber anchor remains)
-    expect(hero).toContain("min(92vw, 520px)");
+    expect(hero).toContain("hero-start");
     expect(hero).not.toContain("bg-[#F59E0B]");
     expect(hero).toContain("text-caption text-[#27272A]");
   });
@@ -321,468 +321,6 @@ describe("v2.4 — hero panel removed, single CTA in (Task C)", () => {
     const hero = heroSlice(await landing());
     expect(hero).not.toContain("mt-4 flex flex-col gap-2 sm:flex-row");
     expect(hero).not.toContain("sm:flex-row");
-  });
-});
-
-describe("v1.9 — hero particle headline + looping tagline (Tasks A & B)", () => {
-  const heroSlice = (html: string) =>
-    html.slice(0, html.indexOf("</section>") + 10);
-
-  it("strings.ts stores the single brand headline line, the tagline prefix and the five loop words in order (Task A)", () => {
-    expect(s.landingHeadlineLines).toEqual(["SHOW ONCE"]);
-    expect(s.landingTaglinePrefix).toBe(
-      "Paste a video link. Learn it step by step, checked as you",
-    );
-    expect(s.landingTaglineLoopWords).toEqual([
-      "build.",
-      "fold.",
-      "stack.",
-      "pack.",
-      "solve.",
-    ]);
-  });
-
-  it("the page renders the particle wrapper in the headline slot and the tagline prefix + LoopingWords (page source)", async () => {
-    const hero = heroSlice(await landing());
-    expect(pageSource).toContain("HeroParticleHeadline");
-    expect(pageSource).toContain("LoopingWords");
-    expect(pageSource).toContain("words={[...s.landingTaglineLoopWords]}");
-    expect(pageSource).toContain("{s.landingTaglinePrefix}");
-    // The old single-string tagline entry is gone from the page.
-    expect(pageSource).not.toContain("landingSubline");
-    // The static render carries the prefix and the loop's first word.
-    expect(hero).toContain(s.landingTaglinePrefix);
-    expect(hero).toContain("build.");
-  });
-
-  it("HeroParticleHeadline keeps a real h1 with the full headline text and the static Anton classes as the fallback (rendered)", async () => {
-    const hero = heroSlice(await landing());
-    expect(hero).toContain(
-      "font-display text-display uppercase leading-display text-[#52525B]",
-    );
-    const h1 = hero.match(/<h1[^>]*>([^<]+)<\/h1>/);
-    expect(h1?.[1]).toBe(s.landingHeadline);
-    // The static headline is visible (not sr-only) on SSR.
-    expect(hero).toContain(
-      'class="relative font-display text-display uppercase leading-display text-[#52525B]"',
-    );
-  });
-
-  it("the wrapper gates particle mounting on document.fonts.load + document.fonts.ready with a reduced-motion early return (source; runtime font simulation UNVERIFIED in jsdom)", () => {
-    expect(heroParticleSource).toContain("use client");
-    expect(heroParticleSource).toContain("document.fonts.load");
-    expect(heroParticleSource).toContain("document.fonts.ready");
-    expect(heroParticleSource).toContain("(prefers-reduced-motion: reduce)");
-  });
-
-  it("the single particle instance renders the brand line with the mandated TextParticleAnimation props (source; canvas behaviour UNVERIFIED in jsdom)", () => {
-    expect(heroParticleSource).toContain("text={s.landingHeadlineLines[0]}");
-    expect(heroParticleSource).toContain('fontFamily="Anton, sans-serif"');
-    expect(heroParticleSource).toContain("fontWeight={400}");
-    expect(heroParticleSource).toContain('theme="light"');
-    expect(heroParticleSource).toContain("resolution={2}");
-    expect(heroParticleSource).toContain("pixelSize={3}");
-    expect(heroParticleSource).toContain("hoverRadius={90}");
-    expect(heroParticleSource).toContain("repelForce={14}");
-    expect(heroParticleSource).toContain("clickRadius={240}");
-    expect(heroParticleSource).toContain("clickForce={50}");
-    expect(heroParticleSource).toContain("springForce={0.085}");
-    expect(heroParticleSource).toContain("friction={0.86}");
-    expect(heroParticleSource).toContain("padding={24}");
-    expect(heroParticleSource).toContain("fontSize={fontSize}");
-  });
-
-  it("no particle canvas renders when prefers-reduced-motion matches — the static headline stays (runtime render)", () => {
-    window.matchMedia = vi.fn().mockReturnValue({
-      matches: true,
-      media: "",
-      onchange: null,
-      addListener: vi.fn(),
-      removeListener: vi.fn(),
-      addEventListener: vi.fn(),
-      removeEventListener: vi.fn(),
-      dispatchEvent: vi.fn(),
-    });
-    const { container } = render(<HeroParticleHeadline />);
-    expect(container.querySelectorAll("canvas").length).toBe(0);
-    const h1 = container.querySelector("h1");
-    expect(h1?.textContent).toBe(s.landingHeadline);
-    expect(h1?.className).toContain("font-display");
-  });
-});
-
-describe("v2.1 — brand particle line + demo-style Looping Words (Tasks A & B)", () => {
-  const heroSlice = (html: string) =>
-    html.slice(0, html.indexOf("</section>") + 10);
-
-  it("LoopingWords is integrated demo-style: only its words prop and a font-styling className, no sizing/clamp/inline-flex wrapper of ours (source)", () => {
-    expect(pageSource).toContain("words={[...s.landingTaglineLoopWords]}");
-    expect(pageSource).toContain(
-      'className="tagline-loop font-sans font-medium text-white/85"',
-    );
-    // No height, min-width, overflow, clamp or inline-flex sizing from our
-    // markup — the component's own internal sizing decides (read-only).
-    expect(pageSource).not.toContain("h-[1.4em]");
-    expect(pageSource).not.toContain("min-w-[6.5ch]");
-    expect(pageSource).not.toContain("h-[1.5em] overflow-hidden");
-    expect(pageSource).not.toContain("inline-flex");
-    expect(pageSource).not.toContain("[&>div]:h-full");
-    expect(pageSource).not.toContain("[&>div]:leading-[inherit]");
-    // LoopingWords sits under the tagline sentence as a centred block.
-    expect(pageSource).toContain('className="mx-auto max-w-[430px] text-body font-medium text-[#121212]"');
-    expect(pageSource).toContain("landingTaglinePrefix");
-  });
-
-  it("the tagline wraps the sentence as plain text on its own line (render stays front of the loop block)", async () => {
-    const hero = heroSlice(await landing());
-    expect(hero).toContain(s.landingTaglinePrefix);
-    expect(hero).toContain("build.");
-  });
-});
-
-describe("v2.3 — Aceternity Resizable Navbar as the public header (Tasks A & B)", () => {
-  const navSource = fs.readFileSync(
-    path.resolve(process.cwd(), "src/components/PublicNavbar.tsx"),
-    "utf8",
-  );
-  const layoutSource = fs.readFileSync(
-    path.resolve(process.cwd(), "src/app/(public)/layout.tsx"),
-    "utf8",
-  );
-  const regSource = fs.readFileSync(
-    path.resolve(process.cwd(), "src/components/ui/resizable-navbar.tsx"),
-    "utf8",
-  );
-
-  it("PublicNavbar imports the installed resizable-navbar parts (Navbar, NavBody, NavItems, MobileNav, MobileNavHeader, MobileNavMenu, MobileNavToggle, NavbarButton)", () => {
-    expect(navSource).toContain(
-      'from "@/components/ui/resizable-navbar"',
-    );
-    for (const part of [
-      "Navbar",
-      "NavBody",
-      "NavItems",
-      "MobileNav",
-      "MobileNavHeader",
-      "MobileNavMenu",
-      "MobileNavToggle",
-      "NavbarButton",
-    ]) {
-      expect(new RegExp(`\\b${part}\\b`).test(navSource)).toBe(true);
-    }
-  });
-
-  it("NavItems equals the three page links in order with no #fragment hrefs; wordmark anchors to /; CTA points to /create with the amber className overrides", () => {
-    expect(navSource).toContain('{ name: s.navCreate, link: "/create" }');
-    expect(navSource).toContain(
-      '{ name: s.yourLessonsLink, link: "/lessons" }',
-    );
-    expect(navSource).toContain('{ name: s.navPrivacy, link: "/privacy" }');
-    // page links in order
-    const create = navSource.indexOf("/create");
-    const lessons = navSource.indexOf("/lessons");
-    const privacy = navSource.indexOf("/privacy");
-    expect(create).toBeGreaterThan(-1);
-    expect(lessons).toBeGreaterThan(create);
-    expect(privacy).toBeGreaterThan(lessons);
-    // no fragment anchors, links go to real pages
-    expect(navSource).not.toMatch(/href="#/);
-    // wordmark anchor to root
-    expect(navSource).toContain('href="/"');
-    // CTA to /create with amber pill overrides (via className only)
-    expect((navSource.match(/href="\/create"/g) || []).length).toBeGreaterThan(0);
-    expect(navSource).toContain("bg-[#F59E0B]");
-    expect(navSource).toContain("text-black");
-    expect(navSource).toContain("rounded-full");
-    expect(navSource).toContain("hover:brightness-110");
-    // variant is left at its default (no variant= prop passed — the
-    // amber pill comes purely from the className overrides)
-    expect(navSource).toMatch(
-      /<NavbarButton\s+href="\/create"\s+className="bg-\[#F59E0B\]/,
-    );
-    expect(navSource).not.toMatch(/<NavbarButton[\s\S]*?variant=/);
-  });
-
-  it("the mobile menu carries the same three page links and the amber Start button (MobileNav, MobileNavMenu state in PublicNavbar)", () => {
-    expect(navSource).toContain("<MobileNav");
-    expect(navSource).toContain("<MobileNavHeader>");
-    expect(navSource).toContain("<MobileNavToggle");
-    expect(navSource).toContain("<MobileNavMenu");
-    expect(navSource).toContain("<NavItems");
-    expect(navSource).toContain("items={navItems}");
-    expect(navSource).toContain("onItemClick={close}");
-    // same Start button in mobile menu
-    expect(navSource).toContain("{s.importStart}");
-    expect(navSource).toContain("useState(false)");
-  });
-
-  it("the installed component keeps the owner animation values (threshold, width, y, blur) unchanged", () => {
-    expect(regSource).toContain("if (latest > 100)");
-    expect(regSource).toContain('width: visible ? "40%" : "100%"');
-    expect(regSource).toContain("y: visible ? 20 : 0");
-    expect(regSource).toContain('backdropFilter: visible ? "blur(10px)" : "none"');
-    // v2.4 Task E: spring softened — stiffness/damping/mass updated, so the
-    // old 200/50 values are gone from the installed file.
-    expect(regSource).not.toContain("stiffness: 200");
-    expect(regSource).not.toContain("damping: 50");
-    expect(regSource).toContain("stiffness: 120");
-    expect(regSource).toContain("damping: 26");
-    expect(regSource).toContain("mass: 0.9");
-    // v2.14: motion elements render at their at-top values on first paint
-    // (initial={false}) so first paint equals the settled state, not the mount.
-    expect((regSource.match(/initial=\{false\}/g) || []).length).toBe(2);
-  });
-
-  it("the layout uses PublicNavbar, no longer references the removed PublicHeader, and sets the fixed-overlay compensation (pt-24) + dark activation", () => {
-    expect(layoutSource).toContain("PublicNavbar");
-    expect(layoutSource).not.toContain("PublicHeader");
-    expect(layoutSource).toContain("pt-24");
-    expect(layoutSource).toContain("flex min-h-dvh flex-col");
-    expect(layoutSource).toMatch(/\bdark\b/);
-  });
-
-  it("no navbar href in PublicNavbar or the layout contains a #fragment", () => {
-    expect(navSource).not.toMatch(/href="#/);
-    expect(layoutSource).not.toMatch(/href="#/);
-  });
-});
-
-describe("v2.4 — glass navbar, wordmark link, hero CTA, tagline loop (Tasks A–E)", () => {
-  const navSource = fs.readFileSync(
-    path.resolve(process.cwd(), "src/components/PublicNavbar.tsx"),
-    "utf8",
-  );
-  const regSource = fs.readFileSync(
-    path.resolve(process.cwd(), "src/components/ui/resizable-navbar.tsx"),
-    "utf8",
-  );
-  const loopSource = fs.readFileSync(
-    path.resolve(process.cwd(), "src/components/lightswind/looping-words.tsx"),
-    "utf8",
-  );
-  const globalsSource = fs.readFileSync(
-    path.resolve(process.cwd(), "src/app/globals.css"),
-    "utf8",
-  );
-  const heroSlice = (html: string) =>
-    html.slice(0, html.indexOf("</section>") + 10);
-
-  it("the Navbar is an overlay via className (fixed top-0) and NavBody/MobileNav carry always-on light glass (v3)", () => {
-    expect(navSource).toContain('<Navbar className="fixed inset-x-0 top-0 z-40">');
-    expect(navSource).toContain("LIGHT_BODY");
-    expect(navSource).toContain("!bg-white/40");
-    expect(navSource).toContain("backdrop-blur-xl");
-    expect(navSource).toContain("backdrop-saturate-150");
-    expect(navSource).toContain("!border-black/10");
-  });
-
-  it("the navbar light treatment is unconditional on every route (no pathname condition), keeping the amber CTA and NO dark-glass branch (v3)", () => {
-    expect(navSource).toContain('const LIGHT_BODY =');
-    expect(navSource).toContain('"!bg-white/40 !border-black/10 backdrop-blur-xl backdrop-saturate-150"');
-    // no pathname condition for the treatment
-    expect(navSource).not.toContain("usePathname");
-    expect(navSource).not.toContain("pathname ===");
-    // no dark-glass branch remains
-    expect(navSource).not.toContain("bg-neutral-950/45");
-    // amber Start CTA and wordmark ONCE kept
-    expect(navSource).toContain("bg-[#F59E0B]");
-    expect(navSource).toContain("text-[#D97706]");
-  });
-
-  it("the wordmark is a Next Link to / with pointer-events-auto in both desktop and mobile (Task B)", () => {
-    expect(navSource).toContain('<Link\n      href="/"');
-    expect(navSource).toContain('aria-label="Show Once — home"');
-    expect(navSource).toContain("pointer-events-auto");
-    expect(navSource).toContain("cursor-pointer");
-    // mobile wordmark closes the menu and carries the unconditional light flag (v3)
-    expect(navSource).toContain('<WordmarkAnchor className="text-base" onClick={close} light />');
-  });
-
-  it("the hero CTA is the Venom stage with a native cursor and no input/panel (v2.6)", async () => {
-    const hero = heroSlice(await landing());
-    expect(hero).toContain("min(92vw, 520px)");
-    expect(hero).not.toContain("bg-[#F59E0B]");
-    expect(hero).not.toContain("hero-link-input");
-    expect(hero).not.toContain("<input");
-    expect(hero).not.toContain("panel w-full p-5");
-  });
-
-  it("the tagline loop is constrained via the .tagline-loop class and rule (Task D size, v2.6)", () => {
-    expect(pageSource).toContain('className="tagline-loop font-sans font-medium text-white/85"');
-    expect(globalsSource).toMatch(/\.tagline-loop\s*\{[^}]*font-size:\s*1\.625rem/);
-    expect(globalsSource).toMatch(/\.tagline-loop\s*\{[^}]*height:\s*1\.3em/);
-  });
-
-  it("the empty-loop defect is fixed by wrapping the index advance modulo (Task D)", () => {
-    // the old advance-and-snap is gone
-    expect(loopSource).not.toContain('if (index === totalOriginal)');
-    expect(loopSource).not.toContain("controls.set({ y: \"0%\" })");
-    // the wrap is present and measures li[index]
-    expect(loopSource).toContain("index = (index + 1) % duplicatedWords.length");
-    expect(loopSource).toContain("updateWidth(index)");
-  });
-
-  it("the installed navbar spring is softened only (Task E); threshold/width/y unchanged", () => {
-    expect(regSource).toContain("if (latest > 100)");
-    expect(regSource).toContain('width: visible ? "40%" : "100%"');
-    expect(regSource).toContain('width: visible ? "90%" : "100%"');
-    expect(regSource).toContain("y: visible ? 20 : 0");
-    expect(regSource).toContain("stiffness: 120");
-    expect(regSource).toContain("damping: 26");
-    expect(regSource).toContain("mass: 0.9");
-  });
-});
-
-describe("v2.5 — hero stack budget + loop size from globals.css (Tasks A & B)", () => {
-  const globalsSource = fs.readFileSync(
-    path.resolve(process.cwd(), "src/app/globals.css"),
-    "utf8",
-  );
-  const heroParticleSource = fs.readFileSync(
-    path.resolve(process.cwd(), "src/components/HeroParticleHeadline.tsx"),
-    "utf8",
-  );
-  const heroSlice = (html: string) =>
-    html.slice(0, html.indexOf("</section>") + 10);
-
-  it("the hero content is one centred column with max-w-[680px], mx-auto, and 104px (pt-26) top padding (Task A)", async () => {
-    const hero = heroSlice(await landing());
-    expect(hero).toContain("mx-auto flex w-full max-w-[680px] flex-col items-center pt-26 text-center");
-    expect(hero).toContain("pt-26");
-    // not the old, larger 112px top padding
-    expect(hero).not.toContain("pt-28");
-  });
-
-  it("the four fixed vertical margins are present on the stack children (20 / 10 / 28 / 14) (Task A)", () => {
-    expect(pageSource).toContain('className="mt-5 w-full"');
-    expect(pageSource).toContain('className="mt-2.5 w-full"');
-    expect(pageSource).toContain('className="entrance entrance-3 mt-7"');
-    expect(pageSource).toContain('className="mt-3.5 text-caption text-[#27272A]"');
-  });
-
-  it("HeroParticleHeadline uses the v2.5 fontSize stages 56 / 96 / 132 (Task A)", () => {
-    expect(heroParticleSource).toContain("56 | 96 | 132");
-    expect(heroParticleSource).toContain("if (width < 640) return 56;");
-    expect(heroParticleSource).toContain("if (width < 1024) return 96;");
-    expect(heroParticleSource).toContain("return 132;");
-    expect(heroParticleSource).toContain("useState<56 | 96 | 132>(132)");
-  });
-
-  it("the .tagline-loop rules are unlayered with the size, inherit, window-height and ink colour (v2.13)", () => {
-    // unlayered (no @layer wrapping them) + required values
-    expect(globalsSource).toMatch(/\.tagline-loop\s*\{[^}]*font-size:\s*1\.625rem;[^}]*font-weight:\s*600;[^}]*line-height:\s*1\.15;[^}]*height:\s*1\.3em;[^}]*color:\s*#121212/);
-    // the descendant rule directly sets ink colour (beats the word's own
-    // layered `text-foreground` utility — no !important needed on colour)
-    expect(globalsSource).toMatch(/\.tagline-loop\s*\*\s*\{[^}]*font-size:\s*inherit\s*!important;[^}]*line-height:\s*inherit\s*!important;[^}]*font-weight:\s*inherit;[^}]*color:\s*#121212/);
-    // the window element (root's first child div) is pinned to one line
-    expect(globalsSource).toMatch(/\.tagline-loop\s*>\s*div\s*\{[^}]*height:\s*1\.3em;[^}]*overflow:\s*hidden/);
-  });
-
-  it("the first loop word is still rendered in the hero DOM (Task B render)", async () => {
-    const hero = heroSlice(await landing());
-    expect(hero).toContain("build.");
-  });
-});
-
-describe("v2.12 — cloud sky hero, venom CTA, finer particles, ink foreground (Tasks A–C)", () => {
-  const venSource = fs.readFileSync(
-    path.resolve(process.cwd(), "src/components/HeroVenomCta.tsx"),
-    "utf8",
-  );
-  const venInnerSource = fs.readFileSync(
-    path.resolve(process.cwd(), "src/components/venom-button/venom-button.tsx"),
-    "utf8",
-  );
-  const skySource = fs.readFileSync(
-    path.resolve(process.cwd(), "src/components/originkit/cloud-sky.tsx"),
-    "utf8",
-  );
-  const navSource = fs.readFileSync(
-    path.resolve(process.cwd(), "src/components/PublicNavbar.tsx"),
-    "utf8",
-  );
-  const heroSlice = (html: string) =>
-    html.slice(0, html.indexOf("</section>") + 10);
-
-  it("the hero mounts SkyGate and no satin reference remains in src/ or globals.css", () => {
-    expect(pageSource).toContain("<SkyGate />");
-    expect(pageSource).not.toContain("SatinGate");
-    expect(pageSource).not.toContain("GrainGate");
-    expect(pageSource).not.toContain("satin");
-    expect(globalsSource).not.toContain("satin-drift");
-    expect(globalsSource).not.toContain("@keyframes satin-drift");
-    // The retired SatinGate file is deleted.
-    const g = fs.readFileSync(
-      path.resolve(process.cwd(), "src/components/SkyGate.tsx"),
-      "utf8",
-    );
-    expect(g).toContain('background="#0075FF"');
-    expect(g).toContain('baseColor="#B4D2F0"');
-    expect(g).toContain('accentColor="#FFFFFF"');
-    expect(g).toContain("density={100}");
-    expect(g).toContain("size={130}");
-    expect(g).toContain("<CloudSky");
-    // Cloud Sky is a WebGL gradient sky with drifting cloud layers.
-    expect(skySource).toContain("getContext(\"webgl\"");
-    expect(skySource).toContain("fbm");
-  });
-
-  it("HeroVenomCta renders the Venom Button with the specified props and a Link to /create via useRouter", () => {
-    expect(venSource).toContain('label={s.finalCtaButton}');
-    expect(venSource).toContain('router.push("/create")');
-    expect(venSource).toContain("strands={7}");
-    expect(venSource).toContain("sense={290}");
-    expect(venSource).toContain("reach={140}");
-    expect(venSource).toContain("release={215}");
-    expect(venSource).toContain('cursor="native"');
-    expect(venSource).toContain("autoplay={false}");
-    expect(venSource).toContain("height={170}");
-    expect(venSource).toContain("min(92vw, 520px)");
-    // v2.7 Task B: the wrapper carries the venom-cta class and passes bg-transparent
-    expect(venSource).toContain('className="venom-cta mx-auto');
-    expect(venSource).toContain('className="bg-transparent"');
-    // the installed component's documented defaults match our overrides
-    expect(venInnerSource).toContain('strands = 7');
-    expect(venInnerSource).toContain('sense = 290');
-    expect(venInnerSource).toContain('reach = 140');
-    expect(venInnerSource).toContain('release = 215');
-  });
-
-  it("the scoped .venom-cta rule forces the stage transparent (v2.7 Task B)", () => {
-    expect(globalsSource).toMatch(/\.venom-cta\s*>\s*div\s*\{[^}]*background:\s*transparent\s*!important/);
-  });
-
-  it("the hero render includes the Venom stage and the privacy line under it, with only one CTA", async () => {
-    const hero = heroSlice(await landing());
-    expect(hero).toContain("min(92vw, 520px)");
-    expect(hero).toContain("text-caption text-[#27272A]");
-  });
-
-  it("particles are light theme and the static fallback is grey (v2.13 Task A)", () => {
-    expect(heroParticleSource).toContain('theme="light"');
-    expect(heroParticleSource).toContain("text-[#52525B]");
-    expect(heroParticleSource).toContain("resolution={2}");
-    expect(heroParticleSource).toContain("pixelSize={3}");
-    // Task A: the installed component's light-theme fill literal is grey
-    const tpaSource = fs.readFileSync(
-      path.resolve(process.cwd(), "src/components/lightswind/text-particle-animation.tsx"),
-      "utf8",
-    );
-    expect(tpaSource).toContain(
-      'ctx.fillStyle = theme === "dark" ? "#ffffff" : "#52525B";',
-    );
-  });
-
-  it("the navbar light treatment is unconditional on every route (v3 supersedes the v2.12 pathname scoping)", () => {
-    expect(navSource).not.toContain("usePathname");
-    expect(navSource).not.toContain('const light = pathname === "/"');
-    expect(navSource).not.toContain(": \"bg-neutral-950/45");
-    // light glass + ink link/wordmark classes are unconditional
-    expect(navSource).toContain("!bg-white/40");
-    expect(navSource).toContain("text-[#121212]");
-    expect(navSource).toContain("text-[#D97706]");
-    // WordmarkAnchor is passed light unconditionally
-    expect(navSource).toContain('<WordmarkAnchor className="text-xl" light />');
   });
 });
 

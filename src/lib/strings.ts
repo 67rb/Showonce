@@ -27,7 +27,7 @@ export const strings = {
   // case-matched value for the accessible h1 text.
   landingHeadline: "Show Once",
   landingHeadlineLines: ["SHOW ONCE"],
-  landingTaglinePrefix: "Paste a video link. Learn it step by step, checked as you",
+  landingTaglinePrefix: "Bring a tutorial. Learn it step by step, at your own pace.",
   landingTaglineLoopWords: ["build.", "fold.", "stack.", "pack.", "solve."],
   eyebrowHero: "Show once",
   eyebrowHowItWorks: "How it works",

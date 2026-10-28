@@ -8,8 +8,6 @@ import {
   Inter_Tight,
   Instrument_Serif,
 } from "next/font/google";
-import { SmoothScroll } from "@/components/SmoothScroll";
-import { Parallax } from "@/components/Parallax";
 import "./globals.css";
 
 const anton = Anton({
@@ -69,8 +67,6 @@ export default function RootLayout({
       <body className="min-h-dvh">
         <Script src="/practice-library.js" strategy="beforeInteractive" />
         <IdentityProvider>
-        <SmoothScroll />
-        <Parallax />
         <div className="relative z-10">{children}</div>
         </IdentityProvider>
       </body>

@@ -26,7 +26,7 @@ const text = (h: string) =>
 describe("Amber Grain Cinema — 1.2 typography", () => {
   it("hero headline uses the display family at display size", async () => {
     const html = markup(await LandingPage());
-    expect(html).toContain("font-display text-display uppercase leading-display");
+    expect(html).toContain("font-display uppercase leading-none");
   });
 });
 

@@ -143,7 +143,7 @@ describe("Amber Grain Cinema — grain integration", () => {
       .filter((f) => /satin-flow["']/.test(read(f)))
       .map((f) => path.relative(ROOT, f).replace(/\\/g, "/"))
       .sort();
-    expect(importers).toEqual(["components/create/SatinBackdrop.tsx"]);
+    expect(importers).toEqual([]);
     const css = read(path.join(ROOT, "app", "globals.css"));
     expect(css).not.toMatch(/satin-drift/);
     // the satin-flow file stays on disk
@@ -162,7 +162,8 @@ describe("Amber Grain Cinema — grain integration", () => {
     expect(g).not.toContain("fixed inset-0");
     // the Cloud Sky component itself tracks at window level (pointer adaptation)
     const sky = read(path.join(ROOT, "components", "originkit", "cloud-sky.tsx"));
-    expect(sky).toContain('window.addEventListener("pointermove"');
+    expect(sky).not.toContain('window.addEventListener("pointermove"');
+    expect(g).toContain("const speed = 0");
   });
 
   it("the root layout defines both font variables", () => {

@@ -25,10 +25,10 @@ export function IdentityProvider({children}:{children:ReactNode}){
  },[]);
  const refresh=useCallback(async()=>{
   const id=++refreshID.current;available.current=false;setReady(false);setError(null);
-  try{const response=await request<Account>('/api/account');if(id!==refreshID.current)return;const next=response.user?.id||null;
+  try{const [response,settings]=await Promise.all([request<Account>('/api/account'),request<Config>('/api/config')]);if(id!==refreshID.current)return;const next=response.user?.id||null;
    if(resolved.current&&next!==actor.current){version.current++;setDraft(initialDraft());guests.current=[];setNotice(null);}actor.current=next;resolved.current=true;setAccount(response);available.current=true;
    try{window.localStorage.setItem('showonce-active-account-v1',next||'anonymous');}catch{}
-   const settings=await request<Config>('/api/config');if(id!==refreshID.current)return;setConfig(settings);setReady(true);
+   if(id!==refreshID.current)return;setConfig(settings);setReady(true);
   }catch(e){if(id===refreshID.current){available.current=false;setReady(false);setError(e instanceof Error?e.message:'Account check failed.');}}
  },[request]);
  useEffect(()=>{void refresh();const hide=()=>{version.current++;available.current=false;setReady(false);},visible=()=>{if(document.hidden)hide();else void refresh();},changed=()=>{hide();void refresh();},storage=(event:StorageEvent)=>{if(event.key==='showonce-active-account-v1'&&event.newValue!==(actor.current||'anonymous'))changed();};document.addEventListener('visibilitychange',visible);window.addEventListener('pagehide',hide);window.addEventListener('showonce-account-changed',changed);window.addEventListener('storage',storage);return()=>{document.removeEventListener('visibilitychange',visible);window.removeEventListener('pagehide',hide);window.removeEventListener('showonce-account-changed',changed);window.removeEventListener('storage',storage);};},[refresh]);

@@ -13,7 +13,7 @@ type Motion = "unknown" | "reduced" | "full";
  * The wrapper fills the hero (absolute inset-0, pointer-events-none); content
  * stays relative z-10. A background's existence is never gated on reduced
  * motion: under prefers-reduced-motion the sky is still mounted but with
- * speed 0, which freezes it into a still image (per the component's docs).
+ * speed 0, which draws a still image.
  * While the hero is off-screen the IntersectionObserver pauses the sky by
  * unmounting it, so no frames are burned off-screen.
  */
@@ -43,8 +43,8 @@ export function SkyGate() {
     return () => io.disconnect();
   }, []);
 
-  // reduced motion => still sky (speed 0); otherwise animated only when on screen.
-  const speed = motion === "reduced" ? 0 : onScreen ? 100 : 0;
+  // The decorative sky renders once; it does not run a background animation.
+  const speed = 0;
   const mounted = motion !== "unknown" && (motion === "reduced" || onScreen);
 
   return (

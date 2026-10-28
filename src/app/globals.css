@@ -600,3 +600,15 @@ body {
 .btn-shine:hover::after {
   left: 120%;
 }
+/* Stable controls and inexpensive visual feedback for the practice app. */
+.hero-start { background: linear-gradient(180deg,#333338,#121214); box-shadow: inset 0 1px 0 #ffffff40,0 8px 20px #11111124; transition: background-color 150ms,box-shadow 150ms; }
+.hero-start:hover { background: #27272a; box-shadow: inset 0 1px 0 #ffffff40,0 10px 24px #11111130; }
+.learning-workspace button { min-height: 44px; }
+.learning-workspace button, .learning-workspace a { touch-action: manipulation; }
+.learning-workspace input,.learning-workspace textarea,.learning-workspace select { min-width: 0; font-size: 16px; }
+.learning-workspace .site-card { min-width: 0; }
+.learning-workspace a.underline { display: inline-flex; align-items: center; min-height: 44px; }
+button:disabled { cursor: not-allowed; }
+@media (max-width: 639px) {
+  .learning-workspace .flex.flex-wrap > a { max-width: 100%; }
+}
