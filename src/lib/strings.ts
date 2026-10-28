@@ -1,0 +1,276 @@
+/**
+ * SHOW ONCE — all user-visible strings.
+ *
+ * Everything rendered to the user lives here so that adding Arabic later is a
+ * matter of adding one strings object and selecting it, without touching
+ * components or pages. Components never hard-code user-visible copy.
+ */
+
+export const strings = {
+  /* Brand */
+  wordmarkShow: "SHOW",
+  wordmarkOnce: "ONCE",
+  privacyClaim: "checks photos, keeps nothing.",
+
+  /* Shared chrome */
+  yourLessonsLink: "Your lessons",
+  navCreate: "Create",
+  navPrivacy: "Privacy",
+  footerLine: "YouTube shows. Show Once watches.",
+  designLink: "Design",
+  exitLesson: "Exit",
+
+  /* Landing */
+  // v2.1 Task A: the hero headline is the brand on a single line. The stored
+  // line value ("SHOW ONCE", uppercase) feeds the particle instance and the
+  // static Anton headline verbatim; landingHeadline is the readable
+  // case-matched value for the accessible h1 text.
+  landingHeadline: "Show Once",
+  landingHeadlineLines: ["SHOW ONCE"],
+  landingTaglinePrefix: "Paste a video link. Learn it step by step, checked as you",
+  landingTaglineLoopWords: ["build.", "fold.", "stack.", "pack.", "solve."],
+  eyebrowHero: "Show once",
+  eyebrowHowItWorks: "How it works",
+  eyebrowTheCheck: "The check",
+  eyebrowScope: "Scope",
+  eyebrowPrivacy: "Privacy",
+  eyebrowYourLessons: "Your lessons",
+  importLinkPlaceholder: "Paste a YouTube or Instagram link",
+  importFieldLabel: "YouTube or Instagram link",
+  importStart: "Start",
+  importUpload: "Upload a video file",
+
+  sectionHowItWorks: "How it works",
+  howStep1Title: "Paste the link",
+  howStep1Line:
+    "Any short YouTube or Instagram video of someone doing it once.",
+  howStep2Title: "Get the steps",
+  howStep2Line:
+    "Show Once breaks the video into steps, each with a picture of what done looks like.",
+  howStep3Title: "Do it, checked",
+  howStep3Line:
+    "Do one step, take one photo. It tells you right, wrong, or can't tell, before you move on.",
+
+  proofStepLabel: "The step",
+  proofPhotoLabel: "Your photo",
+  proofDifference: "The middle block is blue. In the step it is red.",
+  // v2.20 Task D — the check-demo verdict strip sentence.
+  checkDemoDifference: "The top-right brick is blue. In the step, it is red.",
+  proofCaptionLabel: "How a check works.",
+
+  canHeading: "It can teach",
+  cantHeading: "It can't teach",
+  canItems: [
+    "Coloured block and brick builds",
+    "Snap-together STEM kits",
+    "Bead and mosaic patterns",
+    "Board game setup",
+    "Simple kit packing",
+    "Geometry constructions",
+  ],
+  cantItems: [
+    "Knots and tightness",
+    "Fold and crease quality",
+    "Cooking doneness",
+    "Anything a photo from above cannot show",
+  ],
+  canCantClosing:
+    "If a photo of the finished step shows whether it is right, Show Once can coach it.",
+  /* It-can-teach line for the scope hover card (Task B) */
+  audienceCanLine: "Hands-on skills a photo from above can judge.",
+
+  /* Scope — two audience cards (Task A) */
+  audienceHobbyTitle: "Hobby",
+  audienceHobbyLine:
+    "For learning by doing at home — your pace, your table, a check on every step.",
+  audienceHobbyItems: [
+    "Builds and models at home",
+    "Crafts, beads and mosaics",
+    "Board games, set up right",
+    "New kits, learned step by step",
+  ],
+  audienceProfessionalTitle: "Professional",
+  audienceProfessionalLine:
+    "For teaching hands-on work — every trainee's step checked the same way, every time.",
+  audienceProfessionalItems: [
+    "Workshop and vocational training",
+    "Assembly and packing checks",
+    "Classroom practicals",
+    "Hands-on team onboarding",
+  ],
+
+  privacyHeading: "checks photos, keeps nothing.",
+  privacyBody:
+    "Your check photos are processed for the check and never stored. Not in a database, not in logs, not in analytics. Checks run on the Meta Model API. Filming is hands and work surface only.",
+  privacyLink: "Read the privacy page",
+
+  lessonsSectionTitle: "What SHOW ONCE can check.",
+  seeAll: "See all",
+  lessonsEmptyLine: "No lessons yet. Paste a link above to make your first one.",
+
+  /* Gallery capability showcase (v2.20 Task C) */
+  galleryLineTower:
+    "Layer-by-layer block builds, checked from a single photo. Hobby builds at home, model work in the studio — a wrong brick is flagged the moment it lands.",
+  galleryLineMosaic:
+    "Bead and tile patterns, checked colour by colour. Craft projects and professional mosaic work alike — every row is verified before you move to the next.",
+  galleryLineWall:
+    "Staggered brickwork, checked row by row. Practice walls and site training alike — each course is lined up against the step, so the finished wall matches the plan.",
+  galleryTitleTower: "Block builds",
+  galleryTitleMosaic: "Bead & tile patterns",
+  galleryTitleWall: "Brickwork",
+  galleryMoreTitle: "And more it can check",
+  galleryMoreLine:
+    "Board setups. Packed kits. Geometry constructions. For kitchen-table hobbies and professional training alike — if a photo from above can judge it, SHOW ONCE can check it.",
+  /* v2.28 — bottom-anchored examples line per capability card (Task B) */
+  galleryExamplesTower: "Bricks · blocks · STEM kits",
+  galleryExamplesMosaic: "Bead boards · mosaics · tile art",
+  galleryExamplesWall: "Walls · paving · stacked rows",
+  galleryExamplesMore: "Chess setup · tool kits · geometry",
+  eyebrowCapabilities: "Capabilities",
+
+  finalCtaHeadline: "Show it once. Learn it right.",
+  finalCtaButton: "Start learning",
+
+  /* Create — import */
+  createHeading: "Learn something new",
+  uploadPrompt: "or upload a video file",
+  uploadButton: "Choose a video file",
+  createScopeNote:
+    "Works with: coloured block and brick builds, snap-together STEM kits, bead and mosaic patterns, board game setup, simple kit packing, geometry constructions.",
+  createGetSteps: "Get the steps",
+  importErrorInvalid: "That link does not look like a YouTube or Instagram link.",
+  importErrorFailed:
+    "We could not fetch that video. Upload the file instead.",
+  importErrorNotConfigured:
+    "Link import is not set up yet. Upload a video file instead.",
+
+  /* Create — processing */
+  processingHeading: "Breaking your video into steps",
+  procStageFetch: "Fetching the video",
+  procStageSample: "Sampling frames",
+  procStageDerive: "Deriving steps",
+  procStageDone: "Done",
+  processingNote: "This usually takes under a minute.",
+  seeReviewScreen: "See the review screen",
+
+  /* Create — review */
+  reviewHeading: "Check the steps",
+  reviewTitleFieldLabel: "Lesson title",
+  reviewCaptionPlaceholder: "Step caption",
+  deleteStepTitle: "Delete this step?",
+  deleteStepBody:
+    "This step will be removed from the lesson. Nothing is saved in this design review.",
+  cancel: "Cancel",
+  deleteStepConfirm: "Delete step",
+  backToImport: "Back",
+  startLesson: "Start lesson",
+  reorderUpLabel: "Move step up",
+  reorderDownLabel: "Move step down",
+  deleteStepLabel: "Delete step",
+  savedBanner: "Design preview — nothing is saved.",
+
+  /* Library */
+  lessonsHeading: "Your lessons",
+  newLesson: "New lesson",
+  lessonsEmptyButton: "Paste a link",
+  stepsSuffix: "steps",
+
+  /* Lesson overview */
+  modeHeading: "How do you want to learn?",
+  modeStepByStep: "Step by step",
+  modeStepByStepDesc: "One step, one photo, one check. Best for accuracy.",
+  modeLive: "Live",
+  modeLiveDesc: "Camera on while you work. Feedback as you go.",
+  modeLiveChip: "Coming with the tools phase",
+  startLessonShort: "Start",
+  reviewSteps: "Review steps",
+
+  /* Player */
+  speakerLabel: "Play caption",
+  doneStep: "Done",
+  checkingLine: "Checking your photo",
+  verdictRightLabel: "Right",
+  verdictRightLine: "That matches the step.",
+  nextStep: "Next step",
+  verdictWrongLabel: "Wrong",
+  verdictWrongLine: "The middle block is blue. In the step it is red.",
+  fixIt: "Fix it",
+  mineIsRight: "Mine is right",
+  verdictCantTellLabel: "Can't tell",
+  cantTellLine: "That photo cannot be judged. Too dark.",
+  retakePhoto: "Retake photo",
+
+  /* Camera */
+  guideHandsAway: "Hands away, hold still",
+  takePhoto: "Take photo",
+  usePhotoInstead: "Use a photo instead",
+
+  /* Live */
+  liveChip: "Live",
+  liveOnTrackLine: "On track. Keep going.",
+  liveCheckLine: "Check this step",
+  liveTooBlurry: "The last frame was too blurry to judge.",
+  liveWrongLine: "One thing differs",
+  endSession: "End session",
+  endSessionTitle: "End this session?",
+  endSessionBody: "This ends the live session and shows your summary.",
+  endSessionConfirm: "End session",
+
+  /* Completion */
+  completeHeading: "Done.",
+  completeTotalTimeLabel: "Total time",
+  completeStepsCompletedLabel: "Steps completed",
+  completeNeededMoreLabel: "Needed more than one check",
+  backToYourLessons: "Back to your lessons",
+  learnAnother: "Learn another",
+
+  /* Privacy */
+  privacyPageHeading: "Privacy",
+  privacySections: [
+    {
+      heading: "What gets checked",
+      body: "A single photo of a finished step, taken from above, is sent for a check of whether it matches the step (presence, colour, count, approximate position).",
+    },
+    {
+      heading: "What is never stored",
+      body: "Your check photos are processed for the check and never stored. Not in a database, not in logs, not in analytics.",
+    },
+    {
+      heading: "Where checks run",
+      body: "Checks run on the Meta Model API in the cloud, never on your device.",
+    },
+    {
+      heading: "What stays on your device",
+      body: "Filming and capture happen on the device. Filming is hands and work surface only.",
+    },
+  ],
+
+  /* Error pages */
+  notFoundHeading: "That page is not here.",
+  notFoundBody: "The link you followed does not point to a page.",
+  backHome: "Back home",
+  errorHeading: "Something went wrong.",
+  errorBody: "An unexpected error stopped this page from rendering.",
+  errorRetry: "Try again",
+
+  /* Task D fixture copy — the three scaffold lessons (titles + step captions) */
+  fixtureTowerTitle: "Build the stepped tower",
+  fixtureTowerMeta: "4 steps · source: YouTube link",
+  fixtureTowerStep0: "Place three bricks for the base row.",
+  fixtureTowerStep1: "Set two bricks offset above the base.",
+  fixtureTowerStep2: "Balance a contrasting brick up top.",
+  fixtureTowerStep3: "Finish the stepped silhouette.",
+  fixtureMosaicTitle: "Lay a two-row mosaic strip",
+  fixtureMosaicMeta: "3 steps · source: Instagram link",
+  fixtureMosaicStep0: "Lay the first row of flat tiles.",
+  fixtureMosaicStep1: "Start the second row with an offset tone.",
+  fixtureMosaicStep2: "Complete the two-row pattern.",
+  fixtureWallTitle: "Stack a two-course brick wall",
+  fixtureWallMeta: "3 steps · source: YouTube link",
+  fixtureWallStep0: "Lay the first course of bricks.",
+  fixtureWallStep1: "Add the second course, staggered.",
+  fixtureWallStep2: "Fill in the last bricks.",
+} as const;
+
+export type Strings = typeof strings;
+export default strings;

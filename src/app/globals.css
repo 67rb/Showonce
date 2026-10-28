@@ -1,0 +1,519 @@
+@import "tailwindcss";
+/* ============================================================
+   SHOW ONCE — design tokens
+   Visual direction v1.1: Amber Grain Cinema.
+   ============================================================ */
+
+:root {
+  /* Colours (mapped to Tailwind utilities below) */
+  --bg: #16161a;
+  --surface: #1b1b1f;
+  --fg: #ffffff;
+  --muted: #a1a1aa;
+  --accent: #f59e0b;
+  --accent-strong: #d97706;
+  --wrong: #e5484d;
+  --line: #2e2e33;
+
+  /* Spacing scale */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+
+  /* Motion */
+  --motion-fast: 150ms;
+  --motion-base: 250ms;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Tailwind theme. Fonts reference the next/font variables wired in layout.tsx. */
+@theme inline {
+  /* Fonts (Anton = display, Archivo = body) — hero + footer wordmark */
+  --font-display: var(--font-anton);
+  --font-sans: var(--font-archivo);
+  /* Site language (v3, Adorn): Inter Tight display / Inter body, applied
+     below the hero and on every route. */
+  --font-display-ui: var(--font-inter-tight);
+  --font-body-ui: var(--font-inter);
+
+  /* Colours (existing dark theme) */
+  --color-canvas: var(--bg);
+  --color-panel: var(--surface);
+  --color-ink: var(--fg);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --color-accent-strong: var(--accent-strong);
+  --color-wrong: var(--wrong);
+  --color-line: var(--line);
+
+  /* Site language (v3) colours — SHOW ONCE black / white / amber */
+  --color-site-surface: #ffffff; /* ground */
+  --color-site-page: #f7f7f8; /* soft */
+  --color-site-ink: #16161a;
+  --color-site-ink-2: #242429;
+  --color-site-muted: #71717a;
+  --color-site-border: #e5e5e5;
+  --color-site-border-2: #d4d4d8;
+  --color-accent-deep: #d97706;
+  --color-danger: #e5484d;
+  --color-success: #00c758;
+
+  /* Type scale */
+  --text-display: 3.25rem;
+  --text-h1: 2rem;
+  --text-h2: 1.5rem;
+  --text-body: 1rem;
+  --text-small: 0.875rem;
+  --text-caption: 0.75rem;
+  --leading-display: 0.95;
+  --leading-heading: 1.1;
+  --leading-body: 1.6;
+
+  /* Radii */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  /* Site language card radius (v3) */
+  --radius-card: 24px;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--color-site-page);
+  color: var(--color-site-ink);
+  font-family: var(--font-sans), system-ui, sans-serif;
+}
+
+/* Wordmark (Anton, uppercase, tight) */
+.wordmark {
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+  font-weight: 400;
+}
+
+/* --- Surfaces (Amber Grain Cinema) --- */
+
+/* Standard panel: vertical gradient, 1px border, top inner highlight. */
+.panel {
+  position: relative;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-md);
+  background-image: linear-gradient(180deg, #242429 0%, #1b1b1f 100%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+/* Interactive panels: hover border + warm glow. */
+.panel-hover {
+  transition:
+    border-color var(--motion-fast) var(--ease-out),
+    box-shadow var(--motion-fast) var(--ease-out);
+}
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .panel-hover:hover {
+    border-color: rgba(245, 158, 11, 0.4);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.05),
+      0 0 36px rgba(245, 158, 11, 0.12);
+  }
+}
+
+/* Selected interactive panel (mode choice). */
+.panel-selected {
+  border-color: rgba(245, 158, 11, 0.6);
+  background-image: linear-gradient(
+    180deg,
+    rgba(245, 158, 11, 0.14) 0%,
+    rgba(245, 158, 11, 0.05) 45%,
+    #1b1b1f 100%
+  );
+}
+
+/* Dashed placeholder panel (empty states). */
+.panel-dashed {
+  border: 1px dashed rgba(255, 255, 255, 0.12);
+  border-radius: var(--radius-md);
+  background-image: linear-gradient(180deg, #242429 0%, #1b1b1f 100%);
+}
+
+/* Eyebrow label above section headings — accent-deep (Site language v3). */
+.eyebrow {
+  font-family: var(--font-body-ui);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-size: var(--text-small);
+  color: var(--color-accent-deep);
+}
+
+/* --- Hero / ambient layers (above grain, below content) --- */
+
+.hero-glow {
+  background: radial-gradient(
+    closest-side,
+    rgba(245, 158, 11, 0.22) 0%,
+    transparent 70%
+  );
+  pointer-events: none;
+}
+
+/* v1.6.1: readability scrim behind the hero content (black alphas only). */
+.hero-scrim {
+  background: radial-gradient(
+    ellipse 92% 74% at 50% 42%,
+    rgba(255, 255, 255, 0.42) 0%,
+    rgba(255, 255, 255, 0.18) 55%,
+    rgba(255, 255, 255, 0) 80%
+  );
+  pointer-events: none;
+}
+
+.minimal-top-glow {
+  background: radial-gradient(
+    80% 60% at 50% 0%,
+    rgba(245, 158, 11, 0.08) 0%,
+    transparent 100%
+  );
+  pointer-events: none;
+}
+
+/* --- Ghost numbers (how it works) --- */
+.ghost-number {
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  font-size: clamp(6rem, 12vw, 8rem);
+  line-height: 0.85;
+  color: rgba(245, 158, 11, 0.26);
+  user-select: none;
+  white-space: nowrap;
+}
+
+/* Large landing section heading — Inter Tight ink (Site language v3). */
+.section-title {
+  font-family: var(--font-display-ui);
+  font-size: clamp(2.25rem, 6vw, 3.25rem);
+  line-height: 1.05;
+  letter-spacing: -0.01em;
+  color: var(--color-site-ink);
+}
+
+/* Site language card (v3, Adorn): white surface, 24px radius, hairline
+   border, soft low shadow (no heavy drop). */
+.site-card {
+  border-radius: var(--radius-card);
+  background: var(--color-site-surface);
+  border: 1px solid var(--color-site-border);
+  box-shadow: 0 1px 2px rgba(22, 22, 26, 0.04);
+}
+
+/* Static film-noise texture (CSS only, no canvas). Used as a layer on bands. */
+.noise {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 200px 200px;
+  opacity: 0.05;
+  pointer-events: none;
+}
+
+/* Giant outline wordmark in the footer. */
+.footer-outline {
+  font-family: var(--font-display);
+  font-size: clamp(4rem, 17vw, 11rem);
+  line-height: 1;
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(245, 158, 11, 0.25);
+  white-space: nowrap;
+}
+
+/* --- Scroll-reveal (enhancement only; content stays visible without motion) --- */
+.reveal {
+  opacity: 0;
+  transform: translateY(16px);
+  transition:
+    opacity 500ms var(--ease-out),
+    transform 500ms var(--ease-out);
+}
+.reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* --- Hero entrance (landing only) --- */
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.entrance {
+  animation: rise-in 500ms var(--ease-out) backwards;
+}
+.entrance-1 {
+  animation-delay: 0ms;
+}
+.entrance-2 {
+  animation-delay: 90ms;
+}
+.entrance-3 {
+  animation-delay: 180ms;
+}
+
+/* --- Full-screen verdict page tints (player): flat tints only, no glow layer --- */
+.play-verdict-right {
+  background: linear-gradient(180deg, #1a1408 0%, #16161a 100%);
+}
+.play-verdict-wrong {
+  background: linear-gradient(180deg, #1d0b0b 0%, #16161a 100%);
+}
+.play-verdict-canttell {
+  background: #141416;
+}
+
+/* --- Processing indicators --- */
+@keyframes pulse-progress {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }
+}
+.animate-progress {
+  animation: pulse-progress 1.4s ease-in-out infinite;
+}
+
+@keyframes indeterminate {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(300%);
+  }
+}
+.animate-indeterminate {
+  animation: indeterminate 1.2s var(--ease-out) infinite;
+}
+
+/* --- Reduced motion: disable ALL animation and movement --- */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .reveal,
+  .reveal-blur,
+  .entrance {
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+    animation: none;
+    transition: none !important;
+  }
+  [data-parallax] {
+    transform: none !important;
+    will-change: auto;
+  }
+  .animate-progress,
+  .animate-indeterminate,
+  .animate-spin {
+    animation: none;
+  }
+  .panel-hover {
+    transition: none;
+  }
+  @media (hover: hover) {
+    .panel-hover:hover {
+      border-color: rgba(245, 158, 11, 0.4);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    }
+  }
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* v2.5 Task B — Looping Words in the hero tagline: tagline size, one line.
+   Unlayered CSS (outside any @layer) so these author rules beat Tailwind's
+   layered utilities — that is why className merging alone did not win the
+   word elements' own large text classes. The visible window is the
+   component's inner div (loop-words line 51: `relative h-[2.7em] … text-[11vw]
+   md:text-[6vw] … overflow-hidden`), so we pin ITS height/clip too. */
+.tagline-loop {
+  font-size: 1.625rem;
+  font-weight: 600;
+  line-height: 1.15;
+  height: 1.3em;
+  color: #121212;
+  text-transform: none;
+}
+.tagline-loop * {
+  font-size: inherit !important;
+  line-height: inherit !important;
+  font-weight: inherit;
+  color: #121212;
+  text-transform: inherit;
+}
+/* Inner visible window (loop-words line 51): the root's first child div
+   `relative h-[2.7em] … overflow-hidden`. Pin its height to one line and keep
+   the clip so only one word shows inside the bracket frame. */
+.tagline-loop > div {
+  height: 1.3em;
+  overflow: hidden;
+}
+
+/* v2.7 Task B — Venom stage: the glossy-black-pill stage must be transparent so
+   the sky shows through. The component paints its stage background inline
+   (venom-button.tsx root div, `style={{ background: "linear-gradient(...)" }}`),
+   which beats any className; this scoped rule under the wrapper class forces it
+   transparent. */
+.venom-cta > div {
+  background: transparent !important;
+}
+
+/* ============================================================
+   Feel stack (Prompt 2.19) — below the hero.
+   ============================================================ */
+
+/* --- Task B — Parallax depth (shared rAF loop in SmoothScroll) --- */
+[data-parallax] {
+  will-change: transform;
+}
+/* Inner media is scaled 1.15 inside a clipping (overflow hidden) container so
+   a translateY parallax never exposes an edge or a gap. */
+.parallax-media {
+  scale: 1.15;
+}
+
+/* --- Task C — Reveal choreography v2 (slow rise + blur-to-clear). Applied
+   through Reveal.Group; the plain .reveal used by the frozen hero is
+   unchanged and never receives the blur. --- */
+.reveal-blur {
+  opacity: 0;
+  transform: translateY(32px);
+  filter: blur(6px);
+  transition:
+    opacity 900ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 900ms cubic-bezier(0.22, 1, 0.36, 1),
+    filter 900ms cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: opacity, transform, filter;
+}
+.reveal-blur.is-visible {
+  opacity: 1;
+  transform: none;
+  filter: none;
+}
+
+/* --- Task D — Instrument Serif italic accent on a heading's final word.
+   Rendered inside a .font-serif-accent span (helper in Reveal.tsx), sized
+   1.04em relative to the heading; the heading's sans font/colour remain. --- */
+.font-serif-accent {
+  font-family: var(--font-instrument-serif);
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: normal;
+  font-size: 1.04em;
+}
+
+/* --- Task E — horizontal lessons gallery.
+   Pinned: tall wrapper + sticky stage + translated track (transform only).
+   Fallback reuses the .gallery-track flex row inside its own scroller. --- */
+.gallery-stage {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow: hidden;
+}
+.gallery-track {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  height: 100%;
+  will-change: transform;
+}
+@media (prefers-reduced-motion: reduce) {
+  .gallery-stage,
+  .gallery-track {
+    will-change: auto;
+  }
+}
+
+/* ============================================================
+   v2.20 — capability gallery glass + check demo (Tasks C & D)
+   ============================================================ */
+
+/* Glass card (gallery capability showcase): white 8% ground, blur, 16% border. */
+.glass-surface {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 24px;
+}
+
+/* Softer glass for the check-demo panels: white 6% ground, 14% border. */
+.glass-surface-soft {
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 24px;
+}
+
+/* Fixed 16/10 stage for the gallery card visuals — clips the fitted mat,
+   never crops the scene (fit mode guarantees the whole scene is visible). */
+.stage-16-10 {
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+}
+
+/* Small glass pill for the gallery skill-family chip inside the info block. */
+.family-pill {
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-radius: 9999px;
+}
+
+/* ============================================================
+   v2.23 — capability section light colour washes (Task C)
+   Soft radial washes sit behind the 3D scroll-trigger row, clipped to the
+   section (the section is overflow-hidden) with a ~90px blur so no edge reads.
+   ============================================================ */
+.capability-wash {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(90px);
+  pointer-events: none;
+}
+.capability-wash-amber {
+  background: radial-gradient(
+    closest-side,
+    rgba(245, 158, 11, 0.22),
+    transparent 70%
+  );
+}
+.capability-wash-peach {
+  background: radial-gradient(
+    closest-side,
+    rgba(255, 184, 107, 0.18),
+    transparent 70%
+  );
+}
