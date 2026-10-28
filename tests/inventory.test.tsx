@@ -121,7 +121,7 @@ describe("component library renders with fixture props", () => {
 
 describe("landing page", () => {
   it("renders sections in order with exact strings", async () => {
-    const html = textOf(await ssr(() => LandingPage({ searchParams: Promise.resolve({}) })));
+    const html = textOf(await ssr(() => LandingPage()));
     const order = [s.landingHeadline, s.howStep1Title, s.howStep2Title, s.howStep3Title, s.eyebrowCapabilities, s.canHeading, s.canCantClosing, s.finalCtaHeadline];
     let last = -1;
     for (const text of order) {
@@ -136,14 +136,14 @@ describe("landing page", () => {
     expect(html).toContain(s.privacyClaim);
   });
   it("renders the capability section with its four cards regardless of state", async () => {
-    const html = await ssr(() => LandingPage({ searchParams: Promise.resolve({ state: "empty" }) }));
+    const html = await ssr(() => LandingPage());
     expect(html).toContain(s.eyebrowCapabilities);
     expect(html).toContain(s.galleryMoreTitle);
     expect(html).toContain(s.galleryLineTower);
   });
 
   it("renders the how-it-works heading and each step title exactly once", async () => {
-    const html = await ssr(() => LandingPage({ searchParams: Promise.resolve({}) }));
+    const html = await ssr(() => LandingPage());
     // The eyebrow and the heading share the same "How it works" text, so count
     // the serif-wrapped heading element, and each step title individually.
     expect(html.split('How it <span class="font-serif-accent">works</span>').length - 1).toBe(1);
@@ -151,143 +151,6 @@ describe("landing page", () => {
     for (const t of [s.howStep1Title, s.howStep2Title, s.howStep3Title]) {
       expect(text.split(t).length - 1).toBe(1);
     }
-  });
-});
-
-describe("create flow", () => {
-  it("import default renders heading and start", async () => {
-    const html = textOf(await ssr(() => CreatePage({ searchParams: Promise.resolve({}) })));
-    expect(html).toContain(s.createHeading);
-    expect(html).toContain(s.createGetSteps);
-  });
-  it("import invalid/failed/not-configured variants render exact messages", async () => {
-    const invalid = await ssr(() => CreatePage({ searchParams: Promise.resolve({ state: "invalid" }) }));
-    expect(invalid).toContain(s.importErrorInvalid);
-    const failed = await ssr(() => CreatePage({ searchParams: Promise.resolve({ state: "failed" }) }));
-    expect(failed).toContain(s.importErrorFailed);
-    const ncfg = await ssr(() => CreatePage({ searchParams: Promise.resolve({ state: "not-configured" }) }));
-    expect(ncfg).toContain(s.importErrorNotConfigured);
-  });
-  it("processing renders heading and stage rows", async () => {
-    const html = await ssr(() => ProcessingPage());
-    expect(html).toContain(s.processingHeading);
-    expect(html).toContain(s.procStageFetch);
-    expect(html).toContain(s.procStageSample);
-    expect(html).toContain(s.procStageDerive);
-    expect(html).toContain(s.seeReviewScreen);
-  });
-  it("review renders the derived lesson title, all 4 steps, and start lesson", () => {
-    const html = markup(<ReviewPage />);
-    expect(textOf(html)).toContain(sampleLesson.title);
-    expect(html).toContain(s.startLesson);
-    for (const st of sampleLesson.steps) {
-      expect(html).toContain(st.caption);
-    }
-  });
-});
-
-describe("library and lesson overview", () => {
-  it("lessons renders heading, new lesson, three cards", async () => {
-    const html = textOf(await ssr(() => LessonsPage({ searchParams: Promise.resolve({}) })));
-    expect(html).toContain(s.lessonsHeading);
-    expect(html).toContain(s.newLesson);
-    for (const l of libraryLessons) expect(html).toContain(l.title);
-  });
-  it("lessons empty variant renders line", async () => {
-    const html = await ssr(() => LessonsPage({ searchParams: Promise.resolve({ state: "empty" }) }));
-    expect(html).toContain(s.lessonsEmptyLine);
-  });
-  it("lesson overview renders title, meta, mode cards", async () => {
-    const html = textOf(await ssr(() => LessonOverviewPage({ params: Promise.resolve({ id: "sample" }) })));
-    expect(html).toContain(sampleLesson.title);
-    expect(html).toContain(sampleLesson.meta);
-    expect(html).toContain(s.modeStepByStep);
-    expect(html).toContain(s.modeStepByStepDesc);
-    expect(html).toContain(s.modeLive);
-    expect(html).toContain(s.modeLiveDesc);
-    expect(html).toContain(s.modeLiveChip);
-  });
-});
-
-describe("player screens", () => {
-  const play = (state: string) =>
-    ssr(() =>
-      PlayPage({
-        params: Promise.resolve({ id: "sample" }),
-        searchParams: Promise.resolve({ state }),
-      }),
-    );
-  it("step state renders current caption, take-photo action, and privacy line", async () => {
-    const html = await play("step");
-    expect(html).toContain(sampleLesson.steps[1].caption);
-    expect(html).toContain(s.takePhoto);
-    expect(html).toContain(s.privacyClaim);
-  });
-  it("checking state renders line", async () => {
-    expect(await play("checking")).toContain(s.checkingLine);
-  });
-  it("right state renders match line and next", async () => {
-    const html = await play("right");
-    expect(html).toContain(s.verdictRightLine);
-    expect(html).toContain(s.nextStep);
-  });
-  it("wrong state renders the difference sentence and both actions", async () => {
-    const html = await play("wrong");
-    expect(html).toContain(s.checkDemoDifference);
-    expect(html).toContain(s.retakePhoto);
-    expect(html).toContain(s.mineIsRight);
-  });
-  it("canttell state renders line and retake", async () => {
-    const html = await play("canttell");
-    expect(html).toContain(s.cantTellLine);
-    expect(html).toContain(s.retakePhoto);
-  });
-  it("camera renders the dark viewfinder, guidance, and capture; no camera API", async () => {
-    const html = await ssr(() => CameraPage());
-    expect(html).toContain("bg-[#101013]");
-    expect(html).toContain("border-white/20");
-    expect(html).toContain(s.guideHandsAway);
-    expect(html).toContain("border-4 border-white");
-    expect(html).not.toContain("getUserMedia");
-  });
-  it("minimal chrome shows step 2 of 4", () => {
-    expect(markup(<MinimalChrome />)).toContain("2 of 4");
-  });
-});
-
-describe("live and completion", () => {
-  const live = (state: string) =>
-    ssr(() =>
-      LivePage({
-        params: Promise.resolve({ id: "sample" }),
-        searchParams: Promise.resolve({ state }),
-      }),
-    );
-  it("on-track renders its line and Live chip", async () => {
-    const html = await live("on-track");
-    expect(html).toContain(s.liveOnTrackLine);
-    expect(html).toContain(s.liveChip);
-  });
-  it("check renders title and blurry line", async () => {
-    const html = await live("check");
-    expect(html).toContain(s.liveCheckLine);
-    expect(html).toContain(s.liveTooBlurry);
-  });
-  it("wrong renders title and difference", async () => {
-    const html = await live("wrong");
-    expect(html).toContain(s.liveWrongLine);
-    expect(html).toContain(s.verdictWrongLine);
-  });
-  it("completion renders heading, summary, no percentages", async () => {
-    const html = await ssr(() => CompletePage());
-    expect(html).toContain(s.completeHeading);
-    expect(html).toContain(sampleLesson.title);
-    expect(html).toContain(sessionResult.totalTime);
-    expect(html).toContain(sessionResult.stepsCompleted);
-    expect(html).toContain(s.completeNeededMoreLabel);
-    for (const line of sessionResult.neededMoreThanOneCheck) expect(html).toContain(line);
-    expect(html).toContain(s.backToYourLessons);
-    expect(html).toContain(s.learnAnother);
   });
 });
 

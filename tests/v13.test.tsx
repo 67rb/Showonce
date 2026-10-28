@@ -87,7 +87,7 @@ const heroParticleSource = fs.readFileSync(
 );
 
 const landing = async () =>
-  renderToStaticMarkup(await LandingPage({ searchParams: Promise.resolve({}) }));
+  renderToStaticMarkup(await LandingPage());
 
 describe("v1.3 — sky lives in the landing hero only (v2.12)", () => {
   it("the root layout references no grain, satin or sky component at all", () => {
@@ -785,3 +785,4 @@ describe("v2.12 — cloud sky hero, venom CTA, finer particles, ink foreground (
     expect(navSource).toContain('<WordmarkAnchor className="text-xl" light />');
   });
 });
+

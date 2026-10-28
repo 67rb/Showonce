@@ -1,0 +1,33 @@
+{
+  "schema_version": "hashir.ai.v1-proposed",
+  "submission_id": "local_de31aa82d8034cfaafa7dc792d7425d3",
+  "lesson_id": "lesson_cup_dcff9d7098252f24",
+  "step_id": "cup_01",
+  "result": "retry",
+  "corrections": [
+    "Refold bottom point up to top point to create a triangular shape with aligned tips, then re-photograph."
+  ],
+  "criteria": [
+    {
+      "criterion": "Triangle outline; top corners meet",
+      "evidence": "Visible shape is a flat yellow rectangle with four right-angle corners, not a triangle; no meeting top corners seen.",
+      "status": "violated"
+    }
+  ],
+  "feedback": "The visible shape is a rectangle, not the required triangle with meeting tips.",
+  "observations": [
+    "Central solid yellow rectangle with dark border on light beige background",
+    "Four straight edges and four right-angle corners visible, no triangular point"
+  ],
+  "requested_evidence": [],
+  "usage": {
+    "estimated_cost_usd": 0.002507,
+    "input_tokens": 938,
+    "output_tokens": 314
+  },
+  "provider": "meta",
+  "model": "muse-spark-1.3",
+  "is_mock": false,
+  "latency_ms": 7869.32,
+  "safety_notice": "Visual feedback cannot certify physical safety or hidden properties."
+}

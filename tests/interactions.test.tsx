@@ -24,23 +24,6 @@ if (typeof globalThis.IntersectionObserver === "undefined") {
   ).IntersectionObserver = IntersectionObserverStub as unknown as typeof IntersectionObserver;
 }
 
-describe("review delete confirmation", () => {
-  it("delete button opens the dialog with its exact title", () => {
-    render(<ReviewPage />);
-
-    const deleteLabels = screen.getAllByText(s.deleteStepLabel);
-    expect(deleteLabels.length).toBeGreaterThan(0);
-    const button = deleteLabels[0].closest("button");
-    expect(button).not.toBeNull();
-    fireEvent.click(button!);
-
-    expect(screen.getByText(s.deleteStepTitle)).toBeTruthy();
-    expect(screen.getByText(s.deleteStepBody)).toBeTruthy();
-    expect(screen.getByText(s.cancel)).toBeTruthy();
-    expect(screen.getAllByText(s.deleteStepConfirm).length).toBeGreaterThan(0);
-  });
-});
-
 describe("SkyGate — reduced motion", () => {
   it("still renders the sky (a background is never gated on reduced motion)", () => {
     window.matchMedia = vi.fn().mockReturnValue({

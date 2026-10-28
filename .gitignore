@@ -43,3 +43,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Built frontend and local runtime output
+/out/
+*.tsbuildinfo

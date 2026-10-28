@@ -44,21 +44,21 @@ const CAPABILITIES = [
     title: s.galleryTitleTower,
     line: s.galleryLineTower,
     examples: s.galleryExamplesTower,
-    href: "/lesson/sample",
+    href: "/create/",
   },
   {
     id: "mosaic",
     title: s.galleryTitleMosaic,
     line: s.galleryLineMosaic,
     examples: s.galleryExamplesMosaic,
-    href: "/lesson/mosaic",
+    href: "/create/",
   },
   {
     id: "wall",
     title: s.galleryTitleWall,
     line: s.galleryLineWall,
     examples: s.galleryExamplesWall,
-    href: "/lesson/wall",
+    href: "/create/",
   },
 ];
 

@@ -1,26 +1,11 @@
 import type { NextConfig } from "next";
+import {PHASE_DEVELOPMENT_SERVER} from "next/constants";
 
+export default function configuration(phase:string):NextConfig {
 const nextConfig: NextConfig = {
-  output: "standalone",
-  async headers() {
-    return [
-      {
-        // Security hardening for every route (no CSP — the app relies on inline
-        // style/attributes that would break).
-        source: "/(.*)",
-        headers: [
-          { key: "X-Frame-Options", value: "DENY" },
-          { key: "X-Content-Type-Options", value: "nosniff" },
-          { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
-          {
-            key: "Permissions-Policy",
-            value: "camera=(), microphone=(), geolocation=()",
-          },
-          { key: "X-DNS-Prefetch-Control", value: "off" },
-        ],
-      },
-    ];
-  },
+  output: phase===PHASE_DEVELOPMENT_SERVER?undefined:"export",
+  trailingSlash: true,
+  images: { unoptimized: true },
   turbopack: {
     rules: {
       "*.css": {
@@ -31,4 +16,19 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+if(phase===PHASE_DEVELOPMENT_SERVER)nextConfig.rewrites=async()=>[
+ {source:'/api/:path*',destination:'http://127.0.0.1:8026/api/:path*'},
+ {source:'/v1/:path*',destination:'http://127.0.0.1:8026/v1/:path*'},
+ {source:'/health',destination:'http://127.0.0.1:8026/health'},
+ {source:'/studio',destination:'http://127.0.0.1:8026/studio'},
+ {source:'/team.html',destination:'http://127.0.0.1:8026/team.html'},
+ {source:'/team.js',destination:'http://127.0.0.1:8026/team.js'},
+ {source:'/team.css',destination:'http://127.0.0.1:8026/team.css'},
+ {source:'/styles.css',destination:'http://127.0.0.1:8026/styles.css'},
+ {source:'/app.js',destination:'http://127.0.0.1:8026/app.js'},
+ {source:'/fixtures/:path*',destination:'http://127.0.0.1:8026/fixtures/:path*'},
+ {source:'/examples/:path*',destination:'http://127.0.0.1:8026/examples/:path*'},
+ {source:'/public-api.js',destination:'http://127.0.0.1:8026/public-api.js'}
+];
+return nextConfig;
+}

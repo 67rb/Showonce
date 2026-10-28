@@ -1,0 +1,1 @@
+CREATE TABLE source_extractions (id TEXT PRIMARY KEY NOT NULL,source_url TEXT NOT NULL,claim TEXT NOT NULL,status TEXT NOT NULL CHECK(status IN ('starting','processing','ready','failed')),provider_job TEXT,description TEXT,source_json TEXT,error_code TEXT,error_message TEXT,error_status INTEGER,created_at INTEGER NOT NULL,updated_at INTEGER NOT NULL,expires_at INTEGER NOT NULL);

@@ -20,7 +20,7 @@ const allSource = files.map(read).join("\n");
 const relative = (f: string) => path.relative(ROOT, f).replace(/\\/g, "/");
 const pagesUsingFixtures = files.filter(
   (f) =>
-    f.includes("\\app\\") &&
+    f.includes(`${path.sep}app${path.sep}`) &&
     /\bsampleLesson\b|\blibraryLessons\b|\bsessionResult\b/.test(read(f)),
 );
 
@@ -28,21 +28,24 @@ describe("forbidden APIs / storage / privacy", () => {
   it("no window.confirm or window.alert in src", () => {
     expect(allSource).not.toMatch(/window\.confirm|window\.alert\b/);
   });
-  it("no getUserMedia, speechSynthesis, or localStorage in src", () => {
-    expect(allSource).not.toMatch(/getUserMedia|speechSynthesis|localStorage/);
+  it("camera and browser access are confined to the working learning layer", () => {
+    const decorativeSource=files.filter(f=>!relative(f).startsWith("components/learning/")&&relative(f)!=="lib/learning.ts").map(read).join("\n");
+    expect(decorativeSource).not.toMatch(/getUserMedia|speechSynthesis|localStorage/);
+    expect(allSource).not.toMatch(/LLM_[A-Za-z0-9_-]{20,}/);
+    expect(allSource).not.toContain("MODEL_API_KEY");
   });
   it("no camera access claim / on-device processing claim", () => {
     expect(allSource).not.toMatch(/on-device/i);
   });
   it("no percentage sign in the completion page strings", () => {
     const complete = files.find((f) =>
-      f.endsWith("\\lesson\\[id]\\complete\\page.tsx"),
+      f.endsWith(`${path.sep}${path.join("lesson", "[id]", "complete", "page.tsx")}`),
     );
     expect(complete).toBeTruthy();
     expect(read(complete!)).not.toContain("%");
   });
   it("no testimonials, ratings, user counts, or invented statistics", () => {
-    const banned = /testimonial|\bratings?\b|★|★★★★|sign up|join now|\busers\b|downloads/i;
+    const banned = /testimonial|\bratings?\b|★|★★★★|join now|\busers\b|downloads/i;
     expect(allSource).not.toMatch(banned);
   });
 });
@@ -81,7 +84,7 @@ describe("all copy lives in src/lib/strings.ts", () => {
       "ImportPanel.tsx",
     ];
     for (const name of named) {
-      const f = files.find((x) => x.endsWith(`\\components\\${name}`));
+      const f = files.find((x) => x.endsWith(`${path.sep}${path.join("components", name)}`));
       expect(f, `${name} should exist`).toBeTruthy();
       expect(read(f!), "expected strings import in " + name).toMatch(/@\/lib\/strings/);
     }

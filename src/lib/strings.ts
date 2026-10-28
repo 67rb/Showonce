@@ -10,7 +10,7 @@ export const strings = {
   /* Brand */
   wordmarkShow: "SHOW",
   wordmarkOnce: "ONCE",
-  privacyClaim: "checks photos, keeps nothing.",
+  privacyClaim: "checks your work, saves your progress.",
 
   /* Shared chrome */
   yourLessonsLink: "Your lessons",
@@ -43,13 +43,13 @@ export const strings = {
   sectionHowItWorks: "How it works",
   howStep1Title: "Paste the link",
   howStep1Line:
-    "Any short YouTube or Instagram video of someone doing it once.",
+    "A public demonstration, a readable tutorial, or your own written instructions.",
   howStep2Title: "Get the steps",
   howStep2Line:
-    "Show Once breaks the video into steps, each with a picture of what done looks like.",
+    "Get source-grounded checkpoints and optional AI target illustrations.",
   howStep3Title: "Do it, checked",
   howStep3Line:
-    "Do one step, take one photo. It tells you right, wrong, or can't tell, before you move on.",
+    "Practice a step, then check visible details with a photo or record a self-review.",
 
   proofStepLabel: "The step",
   proofPhotoLabel: "Your photo",
@@ -99,9 +99,9 @@ export const strings = {
     "Hands-on team onboarding",
   ],
 
-  privacyHeading: "checks photos, keeps nothing.",
+  privacyHeading: "checks your work, saves your progress.",
   privacyBody:
-    "Your check photos are processed for the check and never stored. Not in a database, not in logs, not in analytics. Checks run on the Meta Model API. Filming is hands and work surface only.",
+    "Photo checks run through Meta. Submitted photos are saved privately with your practice and can be deleted from history. Live camera frames are not saved.",
   privacyLink: "Read the privacy page",
 
   lessonsSectionTitle: "What SHOW ONCE can check.",
@@ -232,8 +232,8 @@ export const strings = {
       body: "A single photo of a finished step, taken from above, is sent for a check of whether it matches the step (presence, colour, count, approximate position).",
     },
     {
-      heading: "What is never stored",
-      body: "Your check photos are processed for the check and never stored. Not in a database, not in logs, not in analytics.",
+      heading: "What is saved",
+      body: "Submitted photos are stored privately with your practice until you delete them from history. Account practices and checkpoint progress are saved on the server. Sampled live camera frames are not stored.",
     },
     {
       heading: "Where checks run",
@@ -241,7 +241,7 @@ export const strings = {
     },
     {
       heading: "What stays on your device",
-      body: "Filming and capture happen on the device. Filming is hands and work surface only.",
+      body: "Camera preview is local. Start feedback sends sampled frames to Meta. Browser-only practices keep private access in this browser; signing in lets you explicitly connect them to your account.",
     },
   ],
 

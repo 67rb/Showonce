@@ -1,4 +1,6 @@
 import type { Metadata, Viewport } from "next";
+import Script from "next/script";
+import { IdentityProvider } from "@/components/learning/Identity";
 import {
   Anton,
   Archivo,
@@ -65,9 +67,12 @@ export default function RootLayout({
       className={`${anton.variable} ${archivo.variable} ${interTight.variable} ${inter.variable} ${instrumentSerif.variable}`}
     >
       <body className="min-h-dvh">
+        <Script src="/practice-library.js" strategy="beforeInteractive" />
+        <IdentityProvider>
         <SmoothScroll />
         <Parallax />
         <div className="relative z-10">{children}</div>
+        </IdentityProvider>
       </body>
     </html>
   );

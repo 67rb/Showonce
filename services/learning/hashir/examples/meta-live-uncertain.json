@@ -1,0 +1,34 @@
+{
+  "schema_version": "hashir.ai.v1-proposed",
+  "submission_id": "local_3d94ae3c30c04be59e22a75a7f9327e6",
+  "lesson_id": "lesson_cup_dcff9d7098252f24",
+  "step_id": "cup_01",
+  "result": "uncertain",
+  "corrections": [],
+  "criteria": [
+    {
+      "criterion": "Triangle outline; top corners meet",
+      "evidence": "Large opaque gray rectangle covers central and upper area, only a narrow yellow strip with dark lower edge is visible at bottom; triangle outline and top corners are hidden and cannot be evaluated.",
+      "status": "not_visible"
+    }
+  ],
+  "feedback": "The folded paper is obscured by a large covering shape, so the triangle outline and corner alignment cannot be assessed from what is visible.",
+  "observations": [
+    "Beige background with small yellow trapezoidal strip visible along bottom with dark outline",
+    "Large solid gray rectangle overlapping and covering most of the central area",
+    "Top text reads SYNTHETIC FIXTURE / STEP 1 / HIDDEN"
+  ],
+  "requested_evidence": [
+    "Clear unobstructed photograph of the folded paper showing full triangle outline and top corners without covering"
+  ],
+  "usage": {
+    "estimated_cost_usd": 0.002737,
+    "input_tokens": 938,
+    "output_tokens": 368
+  },
+  "provider": "meta",
+  "model": "muse-spark-1.3",
+  "is_mock": false,
+  "latency_ms": 5583.69,
+  "safety_notice": "Visual feedback cannot certify physical safety or hidden properties."
+}

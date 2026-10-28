@@ -3,11 +3,14 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
+    "dev": "node scripts/dev.mjs",
+    "build": "next build && node scripts/assemble-app.mjs",
+    "start": "node services/learning/hashir/public-site/scripts/preview.mjs --port 3000",
     "lint": "eslint",
-    "test": "vitest run"
+    "test": "node scripts/prepare-service.mjs && vitest run",
+    "dev:frontend": "next dev",
+    "build:frontend": "next build",
+    "smoke": "node scripts/smoke-unified.mjs"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.3.1",

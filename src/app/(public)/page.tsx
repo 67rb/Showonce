@@ -12,12 +12,7 @@ import { ScrollProgress } from "@/components/ScrollProgress";
 import { SeasonalHoverCards } from "@/components/lightswind/seasonal-hover-cards";
 import Link from "next/link";
 
-export default async function LandingPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ state?: string }>;
-}) {
-  await searchParams;
+export default function LandingPage() {
 
   // Task C: compose the two-line "What SHOW ONCE / can check." heading from the
   // stored string; the serif-accent span covers the final two words here only.
