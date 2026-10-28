@@ -7,6 +7,8 @@ import { StartLearningButton } from "@/components/StartLearningButton";
 import { HorizontalGallery } from "@/components/HorizontalGallery";
 import { HeroParticleHeadline } from "@/components/HeroParticleHeadline";
 import { LoopingWords } from "@/components/lightswind/looping-words";
+import { BorderBeam } from "@/components/lightswind/border-beam";
+import { ScrollProgress } from "@/components/ScrollProgress";
 import { SeasonalHoverCards } from "@/components/lightswind/seasonal-hover-cards";
 import Link from "next/link";
 
@@ -31,6 +33,7 @@ export default async function LandingPage({
 
   return (
     <>
+      <ScrollProgress />
       {/* HERO — full-bleed, full-height (structural full-bleed: the hero sits
           outside the landing container, so the section spans edge to edge) */}
       <section className="hero-full-bleed relative -mt-24 flex min-h-[100svh] flex-col items-center justify-center gap-6 overflow-hidden py-16 text-center">
@@ -72,8 +75,10 @@ export default async function LandingPage({
           </Reveal>
           <Reveal>
             {/* CTA — Nexus Venom stage (v2.6 Task B); one call to action in the hero */}
-            <div className="entrance entrance-3 mt-7">
-              <HeroVenomCta />
+            <div className="btn-shine relative overflow-hidden rounded-full">
+              <div className="entrance entrance-3 mt-7">
+                <HeroVenomCta />
+              </div>
             </div>
           </Reveal>
           <Reveal>
@@ -117,6 +122,15 @@ export default async function LandingPage({
         {/* CAPABILITIES — light ground, colour washes; four LiquidGlassCards
             ride in a 3D scroll-trigger row. Sits directly after How it works. */}
         <section className="relative overflow-hidden bg-site-page pt-14 pb-0 lg:pt-[72px] md:pb-0">
+          <BorderBeam
+            aria-hidden
+            size={80}
+            duration={7}
+            colorFrom="#F59E0B"
+            colorTo="#D97706"
+            opacity={0.55}
+            beamBorderRadius={28}
+          />
           <div
             aria-hidden
             className="capability-wash capability-wash-amber left-[8%] top-10 h-[420px] w-[600px]"
@@ -137,7 +151,7 @@ export default async function LandingPage({
                   </h2>
                   <Link
                     href="/lessons"
-                    className="shrink-0 whitespace-nowrap rounded-full bg-[#16161A] px-5 py-2.5 text-small font-semibold text-white transition-colors duration-[150ms] hover:bg-accent"
+                    className="btn-shine shrink-0 whitespace-nowrap rounded-full bg-[#16161A] px-5 py-2.5 text-small font-semibold text-white transition-colors duration-[150ms] hover:bg-accent"
                   >
                     {s.seeAll}
                   </Link>
@@ -199,7 +213,7 @@ export default async function LandingPage({
                   </p>
                   <Link
                     href="/privacy"
-                    className="mt-5 inline-block rounded-full bg-[#16161A] px-6 py-2.5 text-small font-semibold text-accent transition-colors duration-[150ms] hover:bg-white/20"
+                    className="btn-shine mt-5 inline-block rounded-full bg-[#16161A] px-6 py-2.5 text-small font-semibold text-accent transition-colors duration-[150ms] hover:bg-white/20"
                   >
                     {s.privacyLink}
                   </Link>

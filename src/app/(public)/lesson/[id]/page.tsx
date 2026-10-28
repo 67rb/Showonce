@@ -4,6 +4,9 @@ import { sampleLesson } from "@/design/fixtures";
 import Link from "next/link";
 import { KeyframeVisual } from "@/components/KeyframeVisual";
 import { SerifAccent } from "@/components/Reveal";
+import { SpotlightCard } from "@/components/SpotlightCard";
+import { Magnetic } from "@/components/Magnetic";
+import { BorderBeam } from "@/components/lightswind/border-beam";
 
 type NodeState = "done" | "current" | "upcoming";
 
@@ -39,8 +42,27 @@ export default async function LessonOverviewPage({
   };
 
   return (
-    <div className="bg-site-page min-h-dvh">
-      <div className="mx-auto w-full max-w-[430px] px-4 py-10 lg:max-w-[1000px]">
+    <div className="relative min-h-dvh overflow-hidden bg-site-page">
+      {/* warm premium backdrop */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute left-1/2 top-0 h-[340px] w-[560px] -translate-x-1/2 rounded-full opacity-60 blur-3xl"
+        style={{
+          background:
+            "radial-gradient(closest-side, rgba(245,158,11,0.24), transparent 70%)",
+        }}
+      />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 opacity-40"
+        style={{
+          backgroundImage:
+            "radial-gradient(rgba(22,22,26,0.05) 1px, transparent 1px)",
+          backgroundSize: "24px 24px",
+        }}
+      />
+
+      <div className="relative z-10 mx-auto w-full max-w-[430px] px-4 py-10 lg:max-w-[1000px]">
         <Link
           href="/lessons"
           className="inline-flex items-center gap-2 font-body-ui text-small font-medium text-site-muted transition-colors duration-[150ms] hover:text-site-ink"
@@ -63,17 +85,28 @@ export default async function LessonOverviewPage({
 
         <div className="mt-8 lg:grid lg:grid-cols-[1fr_1.5fr] lg:gap-12">
           {/* lesson summary — large finished-step visual */}
-          <section className="self-start rounded-[24px] border border-site-border bg-white p-3">
-            <div className="aspect-[4/3] w-full overflow-hidden rounded-[14px]">
-              <KeyframeVisual
-                spec={lesson.steps[lastIdx].keyframe}
-                label={lesson.title}
-                variant="step"
-                fit
-                className="h-full"
-              />
-            </div>
-          </section>
+          <div className="relative self-start">
+            <SpotlightCard className="rounded-[28px] border border-site-border bg-white p-3 shadow-[0_20px_50px_-30px_rgba(22,22,26,0.5)]">
+              <div className="aspect-[4/3] w-full overflow-hidden rounded-[16px]">
+                <KeyframeVisual
+                  spec={lesson.steps[lastIdx].keyframe}
+                  label={lesson.title}
+                  variant="step"
+                  fit
+                  className="h-full"
+                />
+              </div>
+            </SpotlightCard>
+            <BorderBeam
+              aria-hidden
+              size={70}
+              duration={7}
+              colorFrom="#F59E0B"
+              colorTo="#D97706"
+              opacity={0.45}
+              beamBorderRadius={28}
+            />
+          </div>
 
           <div className="mt-8 lg:mt-0">
             {/* THE PATH — vertical connecting line, one node per step */}
@@ -149,22 +182,26 @@ export default async function LessonOverviewPage({
                 {s.modeHeading}
               </h2>
               <div className="mt-3 grid gap-3">
+                <Magnetic className="w-full">
                 <Link
                   href="/lesson/sample/play"
-                  className="rounded-full bg-[#16161A] px-5 py-3 text-center font-body-ui text-body font-semibold text-white transition-colors duration-[150ms] hover:bg-accent"
+                  className="block rounded-full bg-[#16161A] px-5 py-3 text-center font-body-ui text-body font-semibold text-white transition-colors duration-[150ms] hover:bg-accent"
                 >
                   {s.modeStepByStep}
                 </Link>
+              </Magnetic>
                 <p className="mt-1 text-center font-body-ui text-small text-site-muted">
                   {s.modeStepByStepDesc}
                 </p>
 
+                <Magnetic className="w-full">
                 <Link
                   href="/lesson/sample/live"
-                  className="rounded-full border border-site-border-2 bg-white px-5 py-3 text-center font-body-ui text-body font-semibold text-site-ink transition-colors duration-[150ms] hover:bg-site-page"
+                  className="block rounded-full border border-site-border-2 bg-white px-5 py-3 text-center font-body-ui text-body font-semibold text-site-ink transition-colors duration-[150ms] hover:bg-site-page"
                 >
                   {s.modeLive}
                 </Link>
+              </Magnetic>
                 <div className="flex items-center justify-center gap-2">
                   <p className="font-body-ui text-small text-site-muted">
                     {s.modeLiveDesc}

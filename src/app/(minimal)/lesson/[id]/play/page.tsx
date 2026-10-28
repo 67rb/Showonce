@@ -4,6 +4,8 @@ import { sampleLesson } from "@/design/fixtures";
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { KeyframeVisual } from "@/components/KeyframeVisual";
+import { SpotlightCard } from "@/components/SpotlightCard";
+import { Magnetic } from "@/components/Magnetic";
 
 type PlayState = "step" | "checking" | "right" | "wrong" | "canttell";
 
@@ -123,15 +125,17 @@ export default async function PlayPage({
         {/* BASE STEP STATE (Task B) */}
         {mode === "step" && (
           <section className="flex flex-col gap-5">
-            <div className="rounded-[24px] border border-site-border bg-white p-4">
+            <SpotlightCard className="rounded-[24px] border border-site-border bg-white p-4">
               <h1 className="font-display-ui text-[1.75rem] font-bold leading-tight text-site-ink">
                 {current.caption}
               </h1>
               <div className="mt-4">
                 <Stage spec={current.keyframe} label={current.caption} variant="step" />
               </div>
-            </div>
-            <InkPill href="/lesson/sample/play/camera">{s.takePhoto}</InkPill>
+            </SpotlightCard>
+            <Magnetic className="w-full">
+              <InkPill href="/lesson/sample/play/camera">{s.takePhoto}</InkPill>
+            </Magnetic>
             <Link
               href="/lesson/sample/play?state=checking"
               className="text-center font-body-ui text-small font-medium text-site-muted underline-offset-4 transition-colors duration-[150ms] hover:text-site-ink hover:underline"

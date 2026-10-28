@@ -125,13 +125,25 @@ describe("Amber Grain Cinema — grain integration", () => {
   });
 
   it("no satin import or class remains in src/ or globals.css", () => {
-    const src = files.map(read).join("\n");
+    // SatinFlow is deliberately re-introduced ONLY on the /create entry via
+    // SatinBackdrop, so it is excluded from the sweep but asserted as the sole
+    // consumer. Everywhere else the retired component stays banned.
+    const excRel = "components/create/SatinBackdrop.tsx";
+    const src = files
+      .filter((f) => path.relative(ROOT, f).replace(/\\/g, "/") !== excRel)
+      .map(read)
+      .join("\n");
     expect(src).not.toMatch(/SatinGate["']/);
     expect(src).not.toMatch(/satin-flow["']/);
     expect(src).not.toMatch(/satin-drift/);
+    const importers = files
+      .filter((f) => /satin-flow["']/.test(read(f)))
+      .map((f) => path.relative(ROOT, f).replace(/\\/g, "/"))
+      .sort();
+    expect(importers).toEqual(["components/create/SatinBackdrop.tsx"]);
     const css = read(path.join(ROOT, "app", "globals.css"));
     expect(css).not.toMatch(/satin-drift/);
-    // the retired satin-flow file may remain unused on disk
+    // the satin-flow file stays on disk
     const satin = path.join(ROOT, "components", "lightswind", "satin-flow.tsx");
     expect(fs.existsSync(satin)).toBe(true);
   });
