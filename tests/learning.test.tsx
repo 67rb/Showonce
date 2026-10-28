@@ -96,6 +96,13 @@ describe('working frontend with the actual learning Worker',()=>{
   fireEvent.click(screen.getByRole('button',{name:'I’ve practiced this step · self-review'}));await screen.findByRole('heading',{name:lesson.steps[1].title!});
   expect(screen.getByRole('progressbar').getAttribute('aria-valuenow')).toBe('2');expect(screen.getByRole('progressbar').getAttribute('aria-valuemax')).toBe('4');
  });
+ it('free numbered practices expose local camera tools and still save progress without AI',async()=>{
+  const lesson=await(await worker.fetch(new Request('https://test.example/v1/lessons',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({source_type:'text',source_text:'1. Draw a circle on paper.\n2. Shade its lower edge.',processing_mode:'structured_text'})}),env)).json() as Lesson;
+  await preparePractice(lesson.id);show('play');fireEvent.click(await screen.findByRole('button',{name:'Practice with live camera · free'}));
+  expect(screen.getByRole('button',{name:'Open camera'})).toBeTruthy();expect(screen.queryByText('Optional AI check · uses existing allowance')).toBeNull();
+  fireEvent.click(screen.getByRole('button',{name:'I’ve practiced this step · self-review'}));await screen.findByRole('heading',{name:lesson.steps[1].title||'Try this step'});
+  expect(screen.queryByRole('button',{name:'Open camera'})).toBeNull();expect(calls.filter(call=>call.path==='/api/assess')).toHaveLength(0);expect((await env.DB.prepare('SELECT calls FROM ai_budget WHERE id=1').first())?.calls).toBe(0);
+ });
  it('the learner report form saves its checkpoint in the team review queue without a photo',async()=>{
   const {progress}=await preparePractice();show('play');fireEvent.click(await screen.findByRole('button',{name:'Report a problem'}));fireEvent.change(screen.getByRole('textbox',{name:'What went wrong?'}),{target:{value:'Synthetic frontend integration check.'}});fireEvent.click(screen.getByRole('button',{name:'Send report'}));await screen.findByText(/Report saved for the team/);const row=await env.DB.prepare('SELECT step_id,details,context FROM learner_reports').first();expect(row?.step_id).toBe(progress.current_step_id);expect(row?.details).toBe('Synthetic frontend integration check.');expect(String(row?.context)).not.toContain('image_base64');expect(String(row?.context)).not.toContain(progress.access_token!);
  });
