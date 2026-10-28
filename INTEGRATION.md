@@ -62,18 +62,17 @@ validation, lost-response duplicate protection and report persistence.
 31-request API/deployment smoke with no paid calls. Physical phone, sign-in and
 recovery acceptance remain separate human checks in DEVICE-ACCEPTANCE.md.
 
-## October performance and control polish
+## Motion and control behavior
 
-The public frontend now uses native scrolling, a single still cloud canvas sized
-to its container, real text for its heading, and a native link for the primary
-action. Capability cards stay still and appear once. Form backgrounds use a
-quiet CSS gradient. Navigation no longer morphs its width while scrolling; the
-mobile toggle has an accessible name, expanded state, and Escape handling.
-Practice actions have consistent minimum touch sizes and wrap on narrow screens.
-Public configuration and the initial account check load concurrently; identity
-validation and account-change invalidation remain in place.
+The original cloud drift, interactive particle headline, Venom button, looping
+words, moving capability cards, and warm satin form background are retained.
+Rendering buffers are capped, decorative shaders draw at 24–30 fps, and motion
+pauses off screen or in hidden tabs. Headline particles sleep once settled and
+wake on interaction. The marquee pauses during pointer hover and keyboard focus;
+its decorative duplicate is inert. OS reduced-motion preferences keep static
+alternatives. Form text remains readable over a dark veil.
 
-`tests/performance-controls.test.tsx` exercises menu behavior, destinations,
-keyboard focus, readable heading/CTA without canvases, and unique gallery links.
-Old tests that mandated particle physics, a three-canvas button, a moving
-marquee, and morphing navbar were replaced or updated for this release.
+Navigation dimensions, 44px tap targets, fixed-header scroll offsets, account
+isolation, and automatic loading of saved step illustrations remain in place.
+New step-image generation requires the learner's explicit button press and uses
+the existing server-side budget. Animation changes make no AI calls.

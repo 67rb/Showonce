@@ -382,6 +382,9 @@ export default function CloudSky(props: Props) {
 
         let raf = 0
         let last = performance.now()
+        let painted = -Infinity
+        const coarse = window.matchMedia("(pointer: coarse)").matches
+        const frameInterval = 1000 / (coarse ? 24 : 30)
         // Each layer keeps its OWN accumulator, wrapped on the CPU. One shared
         // clock scaled per layer would jump every time Speed changed, because the
         // scale multiplies the whole elapsed time, not just what comes next.
@@ -392,6 +395,9 @@ export default function CloudSky(props: Props) {
         let leanY = 0
 
         const render = (now: number) => {
+            if (document.hidden) { raf = 0; return }
+            if (now - painted < frameInterval) { raf = requestAnimationFrame(render); return }
+            painted = now
             const dt = Math.min(0.05, (now - last) / 1000)
             last = now
             const v = vRef.current
@@ -410,7 +416,7 @@ export default function CloudSky(props: Props) {
             farX = (farX - FAR_DRIFT * rate * dt) % 1000
             cirrusX = (cirrusX - CIRRUS_DRIFT * rate * dt) % 1000
 
-            const dpr = Math.min(window.devicePixelRatio || 1, MAX_DPR)
+            const dpr = Math.min(window.devicePixelRatio || 1, MAX_DPR) * (coarse ? 0.6 : 0.8)
             const cw = sizeRef.current.w || canvas.clientWidth || 1200
             const ch = sizeRef.current.h || canvas.clientHeight || 800
             const bw = Math.max(1, Math.round(cw * dpr))
@@ -446,7 +452,15 @@ export default function CloudSky(props: Props) {
             if ((v.speed as number) > 0 && !document.hidden) raf = requestAnimationFrame(render)
         }
 
-        // A still background redraws only when its CSS dimensions change.
+        const track = (event: PointerEvent) => {
+            if (coarse || document.hidden) return
+            const rect = canvas.getBoundingClientRect()
+            ptrRef.current = {x:(event.clientX-rect.left)/rect.width*2-1,y:1-(event.clientY-rect.top)/rect.height*2,inside:true}
+        }
+        const leave = () => { ptrRef.current.inside = false }
+        window.addEventListener("pointermove",track,{passive:true})
+        document.addEventListener("mouseleave",leave)
+        // Resizing and returning to the tab restart the visible animation.
         const redraw = () => { cancelAnimationFrame(raf); raf = requestAnimationFrame(render) }
         const observer = new ResizeObserver(redraw)
         observer.observe(canvas)
@@ -459,6 +473,8 @@ export default function CloudSky(props: Props) {
         return () => {
             cancelAnimationFrame(raf)
             observer.disconnect()
+            window.removeEventListener("pointermove",track)
+            document.removeEventListener("mouseleave",leave)
             document.removeEventListener("visibilitychange", redraw)
             gl.deleteBuffer(buf)
             gl.deleteProgram(prog)

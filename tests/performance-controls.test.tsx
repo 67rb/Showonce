@@ -1,12 +1,16 @@
 // @vitest-environment jsdom
-import {afterEach,describe,expect,it} from 'vitest';
+import {beforeEach,afterEach,describe,expect,it,vi} from 'vitest';
 import {cleanup,fireEvent,render,screen} from '@testing-library/react';
 import {PublicNavbar} from '@/components/PublicNavbar';
 import {HeroVenomCta} from '@/components/HeroVenomCta';
 import {HeroParticleHeadline} from '@/components/HeroParticleHeadline';
-import {SatinBackdrop} from '@/components/create/SatinBackdrop';
 import {HorizontalGallery} from '@/components/HorizontalGallery';
-afterEach(cleanup);
+beforeEach(()=>{
+ vi.stubGlobal('matchMedia',vi.fn(query=>({matches:false,media:query,addEventListener:vi.fn(),removeEventListener:vi.fn(),addListener:vi.fn(),removeListener:vi.fn()})));
+ vi.stubGlobal('ResizeObserver',class {observe(){} disconnect(){}});
+ vi.stubGlobal('requestAnimationFrame',vi.fn(()=>1));vi.stubGlobal('cancelAnimationFrame',vi.fn());
+});
+afterEach(()=>{cleanup();vi.unstubAllGlobals();});
 describe('Steady, accessible product controls',()=>{
  it('mobile menu opens, exposes working destinations, and closes with Escape',()=>{
   render(<PublicNavbar/>);const toggle=screen.getByRole('button',{name:'Open menu'});
@@ -20,14 +24,14 @@ describe('Steady, accessible product controls',()=>{
   render(<PublicNavbar/>);fireEvent.click(screen.getByRole('button',{name:'Open menu'}));
   fireEvent.click(document.querySelector('#mobile-navigation a')!);expect(document.getElementById('mobile-navigation')).toBeNull();
  });
- it('primary action is a native destination and the heading remains readable text without canvases',()=>{
-  const {container}=render(<><HeroParticleHeadline/><HeroVenomCta/><SatinBackdrop/></>);
+ it('animated primary action stays a real button and the heading remains readable without canvas support',()=>{
+  const {container}=render(<><HeroParticleHeadline/><HeroVenomCta/></>);
   expect(screen.getByRole('heading',{level:1}).textContent).toBe('Show Once');
-  expect(screen.getByRole('link',{name:/Start learning/}).getAttribute('href')).toBe('/create/');
-  expect(container.querySelectorAll('canvas').length).toBe(0);
+  expect(screen.getByRole('button',{name:/Start learning/}).getAttribute('type')).toBe('button');
+  expect(container.querySelectorAll('canvas').length).toBe(3);
  });
- it('capability links occur once each and remain keyboard reachable',()=>{
+ it('animated capability links stay keyboard reachable and decorative duplicates are inert',()=>{
   render(<HorizontalGallery/>);expect(screen.getAllByRole('link')).toHaveLength(4);
-  expect(screen.getByLabelText('Skills you can practice').getAttribute('tabindex')).toBe('0');
+  expect(document.querySelector('[inert][aria-hidden="true"]')).not.toBeNull();
  });
 });

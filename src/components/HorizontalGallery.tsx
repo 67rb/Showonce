@@ -7,9 +7,37 @@ import {
   LiquidGlassCardTitle,
   LiquidGlassCardDescription,
 } from "@/components/lightswind/liquid-glass-card";
+import {
+  ThreeDScrollTriggerContainer,
+  ThreeDScrollTriggerRow,
+} from "@/components/lightswind/3d-scroll-trigger";
+import { useMediaQuery } from "./SmoothScroll";
 import s from "@/lib/strings";
 
-/** Four steady cards, with native scrolling on small screens. */
+/**
+ * v2.25 (Tasks A-C) — capability cards are taller text-only glass.
+ *
+ * Each card is a LiquidGlassCard (variant "glass", glow, hoverEffect) holding a
+ * capability title (ink #16161A, 32px top padding) and ONE capability line
+ * (muted ink #52525B, 17px); the lower space is empty glass. Cards are a fixed
+ * 320px tall on md+ (min-height 260px on smaller) so all four are equal in the
+ * stretched row.
+ *
+ * Task B: the header→row gap is 40px (`mt-10`) and the marquee container's
+ * vertical padding is only what the 3D tilt needs (~24px, `py-3`).
+ *
+ * Task C (ghosting): the installed 3D Scroll Trigger repeats children by
+ * rendering them four times as sibling inline-flex sets in ONE track and
+ * translating the track (transform + modulo wrap) — the copies are coplanar.
+ * The glass cards are translucent, so any content behind the card can read
+ * through the face; each card therefore gets an OPAQUE #FFFFFF backing (same
+ * radius) behind the glass so nothing behind can show through, while the front
+ * glare/refraction/glow survive.
+ *
+ * Reduced motion: the installed 3D Scroll Trigger has no reduced-motion path, so
+ * the same four cards render in a static horizontal scroll row (data-lenis-prevent).
+ */
+
 const CAPABILITIES = [
   {
     id: "tower",
@@ -47,6 +75,7 @@ const CARD_LINK_CLASS =
   "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#F59E0B]";
 
 export function HorizontalGallery() {
+  const reduced = useMediaQuery("(prefers-reduced-motion: reduce)");
 
   const capabilityCard = (c: {
     id: string;
@@ -61,7 +90,7 @@ export function HorizontalGallery() {
       <LiquidGlassCard
         variant="glass"
         glow
-        hoverEffect={false}
+        hoverEffect
         className="relative min-h-[260px] md:h-[320px]"
       >
         <LiquidGlassCardHeader className="p-8 pb-2">
@@ -86,5 +115,28 @@ export function HorizontalGallery() {
     </>
   );
 
-  return <div className="relative z-10 mx-auto mt-10 w-full snap-x snap-mandatory overflow-x-auto pb-4" tabIndex={0} aria-label="Skills you can practice"><div className="flex w-max items-stretch gap-4 py-3">{cards}</div></div>;
+  if (reduced) {
+    // REDUCED-MOTION PATH: the same four cards in a static scroll row (no auto-scroll).
+    return (
+      <div
+        data-lenis-prevent
+        className="relative z-10 mx-auto mt-10 w-full snap-x overflow-x-auto"
+      >
+        <div className="flex w-max items-stretch px-4 py-6">
+          <div aria-hidden className="w-[max(1.5rem,4vw)] shrink-0" />
+          {cards}
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="relative z-10 mx-auto mt-10 w-full" aria-label="Skills you can practice">
+      <ThreeDScrollTriggerContainer className="py-3">
+        <ThreeDScrollTriggerRow baseVelocity={1.2} direction={-1}>
+          {cards}
+        </ThreeDScrollTriggerRow>
+      </ThreeDScrollTriggerContainer>
+    </div>
+  );
 }

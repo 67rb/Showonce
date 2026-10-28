@@ -10,6 +10,7 @@ import { BorderBeam } from "@/components/lightswind/border-beam";
 import { ScrollProgress } from "@/components/ScrollProgress";
 import { SeasonalHoverCards } from "@/components/lightswind/seasonal-hover-cards";
 import Link from "next/link";
+import {LoopingWords} from "@/components/lightswind/looping-words";
 
 export default function LandingPage() {
 
@@ -61,7 +62,7 @@ export default function LandingPage() {
           <div>
             {/* loop block */}
             <div className="mt-2.5 w-full">
-              <p className="text-xl font-semibold text-[#27272A]">Fold. Build. Draw. Make it yours.</p>
+              <LoopingWords words={[...s.landingTaglineLoopWords]} className="tagline-loop font-sans font-medium"/>
             </div>
           </div>
           <div>

@@ -43,8 +43,8 @@ export function SkyGate() {
     return () => io.disconnect();
   }, []);
 
-  // The decorative sky renders once; it does not run a background animation.
-  const speed = 0;
+  // Animate only the visible hero; reduced motion keeps the same still sky.
+  const speed = motion === "reduced" ? 0 : onScreen ? 100 : 0;
   const mounted = motion !== "unknown" && (motion === "reduced" || onScreen);
 
   return (

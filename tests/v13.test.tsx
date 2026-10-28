@@ -127,7 +127,7 @@ describe("v1.3 — sky lives in the landing hero only (v2.12)", () => {
   });
 
   it("SkyGate renders the sky under prefers-reduced-motion with speed 0 (a frozen still)", () => {
-    expect(gateSource).toContain("const speed = 0");
+    expect(gateSource).toContain('motion === "reduced" ? 0 : onScreen ? 100 : 0');
     window.matchMedia = vi.fn().mockReturnValue({
       matches: true,
       media: "",
@@ -205,7 +205,7 @@ describe("v1.3.2 — hero text stack (Task C)", () => {
 
   it("the hero shows a single CTA — the Venom stage (v2.6)", async () => {
     const hero = heroSlice(await landing());
-    expect(hero).toContain("hero-start");
+    expect(hero).toContain("venom-cta");
     expect(hero).not.toContain("bg-[#F59E0B]");
   });
 });
@@ -312,7 +312,7 @@ describe("v2.4 — hero panel removed, single CTA in (Task C)", () => {
   it("the hero has one CTA — the Venom stage — and the privacy line under it (v2.6)", async () => {
     const hero = heroSlice(await landing());
     // the single call to action is the Venom stage (no amber anchor remains)
-    expect(hero).toContain("hero-start");
+    expect(hero).toContain("venom-cta");
     expect(hero).not.toContain("bg-[#F59E0B]");
     expect(hero).toContain("text-caption text-[#27272A]");
   });

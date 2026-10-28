@@ -131,6 +131,7 @@ export function ThreeDScrollTriggerRow({
   const smoothTiltRef = useRef(0);
   const isInViewRef = useRef(false);
   const rafIdRef = useRef<number | null>(null);
+  const pausedRef = useRef(false);
   const startAnimationRef = useRef<(() => void) | null>(null);
 
   // Measure single block width with ResizeObserver & sub-pixel precision
@@ -182,7 +183,7 @@ export function ThreeDScrollTriggerRow({
     let lastTime = performance.now();
 
     const animate = (now: number) => {
-      if (!isInViewRef.current) {
+      if (!isInViewRef.current || pausedRef.current || document.hidden) {
         // Completely halt rAF scheduling when not in view
         return;
       }
@@ -243,11 +244,15 @@ export function ThreeDScrollTriggerRow({
       rafIdRef.current = requestAnimationFrame(animate);
     };
 
-    if (isInViewRef.current) {
-      startAnimationRef.current();
-    }
+    const visibility = () => {
+      if (rafIdRef.current) cancelAnimationFrame(rafIdRef.current);
+      if (!document.hidden && isInViewRef.current && !pausedRef.current) startAnimationRef.current?.();
+    };
+    document.addEventListener("visibilitychange",visibility);
+    if (isInViewRef.current) startAnimationRef.current();
 
     return () => {
+      document.removeEventListener("visibilitychange",visibility);
       startAnimationRef.current = null;
       if (rafIdRef.current) cancelAnimationFrame(rafIdRef.current);
     };
@@ -261,6 +266,10 @@ export function ThreeDScrollTriggerRow({
   return (
     <div
       ref={containerRef}
+      onPointerEnter={()=>{pausedRef.current=true;}}
+      onPointerLeave={()=>{pausedRef.current=false;startAnimationRef.current?.();}}
+      onFocusCapture={()=>{pausedRef.current=true;}}
+      onBlurCapture={event=>{if(!event.currentTarget.contains(event.relatedTarget)){pausedRef.current=false;startAnimationRef.current?.();}}}
       className={cn(
         "w-full overflow-hidden whitespace-nowrap [perspective:1200px]",
         className
@@ -280,15 +289,7 @@ export function ThreeDScrollTriggerRow({
           {childrenArray}
         </div>
         {/* Set 2: Seamless Clone */}
-        <div className="inline-flex shrink-0" aria-hidden="true">
-          {childrenArray}
-        </div>
-        {/* Set 3: Seamless Clone */}
-        <div className="inline-flex shrink-0" aria-hidden="true">
-          {childrenArray}
-        </div>
-        {/* Set 4: Seamless Clone for ultra-wide displays */}
-        <div className="inline-flex shrink-0" aria-hidden="true">
+        <div className="inline-flex shrink-0" aria-hidden="true" inert>
           {childrenArray}
         </div>
       </div>

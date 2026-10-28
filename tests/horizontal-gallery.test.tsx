@@ -45,8 +45,9 @@ describe("Task A — card text is ink; Task C — cards are text only", () => {
 
   it("still rides the 3D scroll-trigger row with no pinned markers or cursor badge", () => {
     const html = renderToStaticMarkup(<HorizontalGallery />);
-    expect(html).toContain("overflow-x-auto");
-    expect((html.match(/<a /g)||[]).length).toBe(4);
+    expect(html).toContain("perspective:1200px");
+    expect((html.match(/<a /g)||[]).length).toBe(8);
+    expect(html).toContain('inert=""');
     expect(html).not.toContain("data-gallery-stage");
     expect(html).not.toContain("data-cursor-badge");
   });
@@ -90,10 +91,10 @@ describe("Task A/B/C — source assertions", () => {
   });
 
   it("keeps the 3D row + LiquidGlassCard props and the new card width", () => {
-    expect(source).not.toContain('from "@/components/lightswind/3d-scroll-trigger"');
+    expect(source).toContain('from "@/components/lightswind/3d-scroll-trigger"');
     expect(source).toContain('from "@/components/lightswind/liquid-glass-card"');
-    expect(source).not.toContain("baseVelocity=");
-    expect(source).toContain("snap-mandatory");
+    expect(source).toContain("baseVelocity={1.2}");
+    expect(source).toContain("prefers-reduced-motion");
     expect(source).toContain('variant="glass"');
     expect(source).toContain("w-[min(80vw,480px)]");
   });
@@ -104,7 +105,7 @@ describe("Task A/B/C — source assertions", () => {
   });
 
   it("Task B — header-to-row 40px, marquee padding ~24px", () => {
-    expect(source).toContain("gap-4 py-3");
+    expect(source).toContain('className="py-3"');
     expect(source).toContain("mt-10");
   });
 

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState, useRef } from "react";
-import { motion, useAnimationControls } from "framer-motion";
+import { motion, useAnimationControls, useReducedMotion } from "framer-motion";
 import { cn } from "@/lib/utils";
 
 interface LoopingWordsProps {
@@ -11,6 +11,7 @@ interface LoopingWordsProps {
 
 export function LoopingWords({ words, className }: LoopingWordsProps) {
   const controls = useAnimationControls();
+  const reduced = useReducedMotion();
   const wordsRef = useRef<(HTMLLIElement | null)[]>([]);
   const [selectorWidth, setSelectorWidth] = useState(0);
 
@@ -19,25 +20,30 @@ export function LoopingWords({ words, className }: LoopingWordsProps) {
   const totalOriginal = words.length;
 
   useEffect(() => {
+    controls.set({y:"0%"});
+    if (reduced || !totalOriginal) return;
+    let alive = true;
     // Initial width setup
     updateWidth(0);
 
     let index = 0;
     const interval = setInterval(async () => {
+      if (document.hidden) return;
       // Advance one visible word per tick, wrapped modulo the duplicated list
       // so the cycle repeats forever without ever advancing past a mounted
       // word or leaving the selector with nothing to measure.
-      index = (index + 1) % duplicatedWords.length;
+      index += 1;
       updateWidth(index);
 
       await controls.start({
         y: `-${(index * 100) / duplicatedWords.length}%`,
         transition: { duration: 1.2, ease: [0.175, 0.885, 0.32, 1.15] },
       });
+      if (alive && index >= totalOriginal) { index = 0; controls.set({y:"0%"}); }
     }, 2200);
 
-    return () => clearInterval(interval);
-  }, [controls, totalOriginal, duplicatedWords.length]);
+    return () => { alive = false; clearInterval(interval); controls.stop(); };
+  }, [controls, totalOriginal, duplicatedWords.length,reduced]);
 
   const updateWidth = (index: number) => {
     const el = wordsRef.current[index];
