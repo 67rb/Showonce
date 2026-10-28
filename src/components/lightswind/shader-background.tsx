@@ -141,6 +141,11 @@ function ShaderBackground({
     gl.uniform3f(uColorLocation, r, g, b);
 
     const render = () => {
+      // Skip the WebGL draw while the tab is hidden to save GPU/battery.
+      if (typeof document !== "undefined" && document.hidden) {
+        requestAnimationFrame(render);
+        return;
+      }
       const width = canvas.clientWidth;
       const height = canvas.clientHeight;
       canvas.width = width;

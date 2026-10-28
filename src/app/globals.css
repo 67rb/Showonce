@@ -600,29 +600,3 @@ body {
 .btn-shine:hover::after {
   left: 120%;
 }
-
-/* Feel layer (v4.1) — /lessons light aurora: soft warm gradient + drifting
-   amber glows + faint dot texture. Distinct from the dark satin screens. */
-@keyframes aurora-drift {
-  0% {
-    transform: translate(0, 0) scale(1);
-  }
-  50% {
-    transform: translate(28px, -22px) scale(1.1);
-  }
-  100% {
-    transform: translate(0, 0) scale(1);
-  }
-}
-.aurora-blob {
-  position: absolute;
-  border-radius: 9999px;
-  filter: blur(72px);
-  animation: aurora-drift 18s ease-in-out infinite;
-  pointer-events: none;
-}
-@media (prefers-reduced-motion: reduce) {
-  .aurora-blob {
-    animation: none;
-  }
-}
