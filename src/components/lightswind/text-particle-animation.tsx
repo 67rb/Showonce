@@ -85,8 +85,8 @@ export function TextParticleAnimation({
       color: string;
 
       constructor(x: number, y: number, color: string) {
-        this.x = x + (Math.random() - 0.5) * 30;
-        this.y = y + (Math.random() - 0.5) * 30;
+        this.x = x;
+        this.y = y;
         this.originX = x;
         this.originY = y;
         this.vx = 0;
@@ -140,20 +140,13 @@ export function TextParticleAnimation({
       }
     }
 
-    let onScreen = true, painted = -Infinity;
-    const wake = () => { if (!animationFrameId && onScreen && !document.hidden) animationFrameId = requestAnimationFrame(animate); };
-    function animate(now: number) {
-      animationFrameId = 0;
-      if (!onScreen || document.hidden) return;
-      if (now - painted < 1000 / 30) { wake(); return; }
-      painted = now;
+    function animate() {
       ctx2.clearRect(0, 0, canvas2.width, canvas2.height);
-      let moving = mouse.x > -999;
-      for (const particle of particles) {
-        particle.update(); particle.draw();
-        if (Math.abs(particle.vx) + Math.abs(particle.vy) + Math.abs(particle.originX-particle.x) + Math.abs(particle.originY-particle.y) > 0.08) moving = true;
+      for (let i = 0; i < particles.length; i++) {
+        particles[i].update();
+        particles[i].draw();
       }
-      if (moving) wake();
+      animationFrameId = window.requestAnimationFrame(animate);
     }
 
     const getMousePos = (e: MouseEvent) => {
@@ -170,17 +163,14 @@ export function TextParticleAnimation({
       const pos = getMousePos(e);
       mouse.x = pos.x;
       mouse.y = pos.y;
-      wake();
     };
 
     const handleMouseLeave = () => {
       mouse.x = -1000;
       mouse.y = -1000;
-      wake();
     };
 
     const handleMouseDown = (e: MouseEvent) => {
-      wake();
       const pos = getMousePos(e);
       for (const p of particles) {
         const dx = pos.x - p.x;
@@ -197,13 +187,7 @@ export function TextParticleAnimation({
     };
 
     initParticles(imageData);
-    wake();
-    const visibility = () => { cancelAnimationFrame(animationFrameId); animationFrameId = 0; wake(); };
-    document.addEventListener("visibilitychange", visibility);
-    const observer = typeof IntersectionObserver !== "undefined" ? new IntersectionObserver(([entry]) => {
-      onScreen = entry.isIntersecting; visibility();
-    }) : null;
-    observer?.observe(canvas2);
+    animate();
 
     canvas2.addEventListener("mousemove", handleMouseMove);
     canvas2.addEventListener("mouseleave", handleMouseLeave);
@@ -211,8 +195,6 @@ export function TextParticleAnimation({
 
     return () => {
       window.cancelAnimationFrame(animationFrameId);
-      observer?.disconnect();
-      document.removeEventListener("visibilitychange", visibility);
       canvas2.removeEventListener("mousemove", handleMouseMove);
       canvas2.removeEventListener("mouseleave", handleMouseLeave);
       canvas2.removeEventListener("mousedown", handleMouseDown);

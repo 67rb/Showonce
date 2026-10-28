@@ -1,0 +1,29 @@
+/* Runtime-only extensions of the original GitHub design. */
+.learning-workspace .site-card { min-width:0; }
+.learning-workspace button,.learning-workspace a { touch-action:manipulation; }
+.learning-workspace input,.learning-workspace select,.learning-workspace textarea { min-width:0; font-size:16px; }
+.learning-create input,.learning-create textarea,.learning-create select { border-color:rgba(255,255,255,.15); background:rgba(255,255,255,.05); color:white; border-radius:24px; backdrop-filter:blur(12px); }
+.learning-create input::placeholder,.learning-create textarea::placeholder { color:rgba(255,255,255,.4); }
+.learning-create option { color:#16161a; background:white; }
+.learning-create form>button[type=submit],.learning-create form>button:not([type]) { width:100%; box-shadow:0 16px 44px -12px rgba(245,158,11,.8); }
+.learning-create .learning-examples { color:white; }
+.learning-create .learning-examples .site-card { border:2px dashed rgba(255,255,255,.2); background:rgba(255,255,255,.04); color:white; backdrop-filter:blur(8px); border-radius:24px; }
+.learning-create .learning-examples .text-site-muted { color:rgba(255,255,255,.65); }
+.learning-library > .relative > div > .flex > label { color:white; }
+.learning-library-card { color:#16161a; }
+.learning-create>.relative>div>.site-card,.learning-library>.relative>div>.site-card { background:rgba(255,255,255,.85); }
+.learning-player progress { accent-color:#f59e0b; }
+.learning-library label { color:white; }
+.learning-player button.bg-accent,.learning-player a.bg-accent { background:#16161a; color:white; }
+.library-progress { appearance:none; height:4px; border:none; border-radius:999px; overflow:hidden; }
+.library-progress::-webkit-progress-bar { background:rgba(255,255,255,.3); }
+.library-progress::-webkit-progress-value { background:#f59e0b; border-radius:999px; }
+.library-progress::-moz-progress-bar { background:#f59e0b; border-radius:999px; }
+.learning-path { counter-reset:checkpoint; }
+.learning-path li { position:relative; min-height:56px; padding-left:40px; counter-increment:checkpoint; }
+.learning-path li::before { content:counter(checkpoint); position:absolute; left:0; top:0; display:flex; align-items:center; justify-content:center; width:24px; height:24px; border:2px solid var(--color-site-border-2); border-radius:50%; font-size:11px; }
+.learning-path li[data-state=done]::before { content:'✓'; background:#16161a; color:white; border-color:#16161a; }
+.learning-path li[data-state=current]::before { background:#16161a; color:#f59e0b; border-color:#f59e0b; }
+.learning-path li:not(:last-child)::after { content:''; position:absolute; left:11px; top:24px; bottom:-20px; width:1px; background:var(--color-site-border); }
+.learning-create .reference-link-input { border:0; padding:0; border-radius:0; background:transparent; box-shadow:none; backdrop-filter:none; }
+.learning-library .space-y-6>a.underline { color:rgba(255,255,255,.65); }

@@ -16,7 +16,7 @@ export function HeroVenomCta() {
   const router = useRouter();
 
   return (
-    <div className="venom-cta mx-auto flex items-center justify-center" style={{ width: "min(92vw, 360px)" }}>
+    <div className="venom-cta mx-auto flex items-center justify-center" style={{ width: "min(92vw, 520px)" }}>
       <VenomButton
         label={s.finalCtaButton}
         onClick={() => void router.push("/create")}
@@ -26,7 +26,7 @@ export function HeroVenomCta() {
         release={215}
         cursor="native"
         autoplay={false}
-        height={110}
+        height={170}
         className="bg-transparent"
       />
     </div>

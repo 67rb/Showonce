@@ -62,17 +62,25 @@ validation, lost-response duplicate protection and report persistence.
 31-request API/deployment smoke with no paid calls. Physical phone, sign-in and
 recovery acceptance remain separate human checks in DEVICE-ACCEPTANCE.md.
 
-## Motion and control behavior
+## Original GitHub design reference
 
-The original cloud drift, interactive particle headline, Venom button, looping
-words, moving capability cards, and warm satin form background are retained.
-Rendering buffers are capped, decorative shaders draw at 24–30 fps, and motion
-pauses off screen or in hidden tabs. Headline particles sleep once settled and
-wake on interaction. The marquee pauses during pointer hover and keyboard focus;
-its decorative duplicate is inert. OS reduced-motion preferences keep static
-alternatives. Form text remains readable over a dark veil.
+The visual reference is the original `67rb/Showonce` commit
+`3f2d643f122d20c2981593aa09a1e936825bcbf3`. The supplied
+Showonce-master.zip was verified against every file hash in that Git tree.
+The landing layout, global design tokens/CSS, typography, cloud/particle hero,
+Venom stage, marquee, satin backdrop and reveal styles are restored from that
+source. Runtime-only CSS lives in src/app/learning.css.
 
-Navigation dimensions, 44px tap targets, fixed-header scroll offsets, account
-isolation, and automatic loading of saved step illustrations remain in place.
-New step-image generation requires the learner's explicit button press and uses
-the existing server-side budget. Animation changes make no AI calls.
+The create screen uses the original full amber background, 430px column,
+glass link input, glowing amber action and dashed alternative surface. The
+library uses the original wave background, glass rows and framed thumbnails.
+The player uses the original narrow white cards and segmented header, populated
+with real saved progress. Existing approved illustrations appear in steps and
+library previews; a thumbnail read never starts generation.
+
+Functional adapters remain: static-export routes, working form actions, account
+validation, real library/lesson data, resumable progress and private image access.
+Links that previously opened sample fixtures lead to the working creation flow.
+The original menu appearance has semantic button/keyboard support. Privacy copy
+continues to describe actual photo storage accurately. Source previews never
+claim fixed sample progress, fake AI verdicts, or unrelated fixture images.

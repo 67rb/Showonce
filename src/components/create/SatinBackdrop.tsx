@@ -23,16 +23,13 @@ export function SatinBackdrop() {
   }
 
   return (
-    <div aria-hidden className="pointer-events-none absolute inset-0">
     <SatinFlow
       colors={["#160B02", "#7a4310", "#E29A3A"]}
-      speed={0.4}
+      speed={0.6}
       scale={1.25}
       noiseIntensity={0.3}
-      interactive={false}
+      interactive
       backdropBlurAmount="none"
     />
-    <div className="absolute inset-0 bg-black/55" />
-    </div>
   );
 }

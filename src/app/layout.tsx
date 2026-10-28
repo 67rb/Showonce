@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import Script from "next/script";
-import { IdentityProvider } from "@/components/learning/Identity";
+import {IdentityProvider} from "@/components/learning/Identity";
 import {
   Anton,
   Archivo,
@@ -8,7 +8,10 @@ import {
   Inter_Tight,
   Instrument_Serif,
 } from "next/font/google";
+import { SmoothScroll } from "@/components/SmoothScroll";
+import { Parallax } from "@/components/Parallax";
 import "./globals.css";
+import "./learning.css";
 
 const anton = Anton({
   weight: "400",
@@ -65,8 +68,10 @@ export default function RootLayout({
       className={`${anton.variable} ${archivo.variable} ${interTight.variable} ${inter.variable} ${instrumentSerif.variable}`}
     >
       <body className="min-h-dvh">
-        <Script src="/practice-library.js" strategy="beforeInteractive" />
+        <Script src="/practice-library.js" strategy="beforeInteractive"/>
         <IdentityProvider>
+        <SmoothScroll />
+        <Parallax />
         <div className="relative z-10">{children}</div>
         </IdentityProvider>
       </body>

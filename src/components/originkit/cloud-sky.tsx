@@ -3,7 +3,7 @@
 import * as React from "react"
 import { useEffect, useRef } from "react"
 
-const MAX_DPR = 1
+const MAX_DPR = 2
 
 // Found on a parameter grid; the look depends on these, so they are named.
 const PUFF_UP = 0.34 // ellipse radius above the puff centre
@@ -382,9 +382,6 @@ export default function CloudSky(props: Props) {
 
         let raf = 0
         let last = performance.now()
-        let painted = -Infinity
-        const coarse = window.matchMedia("(pointer: coarse)").matches
-        const frameInterval = 1000 / (coarse ? 24 : 30)
         // Each layer keeps its OWN accumulator, wrapped on the CPU. One shared
         // clock scaled per layer would jump every time Speed changed, because the
         // scale multiplies the whole elapsed time, not just what comes next.
@@ -395,9 +392,6 @@ export default function CloudSky(props: Props) {
         let leanY = 0
 
         const render = (now: number) => {
-            if (document.hidden) { raf = 0; return }
-            if (now - painted < frameInterval) { raf = requestAnimationFrame(render); return }
-            painted = now
             const dt = Math.min(0.05, (now - last) / 1000)
             last = now
             const v = vRef.current
@@ -416,7 +410,7 @@ export default function CloudSky(props: Props) {
             farX = (farX - FAR_DRIFT * rate * dt) % 1000
             cirrusX = (cirrusX - CIRRUS_DRIFT * rate * dt) % 1000
 
-            const dpr = Math.min(window.devicePixelRatio || 1, MAX_DPR) * (coarse ? 0.6 : 0.8)
+            const dpr = Math.min(window.devicePixelRatio || 1, MAX_DPR)
             const cw = sizeRef.current.w || canvas.clientWidth || 1200
             const ch = sizeRef.current.h || canvas.clientHeight || 800
             const bw = Math.max(1, Math.round(cw * dpr))
@@ -449,22 +443,31 @@ export default function CloudSky(props: Props) {
             gl.uniform4f(u("uGlow"), glow[0], glow[1], glow[2], glow[3])
 
             gl.drawArrays(gl.TRIANGLES, 0, 3)
-            if ((v.speed as number) > 0 && !document.hidden) raf = requestAnimationFrame(render)
+            raf = requestAnimationFrame(render)
         }
 
-        const track = (event: PointerEvent) => {
-            if (coarse || document.hidden) return
-            const rect = canvas.getBoundingClientRect()
-            ptrRef.current = {x:(event.clientX-rect.left)/rect.width*2-1,y:1-(event.clientY-rect.top)/rect.height*2,inside:true}
+        // The rect RATIO is zoom-invariant -- offset and size scale together --
+        // so this is safe on a zoomed Framer canvas where absolute px are not.
+        const track = (e: PointerEvent) => {
+            const r = canvas.getBoundingClientRect()
+            if (r.width <= 0 || r.height <= 0) return
+            ptrRef.current.x = ((e.clientX - r.left) / r.width) * 2 - 1
+            ptrRef.current.y = 1 - ((e.clientY - r.top) / r.height) * 2
+            ptrRef.current.inside = true
         }
-        const leave = () => { ptrRef.current.inside = false }
-        window.addEventListener("pointermove",track,{passive:true})
-        document.addEventListener("mouseleave",leave)
-        // Resizing and returning to the tab restart the visible animation.
-        const redraw = () => { cancelAnimationFrame(raf); raf = requestAnimationFrame(render) }
-        const observer = new ResizeObserver(redraw)
-        observer.observe(canvas)
-        document.addEventListener("visibilitychange", redraw)
+        const onLeave = () => {
+            ptrRef.current.inside = false
+        }
+
+        // v2.12: the sky is mounted behind a pointer-events-none gate, so the
+        // canvas itself can never receive pointer events. Track at window level
+        // (same geometry normalisation via the canvas rect) so wind/parallax still
+        // respond; recentre to "outside" when the pointer leaves the window.
+        window.addEventListener("pointermove", track, { passive: true })
+        window.addEventListener("pointerdown", track, { passive: true })
+        window.addEventListener("pointerup", track, { passive: true })
+        window.addEventListener("pointerleave", onLeave)
+        document.addEventListener("mouseleave", onLeave)
 
         raf = requestAnimationFrame(render)
 
@@ -472,14 +475,11 @@ export default function CloudSky(props: Props) {
         // StrictMode's mount -> cleanup -> mount would reuse a force-lost one.
         return () => {
             cancelAnimationFrame(raf)
-            observer.disconnect()
-            window.removeEventListener("pointermove",track)
-            document.removeEventListener("mouseleave",leave)
-            document.removeEventListener("visibilitychange", redraw)
-            gl.deleteBuffer(buf)
-            gl.deleteProgram(prog)
-            gl.deleteShader(vs)
-            gl.deleteShader(fs)
+            window.removeEventListener("pointermove", track)
+            window.removeEventListener("pointerdown", track)
+            window.removeEventListener("pointerup", track)
+            window.removeEventListener("pointerleave", onLeave)
+            document.removeEventListener("mouseleave", onLeave)
         }
     }, [])
 
@@ -490,8 +490,8 @@ export default function CloudSky(props: Props) {
                 overflow: "hidden",
                 background,
                 isolation: "isolate",
-                minWidth: 0,
-                minHeight: 0,
+                minWidth: 1200,
+                minHeight: 800,
                 width: typeof width === "number" && width > 0 ? width : "100%",
                 height: typeof height === "number" && height > 0 ? height : "100%",
                 ...style,

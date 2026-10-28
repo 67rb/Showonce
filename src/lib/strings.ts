@@ -27,7 +27,7 @@ export const strings = {
   // case-matched value for the accessible h1 text.
   landingHeadline: "Show Once",
   landingHeadlineLines: ["SHOW ONCE"],
-  landingTaglinePrefix: "Bring a tutorial. Learn it step by step, at your own pace.",
+  landingTaglinePrefix: "Paste a video link. Learn it step by step, checked as you",
   landingTaglineLoopWords: ["build.", "fold.", "stack.", "pack.", "solve."],
   eyebrowHero: "Show once",
   eyebrowHowItWorks: "How it works",
@@ -43,13 +43,13 @@ export const strings = {
   sectionHowItWorks: "How it works",
   howStep1Title: "Paste the link",
   howStep1Line:
-    "A public demonstration, a readable tutorial, or your own written instructions.",
+    "Any short YouTube or Instagram video of someone doing it once.",
   howStep2Title: "Get the steps",
   howStep2Line:
-    "Get source-grounded checkpoints and optional AI target illustrations.",
+    "Show Once breaks the video into steps, each with a picture of what done looks like.",
   howStep3Title: "Do it, checked",
   howStep3Line:
-    "Practice a step, then check visible details with a photo or record a self-review.",
+    "Do one step, take one photo. It tells you right, wrong, or can't tell, before you move on.",
 
   proofStepLabel: "The step",
   proofPhotoLabel: "Your photo",
@@ -232,8 +232,8 @@ export const strings = {
       body: "A single photo of a finished step, taken from above, is sent for a check of whether it matches the step (presence, colour, count, approximate position).",
     },
     {
-      heading: "What is saved",
-      body: "Submitted photos are stored privately with your practice until you delete them from history. Account practices and checkpoint progress are saved on the server. Sampled live camera frames are not stored.",
+      heading: "What is never stored",
+      body: "Your check photos are processed for the check and never stored. Not in a database, not in logs, not in analytics.",
     },
     {
       heading: "Where checks run",
@@ -241,7 +241,7 @@ export const strings = {
     },
     {
       heading: "What stays on your device",
-      body: "Camera preview is local. Start feedback sends sampled frames to Meta. Browser-only practices keep private access in this browser; signing in lets you explicitly connect them to your account.",
+      body: "Filming and capture happen on the device. Filming is hands and work surface only.",
     },
   ],
 

@@ -34,7 +34,7 @@ describe("Task A — card text is ink; Task C — cards are text only", () => {
     expect(html).not.toContain("stage-16-10");
     expect(html).not.toContain("family-pill");
     expect(html).not.toContain('data-parallax="0.06"');
-    expect(html).not.toContain("<canvas");
+    expect(html).not.toContain("role=");
   });
 
   it("card text uses ink colours (title #16161A, line #52525B)", () => {
@@ -46,8 +46,7 @@ describe("Task A — card text is ink; Task C — cards are text only", () => {
   it("still rides the 3D scroll-trigger row with no pinned markers or cursor badge", () => {
     const html = renderToStaticMarkup(<HorizontalGallery />);
     expect(html).toContain("perspective:1200px");
-    expect((html.match(/<a /g)||[]).length).toBe(8);
-    expect(html).toContain('inert=""');
+    expect(html).toContain("transform-gpu");
     expect(html).not.toContain("data-gallery-stage");
     expect(html).not.toContain("data-cursor-badge");
   });
@@ -93,8 +92,8 @@ describe("Task A/B/C — source assertions", () => {
   it("keeps the 3D row + LiquidGlassCard props and the new card width", () => {
     expect(source).toContain('from "@/components/lightswind/3d-scroll-trigger"');
     expect(source).toContain('from "@/components/lightswind/liquid-glass-card"');
-    expect(source).toContain("baseVelocity={1.2}");
-    expect(source).toContain("prefers-reduced-motion");
+    expect(source).toContain("baseVelocity={4}");
+    expect(source).toContain("direction={-1}");
     expect(source).toContain('variant="glass"');
     expect(source).toContain("w-[min(80vw,480px)]");
   });

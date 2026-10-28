@@ -7,6 +7,7 @@ import {createHash,webcrypto} from 'node:crypto';
 import worker from '../services/learning/hashir/public-site/dist/server/index.js';
 import {localDB,localBucket} from '../services/learning/hashir/public-site/scripts/d1-local.mjs';
 import {IdentityProvider} from '@/components/learning/Identity';
+import {MinimalChrome} from '@/components/MinimalChrome';
 import {LearningWorkspace} from '@/components/learning/Workspace';
 import {lessonHref,photoData,entryFrom,type Lesson,type Progress} from '@/lib/learning';
 import '../public/practice-library.js';
@@ -82,6 +83,18 @@ describe('working frontend with the actual learning Worker',()=>{
   show('play');fireEvent.click(await screen.findByRole('button',{name:'I’ve practiced this step · self-review'}));
   await screen.findByRole('heading',{name:lesson.steps[1].title!});release();
   await screen.findByRole('button',{name:'Generate step image · uses AI allowance'});expect(screen.queryByRole('img')).toBeNull();
+ });
+ it('library thumbnails load only approved saved artwork without starting generation',async()=>{
+  const {lesson}=await preparePractice();await savedIllustration(lesson);imageURLs();show('library');
+  await screen.findByRole('img',{name:'AI illustration preview: '+lesson.steps[0].expected_visual_result});
+  expect(calls.filter(call=>call.path.endsWith('/illustration'))).toHaveLength(0);
+ });
+ it('the original segmented header follows actual saved checkpoint progress',async()=>{
+  const {lesson}=await preparePractice();render(<IdentityProvider><MinimalChrome/><LearningWorkspace screen="play"/></IdentityProvider>);
+  await screen.findByRole('heading',{name:lesson.steps[0].title!});
+  expect(screen.getByRole('progressbar').getAttribute('aria-valuenow')).toBe('1');
+  fireEvent.click(screen.getByRole('button',{name:'I’ve practiced this step · self-review'}));await screen.findByRole('heading',{name:lesson.steps[1].title!});
+  expect(screen.getByRole('progressbar').getAttribute('aria-valuenow')).toBe('2');expect(screen.getByRole('progressbar').getAttribute('aria-valuemax')).toBe('4');
  });
  it('the learner report form saves its checkpoint in the team review queue without a photo',async()=>{
   const {progress}=await preparePractice();show('play');fireEvent.click(await screen.findByRole('button',{name:'Report a problem'}));fireEvent.change(screen.getByRole('textbox',{name:'What went wrong?'}),{target:{value:'Synthetic frontend integration check.'}});fireEvent.click(screen.getByRole('button',{name:'Send report'}));await screen.findByText(/Report saved for the team/);const row=await env.DB.prepare('SELECT step_id,details,context FROM learner_reports').first();expect(row?.step_id).toBe(progress.current_step_id);expect(row?.details).toBe('Synthetic frontend integration check.');expect(String(row?.context)).not.toContain('image_base64');expect(String(row?.context)).not.toContain(progress.access_token!);

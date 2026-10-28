@@ -6,13 +6,13 @@ import { HeroVenomCta } from "@/components/HeroVenomCta";
 import { StartLearningButton } from "@/components/StartLearningButton";
 import { HorizontalGallery } from "@/components/HorizontalGallery";
 import { HeroParticleHeadline } from "@/components/HeroParticleHeadline";
+import { LoopingWords } from "@/components/lightswind/looping-words";
 import { BorderBeam } from "@/components/lightswind/border-beam";
 import { ScrollProgress } from "@/components/ScrollProgress";
 import { SeasonalHoverCards } from "@/components/lightswind/seasonal-hover-cards";
 import Link from "next/link";
-import {LoopingWords} from "@/components/lightswind/looping-words";
 
-export default function LandingPage() {
+export default function LandingPage(_props?: {searchParams:Promise<{state?:string}>}) {
 
   // Task C: compose the two-line "What SHOW ONCE / can check." heading from the
   // stored string; the serif-accent span covers the final two words here only.
@@ -31,7 +31,7 @@ export default function LandingPage() {
       <ScrollProgress />
       {/* HERO — full-bleed, full-height (structural full-bleed: the hero sits
           outside the landing container, so the section spans edge to edge) */}
-      <section className="hero-full-bleed relative -mt-24 flex min-h-[100svh] flex-col items-center justify-center gap-6 overflow-hidden px-5 pt-28 pb-16 text-center">
+      <section className="hero-full-bleed relative -mt-24 flex min-h-[100svh] flex-col items-center justify-center gap-6 overflow-hidden py-16 text-center">
         <SkyGate />
         {/* light veil — above sky, below content (v2.12 replaces the dark scrim) */}
         <div
@@ -44,39 +44,42 @@ export default function LandingPage() {
           className="pointer-events-none absolute inset-x-0 -bottom-1 h-28 bg-gradient-to-b from-transparent to-[#FFFFFF]"
         />
         {/* ONE centred content column — strict vertical budget (v2.5 Task A) */}
-        <div className="relative z-10 mx-auto flex w-full max-w-[680px] flex-col items-center py-10 text-center">
-          <div>
+        <div className="relative z-10 mx-auto flex w-full max-w-[680px] flex-col items-center pt-26 text-center">
+          <Reveal>
             {/* particle block (fontSize stages 56/96/132) */}
             <div className="flex w-full flex-col items-center">
               <HeroParticleHeadline />
             </div>
-          </div>
-          <div>
+          </Reveal>
+          <Reveal>
             {/* tagline sentence — dark ink over the light sky */}
             <div className="mt-5 w-full">
               <p className="mx-auto max-w-[430px] text-body font-medium text-[#121212]">
                 {s.landingTaglinePrefix}
               </p>
             </div>
-          </div>
-          <div>
+          </Reveal>
+          <Reveal>
             {/* loop block */}
             <div className="mt-2.5 w-full">
-              <LoopingWords words={[...s.landingTaglineLoopWords]} className="tagline-loop font-sans font-medium"/>
+              <LoopingWords
+                words={[...s.landingTaglineLoopWords]}
+                className="tagline-loop font-sans font-medium text-white/85"
+              />
             </div>
-          </div>
-          <div>
+          </Reveal>
+          <Reveal>
             {/* CTA — Nexus Venom stage (v2.6 Task B); one call to action in the hero */}
-            <div className="relative mt-8 rounded-full">
-              <div className="flex justify-center">
+            <div className="btn-shine relative overflow-hidden rounded-full">
+              <div className="entrance entrance-3 mt-7">
                 <HeroVenomCta />
               </div>
             </div>
-          </div>
-          <div>
+          </Reveal>
+          <Reveal>
             {/* privacy line */}
-            <p className="mt-5 text-caption text-[#27272A]">{s.privacyClaim}</p>
-          </div>
+            <p className="mt-3.5 text-caption text-[#27272A]">{s.privacyClaim}</p>
+          </Reveal>
         </div>
       </section>
       <div className="mx-auto w-full max-w-6xl px-4">

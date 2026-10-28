@@ -17,12 +17,12 @@ describe('Steady, accessible product controls',()=>{
   expect(toggle.getAttribute('aria-expanded')).toBe('false');
   fireEvent.click(toggle);expect(toggle.getAttribute('aria-expanded')).toBe('true');
   const menu=document.getElementById('mobile-navigation')!;
-  expect(Array.from(menu.querySelectorAll('a')).map(a=>a.getAttribute('href'))).toEqual(['/create/','/lessons/','/privacy/','/create/']);
+  expect(Array.from(menu.querySelectorAll('a')).map(a=>a.getAttribute('href'))).toEqual(['/create','/lessons','/privacy','/create']);
   fireEvent.keyDown(document,{key:'Escape'});expect(toggle.getAttribute('aria-expanded')).toBe('false');expect(document.activeElement).toBe(toggle);
  });
  it('choosing a mobile destination closes the menu',()=>{
   render(<PublicNavbar/>);fireEvent.click(screen.getByRole('button',{name:'Open menu'}));
-  fireEvent.click(document.querySelector('#mobile-navigation a')!);expect(document.getElementById('mobile-navigation')).toBeNull();
+  fireEvent.click(document.querySelector('#mobile-navigation a')!);expect(screen.getByRole('button',{name:'Open menu'}).getAttribute('aria-expanded')).toBe('false');
  });
  it('animated primary action stays a real button and the heading remains readable without canvas support',()=>{
   const {container}=render(<><HeroParticleHeadline/><HeroVenomCta/></>);

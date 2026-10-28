@@ -131,9 +131,9 @@ export function HorizontalGallery() {
   }
 
   return (
-    <div className="relative z-10 mx-auto mt-10 w-full" aria-label="Skills you can practice">
+    <div className="relative z-10 mx-auto mt-10 w-full">
       <ThreeDScrollTriggerContainer className="py-3">
-        <ThreeDScrollTriggerRow baseVelocity={1.2} direction={-1}>
+        <ThreeDScrollTriggerRow baseVelocity={4} direction={-1}>
           {cards}
         </ThreeDScrollTriggerRow>
       </ThreeDScrollTriggerContainer>

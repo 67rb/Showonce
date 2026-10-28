@@ -204,7 +204,7 @@ export const MobileNavMenu = ({
   return (
     <AnimatePresence>
       {isOpen && (
-        <motion.div
+        <motion.div id="mobile-navigation"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -227,11 +227,9 @@ export const MobileNavToggle = ({
   isOpen: boolean;
   onClick: () => void;
 }) => {
-  return isOpen ? (
-    <IconX className="text-black dark:text-white" onClick={onClick} />
-  ) : (
-    <IconMenu2 className="text-black dark:text-white" onClick={onClick} />
-  );
+  return <button type="button" aria-label={isOpen?"Close menu":"Open menu"} aria-expanded={isOpen} aria-controls="mobile-navigation" onClick={onClick} className="relative inline-flex items-center justify-center p-0 leading-none after:absolute after:-inset-2">
+    {isOpen?<IconX aria-hidden className="text-black dark:text-white"/>:<IconMenu2 aria-hidden className="text-black dark:text-white"/>}
+  </button>;
 };
 
 export const NavbarLogo = () => {

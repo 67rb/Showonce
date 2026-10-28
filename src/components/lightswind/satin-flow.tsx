@@ -303,19 +303,16 @@ const SatinFlow: React.FC<SatinFlowProps> = ({
 
     let startTime = Date.now();
     let animationFrameId: number;
-    let painted = 0;
 
     const render = () => {
-      const now = performance.now();
-      if (document.hidden || now - painted < 1000 / 24 || !visibilityRef.current) {
+      if (!visibilityRef.current) {
         animationFrameId = requestAnimationFrame(render);
         return;
       }
 
-      painted = now;
-      // A decorative background does not need a full-density drawing buffer.
-      const width = Math.max(1, Math.round(canvas.clientWidth * 0.6));
-      const height = Math.max(1, Math.round(canvas.clientHeight * 0.6));
+      // Handle resize and match resolution
+      const width = canvas.clientWidth;
+      const height = canvas.clientHeight;
       if (canvas.width !== width || canvas.height !== height) {
         canvas.width = width;
         canvas.height = height;

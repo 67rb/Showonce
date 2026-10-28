@@ -359,7 +359,7 @@ export function VenomButton({
 
     const fit = () => {
       const r = stage.getBoundingClientRect();
-      dpr = Math.min(1, window.devicePixelRatio || 1);
+      dpr = Math.min(2, window.devicePixelRatio || 1);
       w = stage.offsetWidth || r.width; h = stage.offsetHeight || r.height;
       for (const c of [glc, fxc, hc]) { c.width = Math.round(w * dpr); c.height = Math.round(h * dpr); }
       gl.viewport(0, 0, glc.width, glc.height);
@@ -850,11 +850,9 @@ export function VenomButton({
     };
     // Animated: one rAF loop that sleeps while the button is off screen. Reduced motion: no loop,
     // the still pill is drawn once at the start and again whenever the stage is resized.
-    let painted = -Infinity;
     const frame = (now: number) => {
       raf = visible ? requestAnimationFrame(frame) : 0;
-      if (document.hidden) { cancelAnimationFrame(raf); raf = 0; return; }
-      if (visible && now - painted >= 1000 / 30) { painted = now; draw(now); }
+      if (visible) draw(now);
     };
     const ro = new ResizeObserver(() => {
       fit();
@@ -878,10 +876,7 @@ export function VenomButton({
       });
       io.observe(stage);
     }
-    const visibility = () => { cancelAnimationFrame(raf); raf = 0; if (!reduced && !document.hidden && visible) raf = requestAnimationFrame(frame); };
-    document.addEventListener("visibilitychange",visibility);
     return () => {
-      document.removeEventListener("visibilitychange",visibility);
       cancelAnimationFrame(raf);
       io?.disconnect();
       ro.disconnect();
