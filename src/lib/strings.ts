@@ -43,13 +43,13 @@ export const strings = {
   sectionHowItWorks: "How it works",
   howStep1Title: "Paste the link",
   howStep1Line:
-    "Any short YouTube or Instagram video of someone doing it once.",
+    "Bring a supported tutorial link, paste instructions, or start with free numbered steps.",
   howStep2Title: "Get the steps",
   howStep2Line:
-    "Show Once breaks the video into steps, each with a picture of what done looks like.",
+    "Follow a clear target for each step. Saved illustrations load automatically; creating new AI images uses the shared allowance.",
   howStep3Title: "Do it, checked",
   howStep3Line:
-    "Do one step, take one photo. It tells you right, wrong, or can't tell, before you move on.",
+    "Practice with the free camera preview and self-review, or choose an AI photo check for visible details.",
 
   proofStepLabel: "The step",
   proofPhotoLabel: "Your photo",
@@ -136,7 +136,7 @@ export const strings = {
   uploadPrompt: "or upload a video file",
   uploadButton: "Choose a video file",
   createScopeNote:
-    "Works with: coloured block and brick builds, snap-together STEM kits, bead and mosaic patterns, board game setup, simple kit packing, geometry constructions.",
+    "Bring a skill you want to practice. Use a tutorial, your own instructions, or a free example.",
   createGetSteps: "Get the steps",
   importErrorInvalid: "That link does not look like a YouTube or Instagram link.",
   importErrorFailed:
@@ -180,8 +180,8 @@ export const strings = {
   modeStepByStep: "Step by step",
   modeStepByStepDesc: "One step, one photo, one check. Best for accuracy.",
   modeLive: "Live",
-  modeLiveDesc: "Camera on while you work. Feedback as you go.",
-  modeLiveChip: "Coming with the tools phase",
+  modeLiveDesc: "Free camera preview while you work. Optional AI checks use one frame at a time.",
+  modeLiveChip: "Free camera preview",
   startLessonShort: "Start",
   reviewSteps: "Review steps",
 
@@ -229,19 +229,19 @@ export const strings = {
   privacySections: [
     {
       heading: "What gets checked",
-      body: "A single photo of a finished step, taken from above, is sent for a check of whether it matches the step (presence, colour, count, approximate position).",
+      body: "An AI photo check sends the image you select to Meta to assess visible details against the current step. A photo cannot establish hidden qualities or certify safety. Free camera preview and comparison stills stay in your browser unless you explicitly choose an AI frame check.",
     },
     {
-      heading: "What is never stored",
-      body: "Your check photos are processed for the check and never stored. Not in a database, not in logs, not in analytics.",
+      heading: "What gets saved",
+      body: "Uploaded check photos are saved privately with your practice. You can delete individual photos from practice history. Progress and feedback are also saved. Live camera preview is not recorded; its temporary stills clear when you stop, leave the step or background the page. Show Once does not save camera frames sent for a one-frame AI check, but retains the feedback privately.",
     },
     {
-      heading: "Where checks run",
-      body: "Checks run on the Meta Model API in the cloud, never on your device.",
+      heading: "Where AI runs",
+      body: "AI lessons, illustrations and checks use the Meta Model API in the cloud. Supported video imports can also use Supadata. Free examples, numbered-step creation and local camera practice do not call either provider. Provider credentials stay on the server and are never needed from you in the browser.",
     },
     {
-      heading: "What stays on your device",
-      body: "Filming and capture happen on the device. Filming is hands and work surface only.",
+      heading: "Your practice access",
+      body: "Signed-in practices are linked to your account so you can resume on another device. Browser-only practices keep their access in this browser. Signing out stops the camera and hides the account workspace; it does not delete saved practice. Use the history controls to delete saved photos.",
     },
   ],
 

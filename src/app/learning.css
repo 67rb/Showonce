@@ -27,3 +27,19 @@
 .learning-path li:not(:last-child)::after { content:''; position:absolute; left:11px; top:24px; bottom:-20px; width:1px; background:var(--color-site-border); }
 .learning-create .reference-link-input { border:0; padding:0; border-radius:0; background:transparent; box-shadow:none; backdrop-filter:none; }
 .learning-library .space-y-6>a.underline { color:rgba(255,255,255,.65); }
+
+/* Usability refinements keep the original motion, colours and glass surfaces. */
+.learning-workspace :is(button,a,input,select,textarea,summary):focus-visible { outline:2px solid #f59e0b; outline-offset:4px; }
+.learning-workspace summary { min-height:36px; }
+.learning-workspace p,.learning-workspace blockquote { overflow-wrap:anywhere; }
+.learning-create [role=alert] { color:#fff; background:rgba(127,29,29,.45); border-color:rgba(252,165,165,.45); }
+.learning-library [role=alert] { color:#fff; background:rgba(127,29,29,.65); border-color:rgba(252,165,165,.45); }
+.learning-library .learning-library-card { content-visibility:auto; contain-intrinsic-size:auto 120px; }
+.learning-spinner { display:inline-block; width:18px; height:18px; flex-shrink:0; border:2px solid currentColor; border-right-color:transparent; border-radius:50%; animation:learning-spin .9s linear infinite; }
+@keyframes learning-spin { to { transform:rotate(360deg); } }
+@media (prefers-reduced-motion:reduce) { .learning-spinner { animation:none; border-style:dotted; } }
+.skip-to-content { position:fixed; top:8px; left:16px; z-index:100; transform:translateY(-150%); border-radius:999px; background:#f59e0b; color:#16161a; padding:12px 20px; font-weight:600; }
+.skip-to-content:focus { transform:translateY(0); }
+/* Glass stays light enough for the library's dark lesson text at every scroll position. */
+.learning-library .learning-library-card { background:linear-gradient(160deg,rgba(255,255,255,.94),rgba(255,255,255,.80)); }
+.library-progress::-webkit-progress-bar { background:rgba(22,22,26,.13); }

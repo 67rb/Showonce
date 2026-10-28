@@ -1,6 +1,6 @@
 "use client";
 import {useCallback,useEffect,useRef,useState} from 'react';
-import {type Assessment,type Lesson,type Progress,type Step} from '@/lib/learning';
+import {aiChecksAvailable,type Assessment,type Lesson,type Progress,type Step} from '@/lib/learning';
 import {useIdentity} from './Identity';
 
 const button='inline-flex min-h-11 items-center justify-center rounded-full border border-site-border-2 bg-white px-4 py-3 text-center text-small font-semibold text-site-ink disabled:opacity-50';
@@ -50,7 +50,7 @@ export function LiveCamera({lesson,step,progress,token,disabled,stopRef,initialL
   if(!stream.current||!element?.videoWidth||!element.videoHeight){setMessage('Wait until the camera picture appears, then try again.');return null;}
   try{const canvas=document.createElement('canvas'),ratio=Math.min(1,960/element.videoWidth);canvas.width=Math.max(1,Math.round(element.videoWidth*ratio));canvas.height=Math.max(1,Math.round(element.videoHeight*ratio));const context=canvas.getContext('2d');if(!context)throw new Error('Canvas unavailable');context.drawImage(element,0,0,canvas.width,canvas.height);const image=canvas.toDataURL('image/jpeg',.8);setSnapshot(image);setMessage(null);return image;}catch{setMessage('Could not capture a still. You can continue with the live preview or upload a photo.');return null;}
  }
- const paidAvailable=!!identity.config?.ai_available&&!!identity.config.budget&&!identity.config.budget.paused&&identity.config.budget.remaining_usd>0;
+ const paidAvailable=aiChecksAvailable(identity.config);
  async function checkFrame(){
   if(!consent||!paidAvailable||disabled||inFlight.current||!online)return;
   const image=capture();if(!image)return;const epoch=generation.current,controller=new AbortController();request.current=controller;inFlight.current=true;setChecking(true);onError(null);

@@ -1,6 +1,6 @@
 "use client";
 import {useCallback,useEffect,useRef,useState} from 'react';
-import {LearningError,type Step} from '@/lib/learning';
+import {LearningError,aiChecksAvailable,type Step} from '@/lib/learning';
 import {useIdentity} from './Identity';
 
 /** Reading a saved image never starts a billable generation request. */
@@ -35,7 +35,7 @@ export function StepIllustration({lessonID,step,token,disabled=false,onPrepare}:
   finally{inFlight.current=false;}
  }
  if(image)return <figure className="mt-4"><img className="max-h-96 w-full rounded-xl bg-white object-contain" src={image} alt={'AI illustration: '+step.expected_visual_result}/><figcaption className="mt-2 text-small text-site-muted">AI illustration · may contain visual inaccuracies</figcaption></figure>;
- const canGenerate=identity.config?.ai_available&&!identity.config.budget?.paused;
+ const canGenerate=aiChecksAvailable(identity.config);
  return <div className="mt-4 rounded-xl border border-site-border bg-white p-4">
   <p role="status" className="text-small text-site-muted">{state==='loading'?'Loading saved step image…':state==='generating'?'Creating and checking your step image… This uses the AI allowance.':state==='error'?error:'No image has been saved for this step yet.'}</p>
   {state!=='loading'&&state!=='generating'&&<><button type="button" disabled={disabled||!canGenerate} onClick={()=>void generate()} className="mt-3 inline-flex min-h-11 w-full items-center justify-center rounded-full bg-accent px-4 py-3 text-center font-semibold text-[#16161A] disabled:opacity-50">Generate step image · uses AI allowance</button><p className="mt-2 text-small text-site-muted">Saved images reload automatically. {canGenerate?'Create an image for this checkpoint with Meta AI.':'New image generation is currently unavailable.'}</p></>}

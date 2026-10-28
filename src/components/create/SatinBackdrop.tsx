@@ -3,6 +3,8 @@
 import { useReducedMotion } from "framer-motion";
 import SatinFlow from "@/components/lightswind/satin-flow";
 
+const satinColors = ["#160B02", "#7a4310", "#E29A3A"];
+
 /** Cinematic amber satin backdrop for the create entry. Uses the installed
     Lightswind SatinFlow (self-pausing via useInView); under prefers-reduced-
     motion it renders a static warm gradient instead of the WebGL canvas. */
@@ -24,7 +26,7 @@ export function SatinBackdrop() {
 
   return (
     <SatinFlow
-      colors={["#160B02", "#7a4310", "#E29A3A"]}
+      colors={satinColors}
       speed={0.6}
       scale={1.25}
       noiseIntensity={0.3}

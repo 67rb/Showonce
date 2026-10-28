@@ -41,7 +41,7 @@ export function ShaderBackdrop() {
   }
 
   return (
-    <div ref={ref} aria-hidden className="absolute inset-0">
+    <div ref={ref} aria-hidden className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,#3a2109,#0c0703)]">
       {inView ? (
         <ShaderBackground color="#E89A3A" backdropBlurAmount="none" />
       ) : null}

@@ -305,7 +305,7 @@ const SatinFlow: React.FC<SatinFlowProps> = ({
     let animationFrameId: number;
 
     const render = () => {
-      if (!visibilityRef.current) {
+      if (!visibilityRef.current || document.hidden) {
         animationFrameId = requestAnimationFrame(render);
         return;
       }

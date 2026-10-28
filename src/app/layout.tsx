@@ -68,6 +68,7 @@ export default function RootLayout({
       className={`${anton.variable} ${archivo.variable} ${interTight.variable} ${inter.variable} ${instrumentSerif.variable}`}
     >
       <body className="min-h-dvh">
+        <a href="#main-content" className="skip-to-content">Skip to content</a>
         <Script src="/practice-library.js" strategy="beforeInteractive"/>
         <IdentityProvider>
         <SmoothScroll />

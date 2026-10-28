@@ -10,7 +10,7 @@ export default function PublicLayout({
     // pt-24 on non-landing pages; the landing hero compensates on its own.
     <div className="dark flex min-h-dvh flex-col">
       <PublicNavbar />
-      <main className="flex-1 pt-24">{children}</main>
+      <main id="main-content" tabIndex={-1} className="flex-1 pt-24">{children}</main>
       <PublicFooter />
     </div>
   );

@@ -32,3 +32,21 @@ test('five-dollar allowance retains existing spend and rejects requests above th
   const after=await budgetSummary(db);assert.equal(after.charged_or_reserved_usd,5);assert.equal(after.remaining_usd,0);assert.equal(after.calls,22);
  }finally{db.close();}
 });
+
+
+test('configured server credentials never appear in public configuration, pages, headers or source paths',async()=>{
+ const DB=localDB(),meta='canary-meta-'+crypto.randomUUID(),source='canary-source-'+crypto.randomUUID();
+ const env={DB,MODEL_API_KEY:meta,SUPADATA_API_KEY:source,SUPADATA_ENABLED:'free-only'};
+ try{for(const route of ['/api/config','/health','/','/app.js','/.env','/.dev.vars','/src/core.mjs','/worker/index.js','/dist/server/index.js']){
+  const response=await worker.fetch(new Request('https://test.example'+route),env),text=await response.text(),headers=JSON.stringify([...response.headers]);
+  assert.ok(!text.includes(meta)&&!text.includes(source)&&!headers.includes(meta)&&!headers.includes(source),route);
+  if(route.startsWith('/.')||route.startsWith('/src/')||route.startsWith('/worker/')||route.startsWith('/dist/'))assert.equal(response.status,404);
+ }}finally{DB.close();}
+});
+test('provider diagnostics and authorization values remain server-only when AI fails',async()=>{
+ const original=globalThis.fetch,DB=localDB(),secret='canary-provider-'+crypto.randomUUID();let calls=0;
+ try{globalThis.fetch=async(url,options)=>{calls++;assert.equal(options.headers.Authorization,'Bearer '+secret);return new Response('upstream diagnostic '+secret,{status:503});};
+ const response=await worker.fetch(new Request('https://test.example/v1/lessons',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({source_text:'Draw a circle with a pencil. Shade the lower-right part gradually, leaving the upper-left area light. Add a soft cast shadow.'})}),{DB,MODEL_API_KEY:secret});
+ assert.equal(response.status,502);const value=await response.text();assert.ok(!value.includes(secret)&&!value.includes('upstream diagnostic'));assert.equal(calls,1);
+ }finally{globalThis.fetch=original;DB.close();}
+});

@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 
 const vertexShaderSource = `
   attribute vec4 a_position;
@@ -71,8 +71,7 @@ function ShaderBackground({
   className = "",
 }: ShaderBackgroundProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-  const [isHovering, setIsHovering] = useState(false);
+  const pointer = useRef({ x: 0, y: 0, active: false });
 
   const hexToRgb = (hex: string): [number, number, number] => {
     const r = parseInt(hex.substring(1, 3), 16) / 255;
@@ -136,61 +135,57 @@ function ShaderBackground({
     const uColorLocation = gl.getUniformLocation(program, "u_color");
 
     const startTime = Date.now();
-
     const [r, g, b] = hexToRgb(color);
     gl.uniform3f(uColorLocation, r, g, b);
+    let frame = 0, disposed = false;
 
     const render = () => {
-      // Skip the WebGL draw while the tab is hidden to save GPU/battery.
-      if (typeof document !== "undefined" && document.hidden) {
-        requestAnimationFrame(render);
-        return;
+      frame = 0;
+      if (disposed || document.hidden) return;
+      // Keep the same shader and aspect ratio without allocating a page-sized
+      // framebuffer for every frame of a long library.
+      const cssWidth = Math.max(1, canvas.clientWidth);
+      const cssHeight = Math.max(1, canvas.clientHeight);
+      const ratio = Math.min(1, 1920 / Math.max(cssWidth, cssHeight));
+      const width = Math.max(1, Math.round(cssWidth * ratio));
+      const height = Math.max(1, Math.round(cssHeight * ratio));
+      if (canvas.width !== width || canvas.height !== height) {
+        canvas.width = width;
+        canvas.height = height;
+        gl.viewport(0, 0, width, height);
       }
-      const width = canvas.clientWidth;
-      const height = canvas.clientHeight;
-      canvas.width = width;
-      canvas.height = height;
-      gl.viewport(0, 0, width, height);
-
-      const currentTime = (Date.now() - startTime) / 1000;
-
       gl.uniform2f(iResolutionLocation, width, height);
-      gl.uniform1f(iTimeLocation, currentTime);
-      gl.uniform2f(
-        iMouseLocation,
-        isHovering ? mousePosition.x : 0,
-        isHovering ? height - mousePosition.y : 0,
-      );
-
+      gl.uniform1f(iTimeLocation, (Date.now() - startTime) / 1000);
+      const mouse = pointer.current;
+      gl.uniform2f(iMouseLocation, mouse.active ? mouse.x * ratio : 0, mouse.active ? height - mouse.y * ratio : 0);
       gl.drawArrays(gl.TRIANGLES, 0, 6);
-      requestAnimationFrame(render);
+      frame = requestAnimationFrame(render);
     };
-
     const handleMouseMove = (event: MouseEvent) => {
       const rect = canvas.getBoundingClientRect();
-      setMousePosition({
-        x: event.clientX - rect.left,
-        y: event.clientY - rect.top,
-      });
+      pointer.current = { x: event.clientX - rect.left, y: event.clientY - rect.top, active: true };
     };
-    const handleMouseEnter = () => setIsHovering(true);
-    const handleMouseLeave = () => {
-      setIsHovering(false);
-      setMousePosition({ x: 0, y: 0 });
+    const handleMouseLeave = () => { pointer.current.active = false; };
+    const visibility = () => {
+      if (document.hidden) { cancelAnimationFrame(frame); frame = 0; }
+      else if (!frame && !disposed) frame = requestAnimationFrame(render);
     };
-
     canvas.addEventListener("mousemove", handleMouseMove);
-    canvas.addEventListener("mouseenter", handleMouseEnter);
     canvas.addEventListener("mouseleave", handleMouseLeave);
-
+    document.addEventListener("visibilitychange", visibility);
     render();
-
     return () => {
+      disposed = true;
+      cancelAnimationFrame(frame);
       canvas.removeEventListener("mousemove", handleMouseMove);
-      canvas.removeEventListener("mouseenter", handleMouseEnter);
       canvas.removeEventListener("mouseleave", handleMouseLeave);
+      document.removeEventListener("visibilitychange", visibility);
+      gl.deleteBuffer(positionBuffer);
+      gl.deleteProgram(program);
+      gl.deleteShader(vertexShader);
+      gl.deleteShader(fragmentShader);
     };
-  }, [isHovering, mousePosition, color]);
+  }, [color]);
 
   const finalBlurClass =
     blurClassMap[backdropBlurAmount as BlurSize] || blurClassMap["none"];

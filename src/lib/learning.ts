@@ -15,3 +15,11 @@ type LegacyResult={entries:Entry[];error?:string|null;persisted?:boolean};
 declare global {interface Window {ShowOnceLibrary?:{migrate:(storage:Storage)=>LegacyResult;remember:(storage:Storage,entry:Entry,fallback:Entry[])=>LegacyResult};}}
 export function browserEntries():LegacyResult{try{return window.ShowOnceLibrary?.migrate(window.localStorage)||{entries:[],error:'Browser access is still loading. Refresh to retry.'};}catch{return {entries:[],error:'Browser storage is unavailable. Keep this tab open to retain new practice access.'};}}
 export function rememberBrowser(entry:Entry,fallback:Entry[]):LegacyResult{try{return window.ShowOnceLibrary?.remember(window.localStorage,entry,fallback)||{entries:[entry,...fallback],error:'Keep this tab open; browser access could not be saved.'};}catch{return {entries:[entry,...fallback],error:'Keep this tab open; browser access could not be saved.'};}}
+
+/** A configured provider can still have no remaining shared allowance. */
+export function aiChecksAvailable(config:Config|null){return !!config?.ai_available&&!!config.budget&&!config.budget.paused&&config.budget.remaining_usd>0;}
+export function abortableDelay(ms:number,signal:AbortSignal):Promise<void>{return new Promise((resolve,reject)=>{
+ const abort=()=>{clearTimeout(timer);signal.removeEventListener('abort',abort);reject(new LearningError('Stopped waiting. A request already sent may still use the allowance.','request_aborted'));};
+ const timer=setTimeout(()=>{signal.removeEventListener('abort',abort);resolve();},ms);
+ if(signal.aborted)abort();else signal.addEventListener('abort',abort,{once:true});
+});}
