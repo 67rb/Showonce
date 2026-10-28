@@ -13,7 +13,7 @@ export function IdentityProvider({children}:{children:ReactNode}){
   const epoch=version.current,subject=actor.current;
   if(path!=='/api/account'&&path!=='/api/config'&&!available.current)throw new LearningError('Check your account connection before continuing.','account_unchecked');
   const controller=new AbortController(),abort=()=>controller.abort();options.signal?.addEventListener('abort',abort,{once:true});if(options.signal?.aborted)abort();const timeout=setTimeout(abort,body===undefined?20000:300000);
-  try{const headers:Record<string,string>={};if(body!==undefined)headers['Content-Type']='application/json';if(subject&&path!=='/api/account')headers['X-ShowOnce-Account']=subject;if(options.token)headers.Authorization='Bearer '+options.token;if(options.key)headers['Idempotency-Key']=options.key;
+  try{const headers:Record<string,string>={};if(body!==undefined)headers['Content-Type']='application/json';if(subject&&path!=='/api/account'&&path!=='/api/config')headers['X-ShowOnce-Account']=subject;if(options.token)headers.Authorization='Bearer '+options.token;if(options.key)headers['Idempotency-Key']=options.key;
    let response;try{response=await fetch(path,{method:options.method||(body===undefined?'GET':'POST'),headers,body:body===undefined?undefined:JSON.stringify(body),signal:controller.signal,credentials:'same-origin',cache:'no-store'});}catch{throw new LearningError('Connection interrupted. Refresh saved progress or history before retrying a check.');}
    if(epoch!==version.current&&path!=='/api/account')throw new LearningError('Your account changed. Open your practice again.','account_changed');
    if(response.status===204)return null as T;

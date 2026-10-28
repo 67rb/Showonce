@@ -41,6 +41,15 @@ describe('working frontend with the actual learning Worker',()=>{
  it('a different signed-in account sees none of the previous account practices',async()=>{
   await worker.fetch(new Request('https://test.example/v1/sessions',{method:'POST',headers:{'Content-Type':'application/json','oai-authenticated-user-id':'alice','oai-authenticated-user-email':'alice@example.test'},body:JSON.stringify({lesson_id:'example_guitar-rhythm',save_to_account:true})}),env);actor='bob';show('library');await screen.findByRole('heading',{name:'Your next practice starts here.'});expect(screen.queryByRole('heading',{name:'Practice a steady guitar rhythm'})).toBeNull();
  });
+ it('rechecks a changed account without sending the previous identity to public configuration',async()=>{
+  await worker.fetch(new Request('https://test.example/v1/sessions',{method:'POST',headers:{'Content-Type':'application/json','oai-authenticated-user-id':'alice','oai-authenticated-user-email':'alice@example.test'},body:JSON.stringify({lesson_id:'example_guitar-rhythm',save_to_account:true})}),env);
+  actor='alice';show('library');await screen.findByRole('heading',{name:'Practice a steady guitar rhythm'});
+  actor='bob';fireEvent(window,new Event('showonce-account-changed'));
+  await screen.findByRole('heading',{name:'Your next practice starts here.'});
+  expect(screen.queryByRole('heading',{name:'Practice a steady guitar rhythm'})).toBeNull();
+  expect(calls.filter(call=>call.path==='/api/config').every(call=>!call.headers['X-ShowOnce-Account'])).toBe(true);
+  expect(calls.filter(call=>call.path==='/api/account')).toHaveLength(2);
+ });
  it('a denied server practice cannot display fixture progress or offer a false completion',async()=>{
   window.history.replaceState(null,'','/lesson/runtime/play/?lesson_id=example_draw-shading&session_id=session_missing');show('play');await screen.findByRole('alert');expect(screen.queryByText('A step further along.')).toBeNull();expect(screen.queryByRole('button',{name:/self-review/})).toBeNull();
  });
