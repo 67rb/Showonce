@@ -4,10 +4,10 @@ import { useState } from "react";
 import s from "@/lib/strings";
 import { sampleLesson, type FixtureStep } from "@/design/fixtures";
 
-import { StepCard } from "@/components/StepCard";
-import { Button } from "@/components/Button";
-import { Banner } from "@/components/Banner";
+import Link from "next/link";
+import { KeyframeVisual } from "@/components/KeyframeVisual";
 import { ConfirmDialog } from "@/components/ConfirmDialog";
+import { SerifAccent } from "@/components/Reveal";
 
 export default function ReviewPage() {
   const [steps, setSteps] = useState<FixtureStep[]>(sampleLesson.steps);
@@ -29,76 +29,111 @@ export default function ReviewPage() {
     setDeleteIndex(null);
   };
 
+  const iconButton =
+    "flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-site-border text-site-muted transition-colors duration-[150ms] hover:text-site-ink";
+
   return (
     <div className="mx-auto w-full max-w-[430px] px-4 py-10">
-      <div className="flex items-center justify-between">
-        <h1 className="font-display-ui text-[2.25rem] font-extrabold leading-tight text-site-ink">
-          {s.reviewHeading}
-        </h1>
-      </div>
+      <h1 className="font-display-ui text-[2.5rem] font-extrabold leading-tight tracking-tight text-site-ink">
+        <SerifAccent text={sampleLesson.title} />
+      </h1>
+      <p className="mt-1 font-body-ui text-small text-site-muted">
+        {sampleLesson.meta}
+      </p>
 
-      <div className="mt-4">
-        <Banner tone="saved">{s.savedBanner}</Banner>
-      </div>
+      {/* saved hint */}
+      <p className="mt-4 rounded-[20px] border border-site-border bg-white px-4 py-2.5 font-body-ui text-small text-site-muted">
+        {s.savedBanner}
+      </p>
 
-      <div className="mt-5">
-        <label className="font-body-ui mb-2 block text-small font-medium text-site-ink">
-          {s.reviewTitleFieldLabel}
-        </label>
-        <input
-          type="text"
-          defaultValue={sampleLesson.title}
-          aria-label={s.reviewTitleFieldLabel}
-          className="w-full rounded-lg border border-site-border bg-white px-4 py-3 text-body text-site-ink focus:outline focus:outline-2 focus:outline-accent"
-        />
-      </div>
+      {/* title edit — quiet underline field */}
+      <label className="font-body-ui mt-6 block text-small font-medium text-site-muted">
+        {s.reviewTitleFieldLabel}
+      </label>
+      <input
+        type="text"
+        defaultValue={sampleLesson.title}
+        aria-label={s.reviewTitleFieldLabel}
+        className="mt-1 w-full border-b border-site-border bg-transparent pb-1.5 font-display-ui text-[1.5rem] font-bold leading-tight text-site-ink focus:border-accent focus:outline-none"
+      />
 
-      <div className="mt-6 space-y-4">
+      {/* THE STEPS — white rows, 12px gaps (a list, not a table) */}
+      <div className="mt-6 flex flex-col gap-3">
         {steps.map((step, i) => {
           const isFirst = i === 0;
           const isLast = i === steps.length - 1;
           return (
-            <StepCard key={step.caption} step={step} index={i} editableCaption>
-              <div className="flex items-center gap-2">
-                <Button
-                  variant="ghost"
+            <div
+              key={step.caption}
+              className="flex gap-3 rounded-[20px] border border-site-border bg-white p-3"
+            >
+              <div className="h-[72px] w-[72px] shrink-0 overflow-hidden rounded-lg">
+                <KeyframeVisual
+                  spec={step.keyframe}
+                  label={step.caption}
+                  variant="step"
+                  fit
+                  className="h-full"
+                />
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="font-display-ui text-[1.125rem] font-bold leading-snug text-site-ink">
+                  <span className="pr-1.5 font-body-ui text-small text-site-muted">
+                    #{i + 1}
+                  </span>
+                  {step.caption}
+                </p>
+                <p className="mt-1 line-clamp-2 font-body-ui text-small text-site-muted">
+                  {step.caption}
+                </p>
+              </div>
+              <div className="flex shrink-0 flex-col items-center gap-1">
+                <button
+                  type="button"
                   onClick={() => move(i, -1)}
                   disabled={isFirst}
-                  className="h-9 px-3"
+                  className={iconButton + (isFirst ? " opacity-40" : "")}
                 >
                   <span aria-hidden>↑</span>
                   <span className="sr-only">{s.reorderUpLabel}</span>
-                </Button>
-                <Button
-                  variant="ghost"
+                </button>
+                <button
+                  type="button"
                   onClick={() => move(i, 1)}
                   disabled={isLast}
-                  className="h-9 px-3"
+                  className={iconButton + (isLast ? " opacity-40" : "")}
                 >
                   <span aria-hidden>↓</span>
                   <span className="sr-only">{s.reorderDownLabel}</span>
-                </Button>
-                <Button
-                  variant="ghost"
+                </button>
+                <button
+                  type="button"
                   onClick={() => setDeleteIndex(i)}
-                  className="ml-auto h-9 px-3 text-wrong"
+                  className={iconButton}
                 >
                   <span aria-hidden>✕</span>
                   <span className="sr-only">{s.deleteStepLabel}</span>
-                </Button>
+                </button>
               </div>
-            </StepCard>
+            </div>
           );
         })}
       </div>
 
-      <div className="mt-8 flex gap-2">
-        <Button href="/create" variant="secondary" className="flex-1">
-          {s.backToImport}
-        </Button>
-        <Button href="/lesson/sample" className="flex-1">
+      {/* FOOTER — sticky on mobile, static on desktop */}
+      <div className="sticky bottom-0 z-10 mt-6 bg-site-page/95 pb-2 pt-2 backdrop-blur-sm lg:static lg:bg-transparent lg:backdrop-blur-none">
+        <Link
+          href="/lesson/sample"
+          className="block w-full rounded-full bg-[#16161A] px-5 py-3 text-center font-body-ui text-body font-semibold text-white transition-colors duration-[150ms] hover:bg-accent"
+        >
           {s.startLesson}
-        </Button>
+        </Link>
+        <Link
+          href="/create"
+          className="mt-2 block text-center font-body-ui text-small font-medium text-site-muted underline-offset-4 transition-colors duration-[150ms] hover:text-site-ink hover:underline"
+        >
+          {s.backToImport}
+        </Link>
       </div>
 
       <ConfirmDialog

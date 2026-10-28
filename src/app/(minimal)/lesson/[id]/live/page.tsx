@@ -1,8 +1,8 @@
 import s from "@/lib/strings";
 import { sampleLesson } from "@/design/fixtures";
 
+import Link from "next/link";
 import { KeyframeVisual } from "@/components/KeyframeVisual";
-import { VerdictChip } from "@/components/VerdictChip";
 import { EndSessionButton } from "@/components/EndSessionButton";
 
 type LiveState = "on-track" | "check" | "wrong";
@@ -17,83 +17,100 @@ export default async function LivePage({
   await params;
   const { state } = await searchParams;
   const mode = ((state as LiveState) || "on-track") as LiveState;
-
-  const differ = sampleLesson.steps[2];
-
-  const feedback =
-    mode === "on-track"
-      ? {
-          chip: <VerdictChip variant="right" label={s.verdictRightLabel} />,
-          line: null,
-        }
-      : mode === "check"
-        ? {
-            chip: (
-              <VerdictChip variant="canttell" label={s.verdictCantTellLabel} />
-            ),
-            line: s.liveTooBlurry,
-          }
-        : {
-            chip: <VerdictChip variant="wrong" label={s.verdictWrongLabel} />,
-            line: s.verdictWrongLine,
-          };
-
-  const bannerTitle =
-    mode === "on-track"
-      ? s.liveOnTrackLine
-      : mode === "check"
-        ? s.liveCheckLine
-        : s.liveWrongLine;
+  const differ = sampleLesson.steps[2]; // the step whose scene the camera watches
 
   return (
-    <div className="mx-auto flex w-full max-w-[430px] flex-col px-4 py-4">
-      {/* live chip bar */}
-      <div className="mb-3 flex items-center gap-2">
-        <span className="inline-flex rounded-full bg-danger/15 px-2.5 py-1 text-caption font-semibold text-danger">
-          {s.liveChip}
-        </span>
-        <span className="font-body-ui text-small text-site-muted">{sampleLesson.title}</span>
-      </div>
-
-      {/* full-bleed viewfinder — dark photo stage (exception) */}
-      <div className="relative overflow-hidden rounded-2xl bg-[#101013] ring-1 ring-[#101013]">
-        <KeyframeVisual spec={differ.keyframe} label={sampleLesson.title} dim className="aspect-[3/4]" />
-        <div className="pointer-events-none absolute inset-[14%] rounded-md border-2 border-dashed border-accent/50" />
-        {/* amber corner brackets */}
-        <span aria-hidden className="pointer-events-none absolute left-2 top-2 h-6 w-6 border-l-2 border-t-2 border-accent/70" />
-        <span aria-hidden className="pointer-events-none absolute right-2 top-2 h-6 w-6 border-r-2 border-t-2 border-accent/70" />
-        <span aria-hidden className="pointer-events-none absolute bottom-2 left-2 h-6 w-6 border-b-2 border-l-2 border-accent/70" />
-        <span aria-hidden className="pointer-events-none absolute bottom-2 right-2 h-6 w-6 border-b-2 border-r-2 border-accent/70" />
-      </div>
-
-      {/* feedback banner */}
-      <div className="site-card relative mt-4 p-5">
-        <div className="relative flex flex-wrap items-center gap-2">
-          <span className="font-display-ui text-xl font-bold leading-heading text-site-ink">
-            {bannerTitle}
+    <div className="min-h-dvh w-full bg-[#101013] px-4 py-6">
+      <div className="mx-auto flex w-full max-w-[430px] flex-col gap-4">
+        {/* compact top bar: back, step meta, LIVE chip */}
+        <div className="flex items-center justify-between gap-3">
+          <Link
+            href="/lesson/sample"
+            aria-label={sampleLesson.title}
+            className="text-white/70 transition-colors duration-[150ms] hover:text-white"
+          >
+            <span aria-hidden>←</span>
+          </Link>
+          <span className="truncate font-body-ui text-small text-white/60">
+            {differ.caption}
           </span>
-          {feedback.chip}
+          <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-white/10 px-2.5 py-1 text-caption font-semibold text-white">
+            <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-accent" />
+            {s.liveChip}
+          </span>
         </div>
-        {feedback.line ? (
-          <p className="font-body-ui relative mt-1 text-body text-site-muted">{feedback.line}</p>
-        ) : null}
-      </div>
 
-      {/* bottom sheet: current step */}
-      <div className="site-card mt-4 flex items-center gap-3 p-3">
-        <div className="w-20 shrink-0">
-          <KeyframeVisual spec={differ.keyframe} label={sampleLesson.title} />
+        {/* functional dark video surface (near-black) — portrait like the camera */}
+        <div className="relative w-full overflow-hidden rounded-2xl ring-1 ring-white/10">
+          <div className="aspect-[3/4] w-full">
+            <KeyframeVisual
+              spec={differ.keyframe}
+              label={sampleLesson.title}
+              variant="photo"
+              dim
+              fit
+              className="h-full"
+            />
+          </div>
         </div>
-        <div className="min-w-0">
-          <p className="font-body-ui text-caption font-semibold uppercase tracking-wide text-site-muted">
-            Step 3
+
+        {/* status region (state variants) */}
+        {mode === "on-track" && (
+          <div className="rounded-2xl border border-[#00C758]/30 bg-[#00C758]/[0.12] p-4">
+            <p className="flex items-center gap-2 font-body-ui text-body font-medium text-success">
+              <span aria-hidden className="h-2 w-2 shrink-0 rounded-full bg-success" />
+              {s.liveOnTrackLine}
+            </p>
+          </div>
+        )}
+        {mode === "check" && (
+          <div className="rounded-2xl border border-[#F59E0B]/30 bg-[#F59E0B]/[0.12] p-4">
+            <p className="flex items-center gap-2 font-body-ui text-body font-medium text-accent">
+              <span
+                aria-hidden
+                className="h-2 w-2 shrink-0 rounded-full bg-accent animate-progress"
+              />
+              {s.liveCheckLine}
+            </p>
+            <p className="mt-1 font-body-ui text-small text-white/70">
+              {s.liveTooBlurry}
+            </p>
+          </div>
+        )}
+        {mode === "wrong" && (
+          <div className="rounded-2xl border border-[#E5484D]/30 bg-[#E5484D]/[0.10] p-4">
+            <p className="flex items-center gap-2 font-body-ui text-body font-medium text-danger">
+              <span aria-hidden className="h-2 w-2 shrink-0 rounded-full bg-danger" />
+              {s.verdictWrongLabel} · {s.liveWrongLine}
+            </p>
+            <p className="mt-1 font-body-ui text-small text-white/90">
+              {s.verdictWrongLine}
+            </p>
+            {/* live never hard-blocks: a quiet continue/override */}
+            <button
+              type="button"
+              className="mt-3 font-body-ui text-small font-medium text-white/70 underline-offset-4 transition-colors duration-[150ms] hover:text-white hover:underline"
+            >
+              {s.mineIsRight}
+            </button>
+          </div>
+        )}
+
+        {/* under the stage — current step, light text on the dark ground */}
+        <div>
+          <p className="font-display-ui text-[1.25rem] font-bold leading-tight text-white">
+            {differ.caption}
           </p>
-          <p className="font-body-ui truncate text-body text-site-ink">{differ.caption}</p>
+          {differ.visibleState ? (
+            <p className="mt-1 font-body-ui text-small text-white/60">
+              {differ.visibleState}
+            </p>
+          ) : null}
         </div>
-      </div>
 
-      <div className="mt-6">
-        <EndSessionButton />
+        <div className="mt-1">
+          <EndSessionButton />
+        </div>
       </div>
     </div>
   );

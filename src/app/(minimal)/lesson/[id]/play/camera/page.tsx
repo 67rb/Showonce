@@ -1,41 +1,54 @@
 import s from "@/lib/strings";
 import { sampleLesson } from "@/design/fixtures";
 
-import { KeyframeVisual } from "@/components/KeyframeVisual";
-import { Button } from "@/components/Button";
 import Link from "next/link";
+import { KeyframeVisual } from "@/components/KeyframeVisual";
 
 export default function CameraPage() {
   const current = sampleLesson.steps[1]; // the "current" step 2 scene
 
   return (
-    <div className="mx-auto w-full max-w-[430px] px-4 py-6">
-      <div className="relative overflow-hidden rounded-2xl bg-[#101013] ring-1 ring-[#101013]">
-        <KeyframeVisual spec={current.keyframe} label={current.caption} dim />
-        {/* top-down guide outline */}
-        <div className="pointer-events-none absolute inset-[12%] rounded-md border-2 border-dashed border-accent/60" />
-        {/* amber corner brackets */}
-        <span aria-hidden className="pointer-events-none absolute left-2 top-2 h-6 w-6 border-l-2 border-t-2 border-accent/70" />
-        <span aria-hidden className="pointer-events-none absolute right-2 top-2 h-6 w-6 border-r-2 border-t-2 border-accent/70" />
-        <span aria-hidden className="pointer-events-none absolute bottom-2 left-2 h-6 w-6 border-b-2 border-l-2 border-accent/70" />
-        <span aria-hidden className="pointer-events-none absolute bottom-2 right-2 h-6 w-6 border-b-2 border-r-2 border-accent/70" />
+    <div className="relative flex min-h-dvh w-full flex-col items-center justify-between gap-8 bg-[#101013] px-4 py-8">
+      {/* step-reminder chip — dark glass, white text */}
+      <div className="max-w-[430px]">
+        <span className="block w-full rounded-full bg-white/10 px-4 py-1.5 text-center font-body-ui text-small font-medium text-white">
+          {current.caption}
+        </span>
       </div>
 
-      <p className="font-display-ui mt-4 text-center text-[1.5rem] font-bold leading-heading text-site-ink">
+      {/* centred viewfinder — photo variant (white corner brackets) on a
+          hairline white-at-20% border, at the step's 4/3 aspect */}
+      <div className="relative w-full max-w-[430px] overflow-hidden rounded-2xl border border-white/20">
+        <div className="aspect-[4/3] w-full">
+          <KeyframeVisual
+            spec={current.keyframe}
+            label={current.caption}
+            variant="photo"
+            fit
+            className="h-full"
+          />
+        </div>
+      </div>
+
+      <p className="font-body-ui text-small text-white/70">
         {s.guideHandsAway}
       </p>
 
-      <div className="mt-6 flex flex-col items-center gap-4">
+      {/* bottom controls — circular capture + quiet back */}
+      <div className="flex flex-col items-center gap-5">
         <Link
           href="/lesson/sample/play?state=checking"
           aria-label={s.takePhoto}
-          className="flex h-[72px] w-[72px] items-center justify-center rounded-full border-[3px] border-accent/70 transition-colors duration-[150ms] hover:border-accent"
+          className="flex h-20 w-20 items-center justify-center rounded-full border-4 border-white transition-transform duration-[150ms] hover:scale-105"
         >
-          <span aria-hidden className="h-[70%] w-[70%] rounded-full bg-accent" />
+          <span aria-hidden className="h-12 w-12 rounded-full bg-[#121212]" />
         </Link>
-        <Button href="/lesson/sample/play?state=checking" variant="secondary" className="w-full">
-          {s.usePhotoInstead}
-        </Button>
+        <Link
+          href="/lesson/sample/play"
+          className="font-body-ui text-small font-medium text-white/70 underline-offset-4 transition-colors duration-[150ms] hover:text-white hover:underline"
+        >
+          {s.exitLesson}
+        </Link>
       </div>
     </div>
   );

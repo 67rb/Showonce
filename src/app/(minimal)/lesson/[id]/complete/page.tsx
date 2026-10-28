@@ -1,32 +1,29 @@
 import s from "@/lib/strings";
 import { sampleLesson, sessionResult } from "@/design/fixtures";
 
-import { Button } from "@/components/Button";
-import { Reveal, RevealGroup } from "@/components/Reveal";
+import Link from "next/link";
 
 export default function CompletePage() {
   return (
     <div className="mx-auto w-full max-w-[430px] px-4 py-10">
-      <RevealGroup>
-        <Reveal>
-          <div className="flex flex-col items-center text-center">
-            <span
-              aria-hidden
-              className="flex h-16 w-16 items-center justify-center rounded-full border-2 border-accent bg-accent/10 text-3xl font-bold leading-none text-accent"
-            >
-              ✓
-            </span>
-            <h1 className="font-display-ui mt-6 text-[3rem] font-extrabold leading-tight text-site-ink">
-              {s.completeHeading}
-            </h1>
-            <p className="font-display-ui mt-2 text-[1.5rem] font-semibold leading-heading text-site-ink">
-              {sampleLesson.title}
-            </p>
-          </div>
-        </Reveal>
-      </RevealGroup>
+      {/* completion medallion — amber ring, soft amber tint fill, amber check */}
+      <div className="flex flex-col items-center text-center">
+        <span
+          aria-hidden
+          className="flex h-16 w-16 items-center justify-center rounded-full border-2 border-accent bg-accent/10 text-3xl font-bold leading-none text-accent"
+        >
+          ✓
+        </span>
+        <h1 className="font-display-ui mt-6 text-[3rem] font-extrabold leading-tight text-site-ink">
+          {s.completeHeading}
+        </h1>
+        <p className="font-display-ui mt-2 text-[1.5rem] font-semibold leading-heading text-site-ink">
+          {sampleLesson.title}
+        </p>
+      </div>
 
-      <div className="site-card mt-6 p-6">
+      {/* summary card */}
+      <div className="mt-6 rounded-[24px] border border-site-border bg-white p-5">
         <dl className="space-y-3">
           <div className="flex items-center justify-between">
             <dt className="font-body-ui text-small text-site-muted">
@@ -59,13 +56,20 @@ export default function CompletePage() {
         </div>
       </div>
 
+      {/* bottom actions — leaving is this screen's job */}
       <div className="mt-8 flex flex-col gap-2">
-        <Button href="/lessons" className="w-full">
+        <Link
+          href="/lessons"
+          className="rounded-full bg-[#16161A] px-5 py-3 text-center font-body-ui text-body font-semibold text-white transition-colors duration-[150ms] hover:bg-accent"
+        >
           {s.backToYourLessons}
-        </Button>
-        <Button href="/create" variant="secondary" className="w-full">
+        </Link>
+        <Link
+          href="/create"
+          className="rounded-full border border-site-border-2 bg-white px-5 py-3 text-center font-body-ui text-body font-semibold text-site-ink transition-colors duration-[150ms] hover:bg-site-page"
+        >
           {s.learnAnother}
-        </Button>
+        </Link>
       </div>
     </div>
   );

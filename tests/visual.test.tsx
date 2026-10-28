@@ -140,20 +140,19 @@ describe("Amber Grain Cinema — 1.3 app screens", () => {
     // semantic verdict headline colours
     expect(right).toContain("text-success");
     expect(wrong).toContain("text-danger");
-    expect(canttell).toContain("text-site-muted");
+    expect(canttell).toContain("text-accent-deep");
     // the dark play-verdict full-page tints are gone
     expect(right).not.toContain("play-verdict-right");
     expect(step).not.toContain("play-verdict-right");
   });
 
-  it("camera page renders four corner brackets and a ring capture button", () => {
+  it("camera page renders white viewfinder brackets and a ring capture button", () => {
     const html = markup(<CameraPage />);
-    expect(html).toContain("border-l-2 border-t-2 border-accent/70");
-    expect(html).toContain("border-r-2 border-t-2 border-accent/70");
-    expect(html).toContain("border-b-2 border-l-2 border-accent/70");
-    expect(html).toContain("border-b-2 border-r-2 border-accent/70");
-    expect(html).toContain("h-[72px] w-[72px]");
-    expect(html).toContain("border-[3px]");
-    expect(html).toContain("h-[70%] w-[70%]");
+    expect(html).toContain("border-l-2 border-t-2 border-white/90");
+    expect(html).toContain("border-r-2 border-t-2 border-white/90");
+    expect(html).toContain("border-b-2 border-l-2 border-white/90");
+    expect(html).toContain("border-b-2 border-r-2 border-white/90");
+    expect(html).toContain("border-4 border-white");
+    expect(html).toContain("h-20 w-20");
   });
 });

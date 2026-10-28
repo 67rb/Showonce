@@ -1,8 +1,6 @@
 import s from "@/lib/strings";
-import { Input } from "@/components/Input";
-import { Button } from "@/components/Button";
-import { Banner } from "@/components/Banner";
-import { Reveal, RevealGroup, SerifAccent } from "@/components/Reveal";
+import Link from "next/link";
+import { SerifAccent } from "@/components/Reveal";
 
 type CreateState = "default" | "invalid" | "failed" | "not-configured";
 
@@ -14,56 +12,91 @@ export default async function CreatePage({
   const { state } = await searchParams;
   const mode = (state as CreateState) || "default";
 
-  const error =
-    mode === "invalid"
-      ? s.importErrorInvalid
-      : mode === "failed"
-        ? s.importErrorFailed
-        : mode === "not-configured"
-          ? s.importErrorNotConfigured
-          : null;
-
   return (
-    <div className="relative isolate">
-      <div className="relative mx-auto w-full max-w-[430px] px-4 py-10">
-      <RevealGroup>
-        <Reveal>
-          <h1 className="font-display-ui text-[2.25rem] font-extrabold leading-tight text-site-ink">
-            <SerifAccent text={s.createHeading} />
-          </h1>
-        </Reveal>
-      </RevealGroup>
+    <div className="mx-auto w-full max-w-[430px] px-4 py-10">
+      <h1 className="font-display-ui text-[2.5rem] font-extrabold leading-tight tracking-tight text-site-ink">
+        <SerifAccent text={s.createHeading} />
+      </h1>
+      <p className="mt-2 font-body-ui text-body leading-relaxed text-site-muted">
+        {s.createScopeNote}
+      </p>
 
-      {error ? (
-        <div className="mt-5">
-          <Banner tone="error">{error}</Banner>
+      {/* STATE BANDS (state region swapped) */}
+      {mode === "failed" && (
+        <div className="mt-5 rounded-[20px] border border-[#E5484D]/30 bg-[#E5484D]/[0.10] p-4">
+          <p className="font-body-ui text-body font-medium text-site-ink">
+            {s.importErrorFailed}
+          </p>
+          <Link
+            href="/create/processing"
+            className="mt-1 inline-block font-body-ui text-small font-medium text-danger underline-offset-4 hover:underline"
+          >
+            {s.createGetSteps}
+          </Link>
         </div>
-      ) : null}
+      )}
+      {mode === "not-configured" && (
+        <div className="mt-5 rounded-[20px] border border-[#F59E0B]/30 bg-[#F59E0B]/[0.12] p-4">
+          <p className="font-body-ui text-body font-medium text-site-ink">
+            {s.importErrorNotConfigured}
+          </p>
+        </div>
+      )}
 
-      <div className="site-card mt-6 p-6">
-        <Input
-          label={s.importFieldLabel}
-          placeholder={s.importLinkPlaceholder}
-          name="link"
-        />
-        <div className="mt-6">
-          <p className="font-body-ui text-small text-site-muted">{s.uploadPrompt}</p>
-          <div className="mt-3">
-            <Button variant="secondary" className="w-full">
-              {s.uploadButton}
-            </Button>
-          </div>
+      {/* LINK FIELD — the hero of the screen */}
+      <div
+        className={
+          "mt-6 rounded-[20px] border bg-white " +
+          (mode === "invalid" ? "border-danger" : "border-site-border")
+        }
+      >
+        <div className="p-4">
+          <input
+            type="text"
+            name="link"
+            placeholder={s.importLinkPlaceholder}
+            aria-label={s.importFieldLabel}
+            className="w-full bg-transparent font-body-ui text-body text-site-ink placeholder:text-site-muted focus:outline-none"
+          />
+          <p className="mt-1 font-body-ui text-caption text-site-muted">
+            {s.importFieldLabel}
+          </p>
+          {mode === "invalid" && (
+            <p className="mt-1 font-body-ui text-small font-medium text-danger">
+              {s.importErrorInvalid}
+            </p>
+          )}
         </div>
       </div>
 
-      <p className="font-body-ui mt-4 text-small text-site-muted">{s.createScopeNote}</p>
+      {/* primary action */}
+      <Link
+        href="/create/processing"
+        className="mt-4 block rounded-full bg-[#16161A] px-5 py-3 text-center font-body-ui text-body font-semibold text-white transition-colors duration-[150ms] hover:bg-accent"
+      >
+        {s.createGetSteps}
+      </Link>
 
-      <div className="mt-6">
-        <Button href="/create/processing" size="large" className="w-full">
-          {s.createGetSteps}
-        </Button>
+      {/* hairline divider — the "or" is conveyed by the upload line below */}
+      <div aria-hidden className="mt-6 h-px w-full bg-site-border" />
+
+      {/* UPLOAD alternative — dashed surface, clearly secondary */}
+      <div className="mt-6 rounded-[20px] border border-dashed border-site-border-2 bg-white px-4 py-8 text-center">
+        <p className="font-body-ui text-small text-site-muted">
+          {s.uploadPrompt}
+        </p>
+        <button
+          type="button"
+          className="mt-4 block w-full rounded-full border border-site-border-2 bg-white px-5 py-3 text-center font-body-ui text-body font-semibold text-site-ink transition-colors duration-[150ms] hover:bg-site-page"
+        >
+          {s.uploadButton}
+        </button>
       </div>
-      </div>
+
+      {/* privacy line */}
+      <p className="mt-6 text-center font-body-ui text-caption text-site-muted">
+        {s.privacyClaim}
+      </p>
     </div>
   );
 }

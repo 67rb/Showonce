@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 import { renderToStaticMarkup } from "react-dom/server";
 import s from "@/lib/strings";
 import {
@@ -30,6 +30,23 @@ import PlayPage from "@/app/(minimal)/lesson/[id]/play/page";
 import CameraPage from "@/app/(minimal)/lesson/[id]/play/camera/page";
 import LivePage from "@/app/(minimal)/lesson/[id]/live/page";
 import CompletePage from "@/app/(minimal)/lesson/[id]/complete/page";
+
+// MinimalChrome is now route-aware (client, usePathname): on /complete it shows
+// fully-complete progress and no Exit. Outside a router this test pins the
+// active(player) path so the partial "2 of 4" progress still renders.
+vi.mock("next/navigation", () => ({
+  useRouter: () => ({
+    push: () => {},
+    replace: () => {},
+    refresh: () => {},
+    back: () => {},
+    forward: () => {},
+    prefetch: () => {},
+  }),
+  usePathname: () => "/lesson/sample/play",
+  useSearchParams: () => new URLSearchParams(),
+  useParams: () => ({}),
+}));
 import PrivacyPage from "@/app/(public)/privacy/page";
 import DesignPage from "@/app/(public)/design/page";
 import NotFoundPage from "@/app/not-found";
@@ -159,9 +176,9 @@ describe("create flow", () => {
     expect(html).toContain(s.procStageDerive);
     expect(html).toContain(s.seeReviewScreen);
   });
-  it("review renders heading, all 4 steps, and start lesson", () => {
+  it("review renders the derived lesson title, all 4 steps, and start lesson", () => {
     const html = markup(<ReviewPage />);
-    expect(html).toContain(s.reviewHeading);
+    expect(textOf(html)).toContain(sampleLesson.title);
     expect(html).toContain(s.startLesson);
     for (const st of sampleLesson.steps) {
       expect(html).toContain(st.caption);
@@ -200,11 +217,11 @@ describe("player screens", () => {
         searchParams: Promise.resolve({ state }),
       }),
     );
-  it("step state renders current caption and Done", async () => {
+  it("step state renders current caption, take-photo action, and privacy line", async () => {
     const html = await play("step");
     expect(html).toContain(sampleLesson.steps[1].caption);
-    expect(html).toContain(s.doneStep);
-    expect(html).toContain(s.speakerLabel);
+    expect(html).toContain(s.takePhoto);
+    expect(html).toContain(s.privacyClaim);
   });
   it("checking state renders line", async () => {
     expect(await play("checking")).toContain(s.checkingLine);
@@ -214,10 +231,10 @@ describe("player screens", () => {
     expect(html).toContain(s.verdictRightLine);
     expect(html).toContain(s.nextStep);
   });
-  it("wrong state renders difference and both buttons", async () => {
+  it("wrong state renders the difference sentence and both actions", async () => {
     const html = await play("wrong");
-    expect(html).toContain(s.verdictWrongLine);
-    expect(html).toContain(s.fixIt);
+    expect(html).toContain(s.checkDemoDifference);
+    expect(html).toContain(s.retakePhoto);
     expect(html).toContain(s.mineIsRight);
   });
   it("canttell state renders line and retake", async () => {
@@ -225,10 +242,12 @@ describe("player screens", () => {
     expect(html).toContain(s.cantTellLine);
     expect(html).toContain(s.retakePhoto);
   });
-  it("camera renders guidance, no camera API", async () => {
+  it("camera renders the dark viewfinder, guidance, and capture; no camera API", async () => {
     const html = await ssr(() => CameraPage());
+    expect(html).toContain("bg-[#101013]");
+    expect(html).toContain("border-white/20");
     expect(html).toContain(s.guideHandsAway);
-    expect(html).toContain(s.usePhotoInstead);
+    expect(html).toContain("border-4 border-white");
     expect(html).not.toContain("getUserMedia");
   });
   it("minimal chrome shows step 2 of 4", () => {

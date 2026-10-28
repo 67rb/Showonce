@@ -994,3 +994,147 @@ The SCOPE section is restructured and the gap above it is pinned.
 - **Cleanup (Task D):** the orphaned `src/hooks/use-mobile.tsx` and
   `src/hooks/use-toast.tsx` from the installer were confirmed already removed
   and imported nowhere.
+
+### v3.1 — play-flow design system (Prompt 3.1)
+
+The play flow (lesson overview, player + its four states, camera) is re-dressed
+in the landing's locked design language. No route, state variant, logic, string
+or fixture changed. (Live and completion screens remain as previously scoped —
+not part of this pass.)
+
+- **Grounds/surfaces:** light soft ground `--color-site-page` (#F7F7F8), white
+  24px-radius cards with hairline `--color-site-border` borders, ink text
+  (#16161A), muted-ink secondary, Inter Tight display + Inter body, serif-italic
+  accent on the last word of page headings (existing helper; NOT applied inside
+  the player — state headings only). Functional verdict colours are used only
+  for verdicts: success #00C758, danger #E5484D, can't-tell amber
+  (accent-deep #D97706). Photo/camera stages stay near-black (#101013) with the
+  KeyframeVisual in FIT mode (whole scene visible, never cropped).
+- **Lesson overview = learning path (`/lesson/[id]`):** header with back link to
+  `/lessons`, the lesson title (serif last word), muted source meta, and a
+  progress line (steps done / total). THE PATH is a vertical connecting line with
+  one node per step: DONE = ink-filled node + white check, CURRENT = amber ring
+  with ink centre, UPCOMING = hollow node with muted border; the segment is ink
+  up to the current node and hairline beyond; the current step's row sits lifted
+  on a white card. Desktop (>=1024px) widens to a two-area layout (lesson summary
+  left, path right) inside the shared container; mobile-first single column
+  `max-w-[430px]`. MODE CHOICE: primary ink pill "Step by step" (-> play) and
+  secondary outline pill "Live" (-> live), each with its muted description line.
+- **Player anatomy (`/lesson/[id]/play`):** compact header (back to the lesson,
+  a step-caption meta, and a slim progress bar — amber fill on a hairline
+  track), then a white step card holding the step title, instruction line and the
+  KeyframeVisual in FIT mode at a 4/3 aspect. Base actions: full-width ink pill
+  "Take a photo" (-> camera), a quiet "Use a photo instead" action, and the muted
+  privacy claim. No reveals, parallax, or marquee motion inside the player.
+- **Checking:** the photo variant (white viewfinder brackets) stage with a slow
+  horizontal amber sweeping line (CSS only, `play-checking-scan`, disabled under
+  prefers-reduced-motion); state line in muted ink; actions render disabled
+  (no active links).
+- **Verdict bands (each keeps the player header/stage; state region swapped):**
+  - RIGHT — success band (`#00C758` at 12% tint), success "Right" + check glyph,
+    muted line, full-width ink pill "Next step".
+  - WRONG — danger band (`#E5484D` at 10% tint), danger "Wrong" + cross glyph,
+    the fixture difference sentence in ink, and the photo stage rings the
+    differing brick (the landing demo's dashed-amber `highlightId` mechanism on
+    the photo variant); actions: ink pill "Retake photo" + ghost "Mine is right".
+  - CAN'T TELL — amber band (`#F59E0B` at 12% tint), amber-deep "Can't tell",
+    its explanatory line, and the same two actions as WRONG.
+- **Camera (`/lesson/[id]/play/camera`):** functional dark screen — near-black
+  ground, a centred viewfinder at the step's aspect (white corner brackets via
+  the photo variant, hairline white-at-20% border), a top dark-glass step chip,
+  and a bottom circular white-ring capture control (ink centre) with a quiet
+  back text action; no light surfaces and no animation on this screen.
+
+### v3.2 — create-flow design system (Prompt 3.2)
+
+The create flow (/create + its three variants, /create/processing, /create/review)
+is re-dressed in the app design language. No route, variant, logic, string or
+fixture changed. Mobile-first `max-w-[430px]` column, centred (kept narrow on
+desktop — these are tool screens).
+
+- **Entry (`/create`):** heading with the serif accent + one muted line
+  (`createScopeNote`). The LINK FIELD is the hero: a white 20px-radius hairline
+  surface holding the URL input (placeholder `importLinkPlaceholder`) with a
+  muted supported-sources line (`importFieldLabel`) beneath. Full-width ink pill
+  primary (`createGetSteps`). A hairline divider, then the dashed-border UPLOAD
+  surface (`border-dashed border-site-border-2`) with its muted "or upload a
+  video file" line (`uploadPrompt`) + label (`uploadButton`), centred. Privacy
+  line (`privacyClaim`) under the actions.
+  - Variants (state region swapped): INVALID — the field's border becomes danger
+    and a danger error line (`importErrorInvalid`) appears under the field; the
+    primary action remains. FAILED — danger-tint band (`#E5484D` at 10%) at the
+    top with `importErrorFailed` + a quiet retry action. NOT-CONFIGURED — amber
+    band (`#F59E0B` at 12%) with `importErrorNotConfigured`, informational, no
+    danger anywhere.
+- **Processing (`/create/processing`):** source summary card (white surface) with
+  a muted mono source meta line and soft `#ECECEF` skeleton bars (`.create-skeleton`,
+  subtle pulse, disabled under prefers-reduced-motion) for the emerging title.
+  THE STAGES reuses the play flow's path language — a vertical connecting line,
+  one node per stage (labels `procStageFetch`/`procStageSample`/`procStageDerive`):
+  DONE = ink node + check, CURRENT = amber ring + lifted white row, PENDING =
+  hollow muted node; segment ink up to the current stage, hairline beyond. A slim
+  progress bar (amber on a hairline track) under the list is the signal (no
+  spinners). One quiet leave action (`backToImport`) plus the scaffolded review
+  link (`seeReviewScreen`).
+- **Review (`/create/review`):** the derived lesson title as the page heading
+  (serif accent) with a muted meta line (`sampleLesson.meta`); the existing
+  title-edit affordance styled as a quiet underline field. REVIEW ROWS on white
+  20px-radius hairline surfaces, separated by 12px gaps (a list, not a table):
+  a ~72px KeyframeVisual thumb (FIT, 4/3), the step number + caption, the muted
+  instruction line (the fixture caption), and the scaffold's row affordances
+  (reorder up/down + remove, styled muted, wired to reorder/delete with the
+  existing ConfirmDialog). No add-step affordance exists in the scaffold, so none
+  is added. FOOTER: primary full-width ink pill "Start lesson" (`startLesson` →
+  /lesson/sample) + quiet "Back" (`backToImport` → /create); sticky at the
+  column's bottom on mobile, static on desktop.
+
+### v3.3 — library, live, completion, privacy & error screens (Prompt 3.3)
+
+The final inventory set is re-dressed in the app design language. No route,
+variant, logic, string or fixture changed.
+
+- **Library (`/lessons`, + empty):** public container on the light ground; page
+  heading (serif accent) + a primary ink pill to /create (`newLesson`). LESSON
+  ROWS on white 20px-radius hairline surfaces, 12px apart: an ~88px KeyframeVisual
+  thumb (FIT, 4/3), Inter Tight title, muted meta (step count + source), and a
+  progress state derived from the fixture lessons' step statuses — the data
+  carries **in-progress** (tower, 3/4 with the slim amber-on-hairline progress
+  bar) and **completed** (mosaic, wall — success check + "Done"). Each row links
+  to its own lesson route. The EMPTY variant is a centred muted dashed surface
+  (no imagery) with `lessonsEmptyLine` and an ink pill to /create.
+- **Live (`/lesson/[id]/live`, on-track/check/wrong):** functional dark screen —
+  near-black ground, a video/stage area filling the column at the **scaffold's 3/4
+  portrait aspect** (like the camera; `variant="photo"`, dim, FIT), a compact top
+  bar (back, step meta, amber-dot LIVE chip `liveChip`), and light text (white,
+  white/60) under the stage. Status variants swap the region below the stage:
+  ON-TRACK — success-tinted band (`#00C758` 12%) with `liveOnTrackLine` (calm);
+  CHECK — amber band (`#F59E0B` 12%), `liveCheckLine` + `liveTooBlurry`, a pulsing
+  amber dot (`animate-progress`, reduced-motion safe); WRONG — danger band
+  (`#E5484D` 10%), "Wrong" + `liveWrongLine` + the difference sentence
+  (`verdictWrongLine`) + a quiet continue/override (`mineIsRight` — live never
+  hard-blocks). Primary live action stays `EndSessionButton`.
+- **Completion (`/lesson/[id]/complete`) + header fix:** NO element on the
+  complete screen presents a partial/in-progress step count. The stale counter
+  lived in the shared `MinimalChrome` (hard-wired `ProgressSteps current={2}` +
+  an Exit link); that component is now route-aware (client `usePathname`) — on
+  `/complete` it shows **fully-complete** progress (`current = total = 4`, the
+  same completed total the summary card uses) and hides the mid-lesson Exit
+  (leaving is the bottom action's job). Elsewhere (play/camera/live) it is
+  unchanged. The screen: app column on the light ground, an amber completion
+  medallion (ring + soft amber tint + amber check) above "Done." and the lesson
+  title, a white summary card (total time, steps completed, the needed-more-than-
+  one-check recap), and an ink pill back to /lessons (`backToYourLessons`) +
+  secondary to /create (`learnAnother`).
+- **Privacy (`/privacy`):** public container on the existing light ground
+  (`--color-site-page`, the body ground — the landing's amber privacy *section*
+  is a separate block, so the route uses the light ground), heading (`Privacy`,
+  serif accent), and the checks-photos-keeps-nothing claim given poster emphasis
+  as a **soft amber tint band** (`#F59E0B` 12%), followed by the existing headed
+  sections separated by hairline dividers. No copy/section changes.
+- **Not-found / error:** both use the app column on the light ground with a large
+  muted display glyph ("404" / "!"), the existing heading and line, and one ink
+  pill — back home to `/` (`backHome`) for not-found, and the existing retry
+  (`errorRetry`) for the error boundary (its job is to retry; providing a home
+  link would change behaviour).
+
+With this pass, the design system now covers every route in the page inventory.
