@@ -1,5 +1,6 @@
 "use client"
 
+import { visibleAnimation } from "@/lib/visible-animation"
 import * as React from "react"
 import { useEffect, useRef } from "react"
 
@@ -380,7 +381,6 @@ export default function CloudSky(props: Props) {
             return locs[name]
         }
 
-        let raf = 0
         let last = performance.now()
         // Each layer keeps its OWN accumulator, wrapped on the CPU. One shared
         // clock scaled per layer would jump every time Speed changed, because the
@@ -391,7 +391,8 @@ export default function CloudSky(props: Props) {
         let leanX = 0
         let leanY = 0
 
-        const render = (now: number) => {
+        const render = (now: number, resumed: boolean) => {
+            if (resumed) last = now
             const dt = Math.min(0.05, (now - last) / 1000)
             last = now
             const v = vRef.current
@@ -443,7 +444,6 @@ export default function CloudSky(props: Props) {
             gl.uniform4f(u("uGlow"), glow[0], glow[1], glow[2], glow[3])
 
             gl.drawArrays(gl.TRIANGLES, 0, 3)
-            raf = requestAnimationFrame(render)
         }
 
         // The rect RATIO is zoom-invariant -- offset and size scale together --
@@ -469,12 +469,16 @@ export default function CloudSky(props: Props) {
         window.addEventListener("pointerleave", onLeave)
         document.addEventListener("mouseleave", onLeave)
 
-        raf = requestAnimationFrame(render)
+        const animation = visibleAnimation(canvas, render)
 
         // Never loseContext(): getContext returns the same context per canvas, so
         // StrictMode's mount -> cleanup -> mount would reuse a force-lost one.
         return () => {
-            cancelAnimationFrame(raf)
+            animation.dispose()
+            gl.deleteBuffer(buf)
+            gl.deleteProgram(prog)
+            gl.deleteShader(vs)
+            gl.deleteShader(fs)
             window.removeEventListener("pointermove", track)
             window.removeEventListener("pointerdown", track)
             window.removeEventListener("pointerup", track)

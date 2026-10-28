@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { useInView } from "framer-motion";
+import { visibleAnimation } from "@/lib/visible-animation";
 
 const vertexShaderSource = `
   attribute vec4 a_position;
@@ -166,16 +166,10 @@ const SatinFlow: React.FC<SatinFlowProps> = ({
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const isInView = useInView(containerRef);
-  const visibilityRef = useRef(true);
 
   // Mouse coords and active strength refs
   const mouseRef = useRef({ x: 0, y: 0, targetX: 0, targetY: 0 });
   const mouseStrengthRef = useRef({ value: 0, targetValue: 0 });
-
-  useEffect(() => {
-    visibilityRef.current = isInView;
-  }, [isInView]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -302,14 +296,8 @@ const SatinFlow: React.FC<SatinFlowProps> = ({
     canvas.addEventListener("touchend", handleTouchEnd, { passive: true });
 
     let startTime = Date.now();
-    let animationFrameId: number;
 
     const render = () => {
-      if (!visibilityRef.current || document.hidden) {
-        animationFrameId = requestAnimationFrame(render);
-        return;
-      }
-
       // Handle resize and match resolution
       const width = canvas.clientWidth;
       const height = canvas.clientHeight;
@@ -347,13 +335,12 @@ const SatinFlow: React.FC<SatinFlowProps> = ({
       gl.uniform1f(uInteractiveLocation, interactive ? 1.0 : 0.0);
 
       gl.drawArrays(gl.TRIANGLES, 0, 6);
-      animationFrameId = requestAnimationFrame(render);
     };
 
-    render();
+    const animation = visibleAnimation(containerRef.current || canvas, render);
 
     return () => {
-      cancelAnimationFrame(animationFrameId);
+      animation.dispose();
       gl.deleteProgram(program);
       gl.deleteShader(vertexShader);
       gl.deleteShader(fragmentShader);

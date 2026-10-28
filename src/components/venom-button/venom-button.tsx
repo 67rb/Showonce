@@ -312,7 +312,9 @@ export function VenomButton({
     // the pill in stage coordinates, re-measured every frame (it scales when pressed). Everything
     // here is in layout px: if a parent is scaled with a CSS transform, rect sizes are divided by k.
     const pill = { x: 0, y: 0, w: 0, h: 0, r: 0, ls: 0, P: 1 };
+    let measuredTransform = "";
     const measure = () => {
+      measuredTransform = btn.style.transform;
       const a = stage.getBoundingClientRect(), b = btn.getBoundingClientRect();
       const k = stage.offsetWidth ? a.width / stage.offsetWidth : 1;
       pill.x = (b.left - a.left) / k; pill.y = (b.top - a.top) / k; pill.w = b.width / k; pill.h = b.height / k;
@@ -528,7 +530,10 @@ export function VenomButton({
       const dt = Math.max(1 / 240, Math.min(0.033, (now - prev) / 1000));
       prev = now;
       if (!w || !h) return;
-      measure();
+      // The relative pill geometry is stable between resizes. Motion writes
+      // its exact press/release spring transform inline; measure every changed
+      // transform frame so the goo continues to match the animated pill.
+      if (btn.style.transform !== measuredTransform) measure();
       const time = (now - t0) / 1000;
 
       // a lifted finger keeps hold for a moment, then lets go
@@ -851,16 +856,16 @@ export function VenomButton({
     // Animated: one rAF loop that sleeps while the button is off screen. Reduced motion: no loop,
     // the still pill is drawn once at the start and again whenever the stage is resized.
     const frame = (now: number) => {
-      raf = visible ? requestAnimationFrame(frame) : 0;
-      if (visible) draw(now);
+      raf = visible && !document.hidden ? requestAnimationFrame(frame) : 0;
+      if (visible && !document.hidden) draw(now);
     };
     const ro = new ResizeObserver(() => {
       fit();
       if (reduced) draw(performance.now());
     });
     ro.observe(stage);
-    // the still pill is not re-measured every frame, so redraw when the button itself changes size
-    if (reduced) ro.observe(btn);
+    // Font/label changes can resize the pill independently of the stage.
+    ro.observe(btn);
     fit();
     let io: IntersectionObserver | null = null;
     if (reduced) {
@@ -876,7 +881,13 @@ export function VenomButton({
       });
       io.observe(stage);
     }
+    const visibility = () => {
+      if (document.hidden) { cancelAnimationFrame(raf); raf = 0; }
+      else if (visible && !raf && !reduced) { prev = performance.now(); raf = requestAnimationFrame(frame); }
+    };
+    document.addEventListener("visibilitychange", visibility);
     return () => {
+      document.removeEventListener("visibilitychange", visibility);
       cancelAnimationFrame(raf);
       io?.disconnect();
       ro.disconnect();

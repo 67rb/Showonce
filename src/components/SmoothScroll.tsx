@@ -92,6 +92,8 @@ export function SmoothScroll() {
 
     let rafId = 0;
     const raf = (time: number) => {
+      rafId = 0;
+      if (document.hidden) return;
       lenis.raf(time);
       frameSubscribers.forEach((cb) => cb(time));
       rafId = requestAnimationFrame(raf);
@@ -102,9 +104,15 @@ export function SmoothScroll() {
       isPop.current = true;
     };
     window.addEventListener("popstate", onPop);
+    const visibility = () => {
+      if (document.hidden) { cancelAnimationFrame(rafId); rafId = 0; }
+      else if (!rafId) rafId = requestAnimationFrame(raf);
+    };
+    document.addEventListener("visibilitychange", visibility);
 
     return () => {
       window.removeEventListener("popstate", onPop);
+      document.removeEventListener("visibilitychange", visibility);
       cancelAnimationFrame(rafId);
       lenis.destroy();
       lenisRef.current = null;

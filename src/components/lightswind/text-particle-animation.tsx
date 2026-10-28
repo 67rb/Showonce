@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef } from "react";
+import { visibleAnimation } from "@/lib/visible-animation";
 
 export interface TextParticleAnimationProps {
   text: string;
@@ -44,12 +45,12 @@ export function TextParticleAnimation({
     if (!canvas) return;
     const canvas2 = canvas;
 
-    const ctx = canvas.getContext("2d", { willReadFrequently: true });
+    const ctx = canvas.getContext("2d");
     if (!ctx) return;
     const ctx2 = ctx;
 
     let particles: Particle[] = [];
-    let animationFrameId = 0;
+    let paintedColor = "";
 
     const mouse = { x: -1000, y: -1000 };
 
@@ -114,10 +115,12 @@ export function TextParticleAnimation({
 
         this.x += this.vx;
         this.y += this.vy;
+        // Exact rest only: no epsilon, snapping or altered spring arithmetic.
+        return distance < hoverRadius || this.vx !== 0 || this.vy !== 0 || this.x !== this.originX || this.y !== this.originY;
       }
 
       draw() {
-        ctx2.fillStyle = this.color;
+        if (paintedColor !== this.color) { ctx2.fillStyle = this.color; paintedColor = this.color; }
         ctx2.fillRect(this.x, this.y, pixelSize, pixelSize);
       }
     }
@@ -142,11 +145,12 @@ export function TextParticleAnimation({
 
     function animate() {
       ctx2.clearRect(0, 0, canvas2.width, canvas2.height);
+      let moving = false;
       for (let i = 0; i < particles.length; i++) {
-        particles[i].update();
+        moving = particles[i].update() || moving;
         particles[i].draw();
       }
-      animationFrameId = window.requestAnimationFrame(animate);
+      return moving;
     }
 
     const getMousePos = (e: MouseEvent) => {
@@ -163,11 +167,13 @@ export function TextParticleAnimation({
       const pos = getMousePos(e);
       mouse.x = pos.x;
       mouse.y = pos.y;
+      animation.request();
     };
 
     const handleMouseLeave = () => {
       mouse.x = -1000;
       mouse.y = -1000;
+      animation.request();
     };
 
     const handleMouseDown = (e: MouseEvent) => {
@@ -184,17 +190,18 @@ export function TextParticleAnimation({
           p.vy -= Math.sin(angle) * force * clickForce;
         }
       }
+      animation.request();
     };
 
     initParticles(imageData);
-    animate();
+    const animation = visibleAnimation(canvas2, animate);
 
     canvas2.addEventListener("mousemove", handleMouseMove);
     canvas2.addEventListener("mouseleave", handleMouseLeave);
     canvas2.addEventListener("mousedown", handleMouseDown);
 
     return () => {
-      window.cancelAnimationFrame(animationFrameId);
+      animation.dispose();
       canvas2.removeEventListener("mousemove", handleMouseMove);
       canvas2.removeEventListener("mouseleave", handleMouseLeave);
       canvas2.removeEventListener("mousedown", handleMouseDown);
