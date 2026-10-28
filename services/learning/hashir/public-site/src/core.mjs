@@ -1,4 +1,5 @@
 export const VERSION='hashir.ai.v2-proposed';
+export const AI_BUDGET_MICRO=5_000_000;
 export const SAFETY='Visual feedback cannot certify physical safety, hidden properties, or professional competence.';
 export const HOSTS=new Set(['origami.me','www.origami.me','instructables.com','www.instructables.com','developer.mozilla.org','www.freecodecamp.org','freecodecamp.org','learn.adafruit.com']);
 export class AppError extends Error {constructor(code,message,status=422){super(message);this.code=code;this.status=status;}}
@@ -212,7 +213,7 @@ export function assessmentResult(raw,step,meta={}){
 export async function budgetSummary(db){
  await db.prepare('INSERT OR IGNORE INTO ai_budget(id) VALUES(1)').run();
  const row=await db.prepare("SELECT charged_micro,calls,paused,(SELECT COALESCE(SUM(charged_micro),0) FROM ai_reservations WHERE status='reserved') AS unresolved_micro FROM ai_budget WHERE id=1").first();
- return {limit_usd:1,charged_or_reserved_usd:row.charged_micro/1e6,remaining_usd:row.paused?0:Math.max(0,1000000-row.charged_micro)/1e6,calls:row.calls,paused:!!row.paused,unresolved_reservations_usd:row.unresolved_micro/1e6};
+ return {limit_usd:AI_BUDGET_MICRO/1e6,charged_or_reserved_usd:row.charged_micro/1e6,remaining_usd:row.paused?0:Math.max(0,AI_BUDGET_MICRO-row.charged_micro)/1e6,calls:row.calls,paused:!!row.paused,unresolved_reservations_usd:row.unresolved_micro/1e6};
 }
 export async function reserve(db,amount,id=crypto.randomUUID()){
  if(!Number.isSafeInteger(amount)||amount<1)throw new AppError('budget_error','Budget estimate is invalid.',503);
@@ -220,7 +221,7 @@ export async function reserve(db,amount,id=crypto.randomUUID()){
  await db.prepare('INSERT OR IGNORE INTO ai_budget(id) VALUES(1)').run();
  const nonce=crypto.randomUUID();
  await db.batch([
-  db.prepare("INSERT OR IGNORE INTO ai_reservations(id,claim_nonce,maximum_micro,charged_micro,status,created_at) SELECT ?,?,?,?,'reserved',? WHERE EXISTS(SELECT 1 FROM ai_budget WHERE id=1 AND paused=0 AND charged_micro+?<=1000000)").bind(id,nonce,amount,amount,Date.now(),amount),
+  db.prepare("INSERT OR IGNORE INTO ai_reservations(id,claim_nonce,maximum_micro,charged_micro,status,created_at) SELECT ?,?,?,?,'reserved',? WHERE EXISTS(SELECT 1 FROM ai_budget WHERE id=1 AND paused=0 AND charged_micro+?<=?)").bind(id,nonce,amount,amount,Date.now(),amount,AI_BUDGET_MICRO),
   db.prepare('UPDATE ai_budget SET charged_micro=charged_micro+?,calls=calls+1 WHERE id=1 AND EXISTS(SELECT 1 FROM ai_reservations WHERE id=? AND claim_nonce=?)').bind(amount,id,nonce)
  ]);
  const row=await db.prepare('SELECT maximum_micro,status FROM ai_reservations WHERE id=?').bind(id).first();
@@ -232,7 +233,7 @@ export async function settle(db,id,input,output){
  if(!Number.isSafeInteger(input)||!Number.isSafeInteger(output)||input<0||output<0||!Number.isSafeInteger(cost(input,output)))throw new AppError('usage_unknown','AI usage was unavailable. The full budget reservation was retained.',502);
  const actual=cost(input,output);
  await db.batch([
-  db.prepare("UPDATE ai_budget SET charged_micro=1000000,paused=1 WHERE id=1 AND EXISTS(SELECT 1 FROM ai_reservations WHERE id=? AND status='reserved' AND maximum_micro<?)").bind(id,actual),
+  db.prepare("UPDATE ai_budget SET charged_micro=?,paused=1 WHERE id=1 AND EXISTS(SELECT 1 FROM ai_reservations WHERE id=? AND status='reserved' AND maximum_micro<?)").bind(AI_BUDGET_MICRO,id,actual),
   db.prepare("UPDATE ai_budget SET charged_micro=charged_micro-(SELECT maximum_micro-? FROM ai_reservations WHERE id=?) WHERE id=1 AND paused=0 AND EXISTS(SELECT 1 FROM ai_reservations WHERE id=? AND status='reserved' AND maximum_micro>=?)").bind(actual,id,id,actual),
   db.prepare("UPDATE ai_reservations SET charged_micro=?,status=CASE WHEN maximum_micro<? THEN 'usage_mismatch' ELSE 'settled' END,input_tokens=?,output_tokens=?,settled_at=? WHERE id=? AND status='reserved'").bind(actual,actual,input,output,Date.now(),id)
  ]);

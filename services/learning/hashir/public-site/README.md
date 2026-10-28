@@ -16,7 +16,7 @@ storage-failure behavior.
 
 This is a dependency-free Worker ESM Site. `web/` is the frontend, `src/core.mjs`
 is the replaceable AI/source boundary, `src/routes.mjs` exposes the API, and D1
-stores lessons, authenticated sessions, progress, submission history and an atomic shared US$1 public AI allowance. R2 holds private submitted photos. That allowance
+stores lessons, authenticated sessions, progress, submission history and an atomic shared US$5 public AI allowance. R2 holds private submitted photos. That allowance
 was reserved within the user's existing US$5 local ledger; it is not extra credit.
 The model key is a hosted runtime secret and is never present in source or assets.
 
