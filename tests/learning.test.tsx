@@ -2,7 +2,8 @@
 import {beforeEach,afterEach,describe,it,expect,vi} from 'vitest';
 import {render,screen,fireEvent,waitFor,cleanup} from '@testing-library/react';
 import path from 'node:path';
-import {webcrypto} from 'node:crypto';
+import {readFile} from 'node:fs/promises';
+import {createHash,webcrypto} from 'node:crypto';
 import worker from '../services/learning/hashir/public-site/dist/server/index.js';
 import {localDB,localBucket} from '../services/learning/hashir/public-site/scripts/d1-local.mjs';
 import {IdentityProvider} from '@/components/learning/Identity';
@@ -27,6 +28,12 @@ async function preparePractice(lessonID='example_draw-shading'){
  const progress=await(await worker.fetch(new Request('https://test.example/v1/sessions',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({lesson_id:lesson.id})}),env)).json() as Progress;
  window.ShowOnceLibrary!.remember(window.localStorage,entryFrom(lesson,progress,progress.access_token),[]);window.history.replaceState(null,'',lessonHref(lesson.id,progress.session_id,'play'));return {lesson,progress};
 }
+async function savedIllustration(lesson:Lesson,stepIndex=0){
+ const target=lesson.steps[stepIndex],id='illustration_'+createHash('sha256').update(lesson.id+'|'+target.id+'|v2').digest('hex');
+ await env.DB.prepare("INSERT INTO illustration_candidates(id,lesson_id,step_id,claim_nonce,status,image_key,mime_type,review_json,created_at) VALUES(?,?,?,'test','ready',?,'image/png',?,0)").bind(id,lesson.id,target.id,'test/'+id,JSON.stringify({usable:true,issues:[]})).run();
+ await env.BUCKET.put('test/'+id,await readFile('services/learning/hashir/public-site/web/fixtures/images/cup_01_correct.png'));
+}
+function imageURLs(){const NativeURL=URL;const revoke=vi.fn();vi.stubGlobal('URL',class extends NativeURL {static createObjectURL=vi.fn(()=> 'blob:saved-step');static revokeObjectURL=revoke;});return revoke;}
 describe('working frontend with the actual learning Worker',()=>{
  it('creates a free lesson from entered instructions and saves a real resumable practice',async()=>{
   show();await screen.findByRole('button',{name:'Free numbered steps'});expect(screen.queryByRole('textbox',{name:/Paste this tutorial/})).toBeNull();fireEvent.click(screen.getByRole('button',{name:'Free numbered steps'}));fireEvent.change(screen.getByRole('textbox',{name:'2–18 numbered instructions'}),{target:{value:'1. Draw a circle on paper.\n2. Shade its lower edge.'}});fireEvent.click(screen.getByRole('button',{name:'Create free practice'}));await waitFor(()=>expect(push).toHaveBeenCalled());
@@ -57,6 +64,24 @@ describe('working frontend with the actual learning Worker',()=>{
  it('unsupported and oversized photos fail locally before any network check',async()=>{await expect(photoData(new File(['text'],'work.txt',{type:'text/plain'}))).rejects.toThrow(/PNG/);await expect(photoData(new File([new Uint8Array(5242881)],'work.png',{type:'image/png'}))).rejects.toThrow(/5 MiB/);expect(calls).toHaveLength(0);});
  it('a lost acknowledgement reply retries the same key and advances only once',async()=>{
   const {lesson,progress}=await preparePractice();const original=globalThis.fetch;let lose=true;vi.stubGlobal('fetch',async(...args:Parameters<typeof fetch>)=>{const response=await original(...args);if(String(args[0]).endsWith('/acknowledgements')&&lose){lose=false;throw new Error('Reply lost after commit.');}return response;});show('play');const button=await screen.findByRole('button',{name:'I’ve practiced this step · self-review'});fireEvent.click(button);await screen.findByRole('alert');expect((await env.DB.prepare('SELECT current_index FROM practice_sessions WHERE id=?').bind(progress.session_id).first())?.current_index).toBe(1);fireEvent.click(screen.getByRole('button',{name:'I’ve practiced this step · self-review'}));await screen.findByRole('heading',{name:lesson.steps[1].title||'Try this step'});const retries=calls.filter(call=>call.path.endsWith('/acknowledgements'));expect(retries).toHaveLength(2);expect(retries[0].headers['Idempotency-Key']).toBe(retries[1].headers['Idempotency-Key']);expect((await env.DB.prepare('SELECT current_index FROM practice_sessions WHERE id=?').bind(progress.session_id).first())?.current_index).toBe(1);
+ });
+ it('automatically reloads a saved step image without generation and clears it when the checkpoint changes',async()=>{
+  const {lesson}=await preparePractice();await savedIllustration(lesson);const revoke=imageURLs();show('play');
+  expect((await screen.findByRole('img',{name:'AI illustration: '+lesson.steps[0].expected_visual_result})).getAttribute('src')).toBe('blob:saved-step');
+  fireEvent.click(screen.getByRole('button',{name:'I’ve practiced this step · self-review'}));await screen.findByRole('heading',{name:lesson.steps[1].title!});
+  expect(screen.queryByRole('img')).toBeNull();expect(revoke).toHaveBeenCalledWith('blob:saved-step');
+  fireEvent.change(screen.getByRole('combobox',{name:'Checkpoint'}),{target:{value:'0'}});
+  await screen.findByRole('img',{name:'AI illustration: '+lesson.steps[0].expected_visual_result});
+  expect(calls.filter(call=>call.path.endsWith('/illustration'))).toHaveLength(0);
+  expect((await env.DB.prepare('SELECT calls FROM ai_budget WHERE id=1').first())?.calls).toBe(0);
+ });
+ it('a late image response cannot show the previous checkpoint picture on the next step',async()=>{
+  const {lesson}=await preparePractice();await savedIllustration(lesson);imageURLs();const original=globalThis.fetch;
+  let release!:()=>void;const held=new Promise<void>(resolve=>{release=resolve;});
+  vi.stubGlobal('fetch',async(...args:Parameters<typeof fetch>)=>{const response=await original(...args);if(String(args[0]).endsWith('/'+lesson.steps[0].id+'/illustration/image'))await held;return response;});
+  show('play');fireEvent.click(await screen.findByRole('button',{name:'I’ve practiced this step · self-review'}));
+  await screen.findByRole('heading',{name:lesson.steps[1].title!});release();
+  await screen.findByRole('button',{name:'Generate step image · uses AI allowance'});expect(screen.queryByRole('img')).toBeNull();
  });
  it('the learner report form saves its checkpoint in the team review queue without a photo',async()=>{
   const {progress}=await preparePractice();show('play');fireEvent.click(await screen.findByRole('button',{name:'Report a problem'}));fireEvent.change(screen.getByRole('textbox',{name:'What went wrong?'}),{target:{value:'Synthetic frontend integration check.'}});fireEvent.click(screen.getByRole('button',{name:'Send report'}));await screen.findByText(/Report saved for the team/);const row=await env.DB.prepare('SELECT step_id,details,context FROM learner_reports').first();expect(row?.step_id).toBe(progress.current_step_id);expect(row?.details).toBe('Synthetic frontend integration check.');expect(String(row?.context)).not.toContain('image_base64');expect(String(row?.context)).not.toContain(progress.access_token!);
