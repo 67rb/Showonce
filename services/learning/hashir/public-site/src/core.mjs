@@ -6,6 +6,11 @@ export class AppError extends Error {constructor(code,message,status=422){super(
 export const cost=(input,output)=>Math.ceil((5*input+17*output)/4);
 export const digest=async text=>Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(text)))).map(v=>v.toString(16).padStart(2,'0')).join('');
 export const clean=s=>String(s??'').replace(/\s+/g,' ').trim();
+function observationList(value){
+ if(value===undefined)return [];
+ if(!Array.isArray(value)||value.length>20)throw new AppError('invalid_observations','Share up to 20 observed checkpoint details.');
+ return value.map(item=>{if(typeof item!=='string'||!item.trim()||item.length>1200||/[\u0000-\u0008\u000b\u000c\u000e-\u001f]/.test(item))throw new AppError('invalid_observations','Each observation must be 1–1200 characters.');return item.trim();});
+}
 const SOCIAL_HOSTS=new Map([
  ...['instagram.com','www.instagram.com'].map(h=>[h,'Instagram']),
  ...['tiktok.com','www.tiktok.com','m.tiktok.com','vm.tiktok.com','vt.tiktok.com'].map(h=>[h,'TikTok']),

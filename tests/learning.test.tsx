@@ -119,7 +119,108 @@ describe('working frontend with the actual learning Worker',()=>{
  it('refresh failure keeps saved practices visible and library search matches the skill category',async()=>{
   await preparePractice();const original=globalThis.fetch;let fail=false;vi.stubGlobal('fetch',async(...args:Parameters<typeof fetch>)=>{if(fail&&String(args[0]).startsWith('/v1/sessions/'))throw new Error('Offline');return original(...args);});show('library');await screen.findByRole('heading',{name:'Sketch a shaded sphere'});fireEvent.change(screen.getByRole('searchbox',{name:'Find a practice'}),{target:{value:'drawing'}});expect(screen.getByRole('heading',{name:'Sketch a shaded sphere'})).toBeTruthy();fail=true;fireEvent.click(screen.getByRole('button',{name:'Refresh library'}));await screen.findByRole('alert');expect(screen.getByRole('heading',{name:'Sketch a shaded sphere'})).toBeTruthy();fireEvent.change(screen.getByRole('searchbox',{name:'Find a practice'}),{target:{value:'not found'}});fireEvent.click(screen.getByRole('button',{name:'Clear filters'}));expect(screen.getByRole('heading',{name:'Sketch a shaded sphere'})).toBeTruthy();
  });
+ it('self-review acknowledgements carry checked observations to saved progress',async()=>{
+  const {lesson,progress}=await preparePractice();show('play');
+  fireEvent.click(await screen.findByRole('button',{name:'Practice with live camera · free'}));
+  fireEvent.click(screen.getByRole('checkbox',{name:lesson.steps[0].assessment_criteria[0]}));
+  fireEvent.click(screen.getByRole('button',{name:'I’ve practiced this step · self-review'}));
+  await screen.findByRole('heading',{name:lesson.steps[1].title!});
+  expect(calls.find(call=>call.path.endsWith('/acknowledgements'))?.body?.observations).toEqual([lesson.steps[0].assessment_criteria[0]]);
+  const row=await env.DB.prepare('SELECT observations FROM practice_acknowledgements WHERE session_id=?').bind(progress.session_id).first();
+  expect(JSON.parse(String(row?.observations))).toEqual([lesson.steps[0].assessment_criteria[0]]);
+  const saved=await(await worker.fetch(new Request('https://test.example/v1/sessions/'+progress.session_id,{headers:{Authorization:'Bearer '+progress.access_token}}),env)).json() as Progress;
+  expect(saved.completed_checkpoints[0]).toMatchObject({kind:'self',observations:[lesson.steps[0].assessment_criteria[0]]});
+ });
+ it('shows saved self-review observations when revisiting and completing checkpoints',async()=>{
+   const {lesson}=await preparePractice();show('play');
+   fireEvent.click(await screen.findByRole('button',{name:'Practice with live camera · free'}));
+   fireEvent.click(screen.getByRole('checkbox',{name:lesson.steps[0].assessment_criteria[0]}));
+   fireEvent.click(screen.getByRole('button',{name:'I’ve practiced this step · self-review'}));
+   await screen.findByRole('heading',{name:lesson.steps[1].title!});
+   const confirmed='Step 1 · self-reviewed — you confirmed: '+lesson.steps[0].assessment_criteria[0];
+   expect(screen.queryByText(confirmed)).toBeNull();
+   fireEvent.change(screen.getByRole('combobox',{name:'Checkpoint'}),{target:{value:'0'}});
+   expect(await screen.findByText(confirmed)).toBeTruthy();
+   fireEvent.click(screen.getByRole('button',{name:'Return to current checkpoint'}));
+   await screen.findByRole('heading',{name:lesson.steps[1].title!});
+   for(let i=1;i<lesson.steps.length;i++){fireEvent.click(screen.getByRole('button',{name:'I’ve practiced this step · self-review'}));if(i+1<lesson.steps.length)await screen.findByRole('heading',{name:lesson.steps[i+1].title!});}
+   await screen.findByRole('heading',{name:'A step further along.'});
+   expect(screen.getByText(confirmed)).toBeTruthy();
+  });
+ it('learner reports carry checked observations to the team queue',async()=>{
+  const {lesson}=await preparePractice();show('play');
+  fireEvent.click(await screen.findByRole('button',{name:'Practice with live camera · free'}));
+  fireEvent.click(screen.getByRole('checkbox',{name:lesson.steps[0].assessment_criteria[0]}));
+  fireEvent.click(await screen.findByRole('button',{name:'Report a problem'}));
+  fireEvent.change(screen.getByRole('textbox',{name:'What went wrong?'}),{target:{value:'Checked observations attached.'}});
+  fireEvent.click(screen.getByRole('button',{name:'Send report'}));
+  await screen.findByText(/Report saved for the team/);
+  expect(calls.find(call=>call.path.endsWith('/reports'))?.body?.observations).toEqual([lesson.steps[0].assessment_criteria[0]]);
+  const row=await env.DB.prepare('SELECT context FROM learner_reports').first();
+  expect(JSON.parse(String(row?.context)).observations).toEqual([lesson.steps[0].assessment_criteria[0]]);
+ });
+ it('reports from a criteria-less numbered lesson carry the fallback observation',async()=>{
+  const lesson=await(await worker.fetch(new Request('https://test.example/v1/lessons',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({source_text:'1. Draw a circle on paper.\n2. Shade its lower edge.',processing_mode:'structured_text'})}),env)).json() as Lesson;
+  const fallback=lesson.steps[0].assessment_criteria?.length?lesson.steps[0].assessment_criteria[0]:(lesson.steps[0].expected_visual_result||lesson.steps[0].instructions);
+  await preparePractice(lesson.id);show('play');
+  fireEvent.click(await screen.findByRole('button',{name:'Practice with live camera · free'}));
+  fireEvent.click(screen.getByRole('checkbox',{name:fallback}));
+  fireEvent.click(screen.getByRole('button',{name:'Report a problem'}));
+  fireEvent.change(screen.getByRole('textbox',{name:'What went wrong?'}),{target:{value:'Numbered-lesson fallback check.'}});
+  fireEvent.click(screen.getByRole('button',{name:'Send report'}));
+  await screen.findByText(/Report saved for the team/);
+  expect(calls.find(call=>call.path.endsWith('/reports'))?.body?.observations).toEqual([fallback]);
+  const row=await env.DB.prepare('SELECT context FROM learner_reports').first();
+  expect(JSON.parse(String(row?.context)).observations).toEqual([fallback]);
+ });
  it('the learner report form saves its checkpoint in the team review queue without a photo',async()=>{
   const {progress}=await preparePractice();show('play');fireEvent.click(await screen.findByRole('button',{name:'Report a problem'}));fireEvent.change(screen.getByRole('textbox',{name:'What went wrong?'}),{target:{value:'Synthetic frontend integration check.'}});fireEvent.click(screen.getByRole('button',{name:'Send report'}));await screen.findByText(/Report saved for the team/);const row=await env.DB.prepare('SELECT step_id,details,context FROM learner_reports').first();expect(row?.step_id).toBe(progress.current_step_id);expect(row?.details).toBe('Synthetic frontend integration check.');expect(String(row?.context)).not.toContain('image_base64');expect(String(row?.context)).not.toContain(progress.access_token!);
  });
+ it('a failed acknowledgement keeps the checklist and retries with the same key',async()=>{
+  const {lesson,progress}=await preparePractice();show('play');
+  fireEvent.click(await screen.findByRole('button',{name:'Practice with live camera · free'}));
+  const box=screen.getByRole('checkbox',{name:lesson.steps[0].assessment_criteria[0]});fireEvent.click(box);expect((box as HTMLInputElement).checked).toBe(true);
+  const original=globalThis.fetch,ackKeys:string[]=[];let fail=true;
+  vi.stubGlobal('fetch',async(...args:Parameters<typeof fetch>)=>{if(String(args[0]).endsWith('/acknowledgements')){ackKeys.push(((args[1]?.headers||{}) as Record<string,string>)['Idempotency-Key']);if(fail){fail=false;throw new Error('Offline while saving');}}return original(...args);});
+  fireEvent.click(screen.getByRole('button',{name:'I’ve practiced this step · self-review'}));
+  await screen.findByRole('alert');
+  expect((screen.getByRole('checkbox',{name:lesson.steps[0].assessment_criteria[0]}) as HTMLInputElement).checked).toBe(true);
+  expect((await env.DB.prepare('SELECT current_index FROM practice_sessions WHERE id=?').bind(progress.session_id).first())?.current_index).toBe(0);
+  fireEvent.click(screen.getByRole('button',{name:'I’ve practiced this step · self-review'}));
+  await screen.findByRole('heading',{name:lesson.steps[1].title!});
+  expect(ackKeys).toHaveLength(2);expect(ackKeys[0]).toBeTruthy();expect(ackKeys[1]).toBe(ackKeys[0]);
+  expect(calls.find(call=>call.path.endsWith('/acknowledgements'))?.body?.observations).toEqual([lesson.steps[0].assessment_criteria[0]]);
+ });
+ it('reporting a saved submission from another step does not attach the current checklist',async()=>{
+  const {lesson,progress}=await preparePractice();
+  const assessment=JSON.stringify({result:'uncertain',feedback:'Saved feedback.',corrections:[],requested_evidence:[],criteria:[]});
+  await env.DB.prepare("INSERT INTO practice_submissions(id,session_id,step_id,idem_key,request_hash,status,assessment,created_at) VALUES(?,?,?,'key-current','hash-current','assessed',?,1)").bind('sub_current_step',progress.session_id,lesson.steps[0].id,assessment).run();
+  await env.DB.prepare("INSERT INTO practice_submissions(id,session_id,step_id,idem_key,request_hash,status,assessment,created_at) VALUES(?,?,?,'key-other','hash-other','assessed',?,2)").bind('sub_other_step',progress.session_id,lesson.steps[1].id,assessment).run();
+  show('play');
+  fireEvent.click(await screen.findByRole('button',{name:'Practice with live camera · free'}));
+  fireEvent.click(screen.getByRole('checkbox',{name:lesson.steps[0].assessment_criteria[0]}));
+  fireEvent.click(screen.getByRole('button',{name:'View / refresh practice history'}));
+  const reportButtons=await screen.findAllByRole('button',{name:'Report this feedback'});expect(reportButtons).toHaveLength(2);
+  fireEvent.click(reportButtons[1]);
+  fireEvent.change(screen.getByRole('textbox',{name:'What went wrong?'}),{target:{value:'Other step report.'}});
+  fireEvent.click(screen.getByRole('button',{name:'Send report'}));
+  await screen.findByText(/Report saved for the team/);
+  let reports=calls.filter(call=>call.path.endsWith('/reports'));expect(reports).toHaveLength(1);expect(reports[0].body?.step_id).toBe(lesson.steps[1].id);expect(reports[0].body?.submission_id).toBe('sub_other_step');expect(reports[0].body?.observations).toEqual([]);
+  fireEvent.click(screen.getByRole('button',{name:'Close report'}));
+  fireEvent.click(screen.getByRole('checkbox',{name:lesson.steps[0].assessment_criteria[0]}));
+  fireEvent.click((await screen.findAllByRole('button',{name:'Report this feedback'}))[0]);
+  fireEvent.change(screen.getByRole('textbox',{name:'What went wrong?'}),{target:{value:'Current step report.'}});
+  fireEvent.click(screen.getByRole('button',{name:'Send report'}));
+  await screen.findByText(/Report saved for the team/);
+  reports=calls.filter(call=>call.path.endsWith('/reports'));expect(reports).toHaveLength(2);expect(reports[1].body?.step_id).toBe(lesson.steps[0].id);expect(reports[1].body?.submission_id).toBe('sub_current_step');expect(reports[1].body?.observations).toEqual([lesson.steps[0].assessment_criteria[0]]);
+ });
+ it('clears saved camera preferences when the signed-in account changes',async()=>{
+  await worker.fetch(new Request('https://test.example/v1/sessions',{method:'POST',headers:{'Content-Type':'application/json','oai-authenticated-user-id':'alice','oai-authenticated-user-email':'alice@example.test'},body:JSON.stringify({lesson_id:'example_guitar-rhythm',save_to_account:true})}),env);
+  actor='alice';show('library');await screen.findByRole('heading',{name:'Practice a steady guitar rhythm'});
+  window.localStorage.setItem('showonce-last-camera-v1','front');window.localStorage.setItem('showonce-camera-res-v1','1080');
+  actor='bob';fireEvent(window,new Event('showonce-account-changed'));
+  await screen.findByRole('heading',{name:'Your next practice starts here.'});
+  expect(window.localStorage.getItem('showonce-last-camera-v1')).toBeNull();expect(window.localStorage.getItem('showonce-camera-res-v1')).toBeNull();
+ });
+
 });

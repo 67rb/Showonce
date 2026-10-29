@@ -27,7 +27,7 @@ export function IdentityProvider({children}:{children:ReactNode}){
  const refresh=useCallback(async()=>{
   const id=++refreshID.current;available.current=false;setReady(false);setError(null);
   try{const [response,settings]=await Promise.all([request<Account>('/api/account'),request<Config>('/api/config')]);if(id!==refreshID.current)return;const next=response.user?.id||null;
-   if(resolved.current&&next!==actor.current){version.current++;setPractice(null);setDraft(initialDraft());guests.current=[];setNotice(null);}actor.current=next;resolved.current=true;setAccount(response);available.current=true;
+   if(resolved.current&&next!==actor.current){version.current++;setPractice(null);setDraft(initialDraft());guests.current=[];setNotice(null);try{window.localStorage.removeItem('showonce-last-camera-v1');window.localStorage.removeItem('showonce-camera-res-v1');}catch{}}actor.current=next;resolved.current=true;setAccount(response);available.current=true;
    try{window.localStorage.setItem('showonce-active-account-v1',next||'anonymous');}catch{}
    if(id!==refreshID.current)return;setConfig(settings);setReady(true);
   }catch(e){if(id===refreshID.current){available.current=false;setReady(false);setError(e instanceof Error?e.message:'Account check failed.');}}

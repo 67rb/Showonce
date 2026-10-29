@@ -21,9 +21,9 @@ async function recoverSession(env,id){
 }
 export async function sessionProgress(env,session,origin){
  const lesson=await getLesson(env,session.lesson_id,origin),steps=lesson.steps,index=session.current_index;
- const a=await env.DB.prepare('SELECT step_id FROM practice_acknowledgements WHERE session_id=?').bind(session.id).all();
- const manual=new Set(a.results.map(x=>x.step_id));
- return {session_id:session.id,lesson_id:lesson.id,account_owned:!!session.owner_id,status:index>=steps.length?'completed':'active',current_step_id:steps[index]?.id??null,completed_step_ids:steps.slice(0,index).map(s=>s.id),completed_checkpoints:steps.slice(0,index).map(s=>({step_id:s.id,kind:manual.has(s.id)?'self':'photo'})),total_steps:steps.length,updated_at:timestamp(session.updated_at)};
+ const a=await env.DB.prepare('SELECT step_id,observations FROM practice_acknowledgements WHERE session_id=?').bind(session.id).all();
+ const manual=new Map(a.results.map(x=>[x.step_id,x.observations?JSON.parse(x.observations):[]]));
+ return {session_id:session.id,lesson_id:lesson.id,account_owned:!!session.owner_id,status:index>=steps.length?'completed':'active',current_step_id:steps[index]?.id??null,completed_step_ids:steps.slice(0,index).map(s=>s.id),completed_checkpoints:steps.slice(0,index).map(s=>manual.has(s.id)?{step_id:s.id,kind:'self',observations:manual.get(s.id)}:{step_id:s.id,kind:'photo'}),total_steps:steps.length,updated_at:timestamp(session.updated_at)};
 }
 export async function createPracticeSession(env,body,origin,user=null){
  if(typeof body.lesson_id!=='string')throw new AppError('invalid_lesson_id','Choose a lesson.');
@@ -101,6 +101,8 @@ export async function liveAssessment(env,body,token,origin,assessor=assessPhoto,
  if(step.photo_assessable===false)throw new AppError('not_visually_assessable','This checkpoint needs self-review.');
  imageBytes(body);
  if(body.submission_id!==undefined&&(typeof body.submission_id!=='string'||!/^[A-Za-z0-9_-]{1,200}$/.test(body.submission_id)))throw new AppError('invalid_submission_id','Use a valid frame identifier.');
+ const recentLive=await env.DB.prepare('SELECT COUNT(*) AS count FROM practice_camera_feedback WHERE session_id=? AND created_at>?').bind(session.id,Date.now()-86400000).first();
+ if(Number(recentLive?.count||0)>=20)throw new AppError('live_check_limit','You have used 20 live checks in the last 24 hours. Free preview and self-review still work.',429);
  const claim=sid('live'),now=Date.now();
  const lease=await env.DB.prepare("INSERT INTO practice_live_leases(session_id,claim_id,created_at,expires_at,active) SELECT ?,?,?,?,1 WHERE EXISTS(SELECT 1 FROM practice_sessions WHERE id=? AND current_index=?) AND NOT EXISTS(SELECT 1 FROM practice_submissions WHERE session_id=? AND status='processing') ON CONFLICT(session_id) DO UPDATE SET claim_id=excluded.claim_id,created_at=excluded.created_at,expires_at=excluded.expires_at,active=1 WHERE (practice_live_leases.expires_at<=? OR (practice_live_leases.active=0 AND practice_live_leases.created_at<=?))").bind(session.id,claim,now,now+120000,session.id,session.current_index,session.id,now,now-3000).run();
  if(!changed(lease))throw new AppError('live_check_busy','A photo or camera check is already active, or a camera check just started. Wait a moment before trying again.',429);
@@ -114,20 +116,23 @@ export async function liveAssessment(env,body,token,origin,assessor=assessPhoto,
   ]);
   return {...result,feedback_id:claim};
  }finally{
-  // A late completion must never release a newer request's lease.
-  await env.DB.prepare('UPDATE practice_live_leases SET active=0 WHERE session_id=? AND claim_id=?').bind(session.id,claim).run();
+  // A late completion must never release a newer request's lease. Stamp the
+  // release time so the inactive cooldown measures from completion, not start.
+  await env.DB.prepare('UPDATE practice_live_leases SET active=0,created_at=? WHERE session_id=? AND claim_id=?').bind(Date.now(),session.id,claim).run();
  }
 }
 export async function acknowledgePractice(env,session,body,key,origin){
  idem(key);
- const replay=async()=>{const existing=await env.DB.prepare('SELECT step_id FROM practice_acknowledgements WHERE session_id=? AND idem_key=?').bind(session.id,key).first();if(!existing)return null;if(existing.step_id!==body.step_id)throw new AppError('idempotency_conflict','This key was used for another checkpoint.',409);return {progress:await sessionProgress(env,await getSession(env,session.id),origin),replayed:true};};
+ const observations=observationList(body.observations);
+ const requestHash=await digest(JSON.stringify([body.step_id,observations]));
+ const replay=async()=>{const existing=await env.DB.prepare('SELECT step_id,request_hash FROM practice_acknowledgements WHERE session_id=? AND idem_key=?').bind(session.id,key).first();if(!existing)return null;if(existing.step_id!==body.step_id)throw new AppError('idempotency_conflict','This key was used for another checkpoint.',409);if(existing.request_hash&&existing.request_hash!==requestHash)throw new AppError('idempotency_conflict','This key was used for different observations.',409);return {progress:await sessionProgress(env,await getSession(env,session.id),origin),replayed:true};};
  const previous=await replay();if(previous)return previous;
  const lesson=await getLesson(env,session.lesson_id,origin),step=lesson.steps[session.current_index];
  if(!step||step.id!==body.step_id)throw new AppError('step_not_current','Acknowledge only the current checkpoint.',409);
  const id=sid('ack'),now=Date.now();
  let batch;
  try{batch=await env.DB.batch([
-  env.DB.prepare("INSERT INTO practice_acknowledgements(id,session_id,step_id,idem_key,created_at) SELECT ?,?,?,?,? WHERE EXISTS(SELECT 1 FROM practice_sessions WHERE id=? AND current_index=?) AND NOT EXISTS(SELECT 1 FROM practice_submissions WHERE session_id=? AND status='processing')").bind(id,session.id,step.id,key,now,session.id,session.current_index,session.id),
+  env.DB.prepare("INSERT INTO practice_acknowledgements(id,session_id,step_id,observations,idem_key,created_at,request_hash) SELECT ?,?,?,?,?,?,? WHERE EXISTS(SELECT 1 FROM practice_sessions WHERE id=? AND current_index=?) AND NOT EXISTS(SELECT 1 FROM practice_submissions WHERE session_id=? AND status='processing') AND NOT EXISTS(SELECT 1 FROM practice_live_leases WHERE session_id=? AND active=1 AND expires_at>?)").bind(id,session.id,step.id,JSON.stringify(observations),key,now,requestHash,session.id,session.current_index,session.id,session.id,now),
   env.DB.prepare('UPDATE practice_sessions SET current_index=current_index+1,updated_at=? WHERE id=? AND current_index=? AND EXISTS(SELECT 1 FROM practice_acknowledgements WHERE id=?)').bind(now,session.id,session.current_index,id)
  ]);}catch{const raced=await replay();if(raced)return raced;throw new AppError('assessment_in_progress','Progress changed. Refresh before continuing.',409);}
  if(!changed(batch[0])){const raced=await replay();if(raced)return raced;throw new AppError('assessment_in_progress','Wait for the pending photo check before acknowledging this step.',409);}
@@ -140,7 +145,7 @@ export async function routeMaster(request,env,url){
   await env.DB.prepare('SELECT id,review_json FROM illustration_candidates LIMIT 1').first();
   // Compile a bounded read against every new runtime table, even when empty.
   // A process being alive must not conceal missing migrations or a database outage.
-  await env.DB.prepare('SELECT (SELECT paused FROM ai_budget WHERE id=1) AS paused,(SELECT id FROM ai_reservations LIMIT 1) AS reservation,(SELECT session_id FROM practice_live_leases LIMIT 1) AS lease,(SELECT id FROM learner_accounts LIMIT 1) AS account,(SELECT owner_id FROM ai_lessons LIMIT 1) AS lesson_owner,(SELECT total_steps FROM practice_sessions LIMIT 1) AS steps,(SELECT draft_lesson_id FROM catalogue_entries LIMIT 1) AS catalogue,(SELECT lesson_id FROM catalogue_revisions LIMIT 1) AS revision,(SELECT context FROM learner_reports LIMIT 1) AS report,(SELECT id FROM practice_questions LIMIT 1) AS question').first();
+  await env.DB.prepare('SELECT (SELECT paused FROM ai_budget WHERE id=1) AS paused,(SELECT id FROM ai_reservations LIMIT 1) AS reservation,(SELECT session_id FROM practice_live_leases LIMIT 1) AS lease,(SELECT id FROM learner_accounts LIMIT 1) AS account,(SELECT owner_id FROM ai_lessons LIMIT 1) AS lesson_owner,(SELECT total_steps FROM practice_sessions LIMIT 1) AS steps,(SELECT draft_lesson_id FROM catalogue_entries LIMIT 1) AS catalogue,(SELECT lesson_id FROM catalogue_revisions LIMIT 1) AS revision,(SELECT context FROM learner_reports LIMIT 1) AS report,(SELECT id FROM practice_questions LIMIT 1) AS question,(SELECT observations FROM practice_acknowledgements LIMIT 1) AS ack_observations,(SELECT request_hash FROM practice_acknowledgements LIMIT 1) AS ack_request_hash').first();
   if(socialExtractionEnabled(env))await env.DB.prepare('SELECT id,job_kind,metadata_json FROM source_extractions LIMIT 1').first();
   return json({status:'ok',api_version:'v1',runtime:'worker-d1',mock_mode:false,storage:'ready'});
  }

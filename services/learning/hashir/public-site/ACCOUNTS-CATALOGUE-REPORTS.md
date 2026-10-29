@@ -49,7 +49,9 @@ than one database request per managed lesson.
 
 Learners can report instructions, AI feedback, a broken source, or another issue
 from a saved practice. A report stores its reason, optional description, lesson,
-checkpoint, source attribution and deliberately selected feedback. Photos and
+checkpoint, source attribution, deliberately selected feedback and the learner's
+checked observations (up to 20 short checkpoint details, validated like
+acknowledgement observations and included in the report idempotency hash). Photos and
 session access are excluded. Camera feedback text is retained for the last 20
 frames per practice so its server-owned result can be reported; camera frames
 are not retained. A report copies its selected result so later feedback cannot

@@ -1,6 +1,7 @@
 "use client";
 import {useCallback,useEffect,useRef,useState} from 'react';
 import {LearningError,aiChecksAvailable,type Step} from '@/lib/learning';
+import {illustrationKey,writeIllustration} from '@/lib/illustration-cache';
 import {useIdentity} from './Identity';
 
 /** Reading a saved image never starts a billable generation request. */
@@ -10,11 +11,13 @@ export function StepIllustration({lessonID,step,token,disabled=false,onPrepare}:
  const lifetime=useRef<AbortController|null>(null),objectURL=useRef<string|null>(null),inFlight=useRef(false);
  const path='/v1/lessons/'+encodeURIComponent(lessonID)+'/steps/'+encodeURIComponent(step.id)+'/illustration';
  const load=useCallback(async(signal:AbortSignal)=>{
+  const key=illustrationKey(lessonID,step.id);
   try{const blob=await identity.request<Blob>(path+'/image',undefined,{token,image:true,signal});
    if(signal.aborted)return false;
+   writeIllustration(key,{status:'ready',blob});
    const url=URL.createObjectURL(blob);if(objectURL.current)URL.revokeObjectURL(objectURL.current);objectURL.current=url;setImage(url);setState('ready');return true;
-  }catch(e){if(signal.aborted)return false;if(e instanceof LearningError&&e.status===404){setState('missing');return false;}throw e;}
- },[identity.request,path,token]);
+  }catch(e){if(signal.aborted)return false;if(e instanceof LearningError&&e.status===404){writeIllustration(key,{status:'missing'});setState('missing');return false;}throw e;}
+ },[identity.request,path,token,lessonID,step.id]);
  useEffect(()=>{
   const controller=new AbortController();lifetime.current=controller;
   void load(controller.signal).catch(e=>{if(!controller.signal.aborted){setState('error');setError(e instanceof Error?e.message:'The saved image could not be loaded.');}});

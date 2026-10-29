@@ -1,11 +1,11 @@
 export type Step = {id:string;position:number;title?:string;instructions:string;expected_visual_result:string;assessment_criteria:string[];visual_limits:string[];photo_assessable?:boolean;source_reference?:{url?:string;quote?:string};coaching_origin?:string};
 export type Lesson = {id:string;title:string;category:string;materials:string[];difficulty?:string;steps:Step[];source_url?:string;source_attribution?:string;safety_notice?:string;practice_restrictions?:string[];content_origin?:string};
-export type Progress = {session_id:string;lesson_id:string;access_token?:string;account_owned?:boolean;status:string;current_step_id:string|null;completed_step_ids:string[];completed_checkpoints:{step_id:string;kind:string}[];total_steps:number;updated_at:string};
+export type Progress = {session_id:string;lesson_id:string;access_token?:string;account_owned?:boolean;status:string;current_step_id:string|null;completed_step_ids:string[];completed_checkpoints:{step_id:string;kind:string;observations?:string[]}[];total_steps:number;updated_at:string};
 export type Assessment = {result:'pass'|'retry'|'uncertain';feedback:string;corrections:string[];requested_evidence:string[];criteria:{criterion:string;status:string;evidence:string}[];feedback_id?:string;provider?:string;model?:string};
 export type Submission = {id:string;step_id:string;status:string;created_at:string;assessment:Assessment|null;image_available:boolean};
 export type Account = {authenticated:boolean;user:{id:string;email:string;display_name:string}|null;is_admin:boolean};
 export type Entry = {id:string;lesson_id:string;token?:string|null;title:string;category:string;total_steps:number;completed_steps:number;status:string;created_at:string;updated_at:string;account_owned?:boolean};
-export type Config = {examples:{id:string;title:string;category:string;steps:number}[];ai_available:boolean;source_processing?:{enabled:boolean};budget?:{remaining_usd:number;paused:boolean}};
+export type Config = {examples:{id:string;title:string;category:string;steps:number}[];ai_available:boolean;source_processing?:{enabled:boolean};budget?:{remaining_usd:number;paused:boolean;limit_usd?:number}};
 export class LearningError extends Error {code:string;status?:number;constructor(message:string,code='request_interrupted',status?:number){super(message);this.code=code;this.status=status;}}
 export function lessonHref(lesson:string,session?:string,screen='overview'){const params=new URLSearchParams({lesson_id:lesson});if(session)params.set('session_id',session);return '/lesson/runtime/'+(screen==='overview'?'':screen+'/')+'?'+params;}
 export function currentQuery(){return new URLSearchParams(typeof window==='undefined'?'':window.location.search);}

@@ -79,6 +79,12 @@ export async function createReport(env,user,session,body,key,origin){
  const details=shortText(body.details||'','report_details',2000,false),lesson=await getLesson(env,session.lesson_id,origin),step=lesson.steps.find(step=>step.id===body.step_id);
  if(!step)throw new AppError('invalid_step','Choose a checkpoint from this practice.');
  if(body.lesson_id!==undefined&&body.lesson_id!==lesson.id)throw new AppError('invalid_lesson_id','Report a checkpoint from this practice.');
+ const observations=observationList(body.observations);
+ const hash=await digest(JSON.stringify([step.id,body.reason,details,observations,body.submission_id||null,body.camera_feedback_id||null]));
+ const previous=await env.DB.prepare('SELECT id,request_hash FROM learner_reports WHERE session_id=? AND idem_key=?').bind(session.id,key).first();
+ if(previous){if(previous.request_hash!==hash)throw new AppError('idempotency_conflict','This report key was used for different details.',409);return {id:previous.id,status:'received',replayed:true};}
+ const checklist=Array.isArray(step.assessment_criteria)&&step.assessment_criteria.length?step.assessment_criteria:[step.expected_visual_result||step.instructions];
+ if(observations.length&&observations.some(item=>!checklist.includes(item)))throw new AppError('invalid_observations','Choose observations from this checkpoint checklist.');
  let submission=null;
  if(body.submission_id!==undefined&&body.submission_id!==null){
   if(typeof body.submission_id!=='string')throw new AppError('invalid_submission_id','Choose feedback from this practice.');
@@ -93,10 +99,7 @@ export async function createReport(env,user,session,body,key,origin){
   if(!row)throw new AppError('invalid_feedback_id','That camera feedback is no longer available. Report the checkpoint with a description instead.');
   camera_feedback={id:row.id,assessment:JSON.parse(row.assessment),created_at:timestamp(row.created_at)};
  }
- const hash=await digest(JSON.stringify([step.id,body.reason,details,submission?.id||null,camera_feedback?.id||null]));
- const previous=await env.DB.prepare('SELECT id,request_hash FROM learner_reports WHERE session_id=? AND idem_key=?').bind(session.id,key).first();
- if(previous){if(previous.request_hash!==hash)throw new AppError('idempotency_conflict','This report key was used for different details.',409);return {id:previous.id,status:'received',replayed:true};}
- const now=Date.now(),id=sid('report'),context={lesson_title:lesson.title,category:lesson.category,source_url:lesson.source_url,source_attribution:lesson.source_attribution||null,step:structuredClone(step),submission,camera_feedback};
+ const now=Date.now(),id=sid('report'),context={lesson_title:lesson.title,category:lesson.category,source_url:lesson.source_url,source_attribution:lesson.source_attribution||null,step:structuredClone(step),submission,camera_feedback,observations};
  // Store only the reported checkpoint and deliberately selected saved feedback.
  // Photos, other checkpoints and browser/session access are never included.
  const result=await env.DB.prepare("INSERT OR IGNORE INTO learner_reports(id,session_id,lesson_id,step_id,reporter_id,reason,details,context,idem_key,request_hash,created_at,updated_at) SELECT ?,?,?,?,?,?,?,?,?,?,?,? WHERE (SELECT COUNT(*) FROM learner_reports WHERE session_id=? AND created_at>?)<10 AND (? IS NULL OR (SELECT COUNT(*) FROM learner_reports WHERE reporter_id=? AND created_at>?)<30)").bind(id,session.id,lesson.id,step.id,user?.id||null,body.reason,details,JSON.stringify(context),key,hash,now,now,session.id,now-86400000,user?.id||null,user?.id||null,now-86400000).run();

@@ -71,6 +71,20 @@
       "when": 1793252594748,
       "tag": "0009_step_questions",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "6",
+      "when": 1793260000000,
+      "tag": "0010_ack_observations",
+      "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "6",
+      "when": 1793265000000,
+      "tag": "0011_ack_request_hash",
+      "breakpoints": true
     }
   ]
 }
