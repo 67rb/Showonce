@@ -140,13 +140,14 @@ export async function routeMaster(request,env,url){
   await env.DB.prepare('SELECT id,review_json FROM illustration_candidates LIMIT 1').first();
   // Compile a bounded read against every new runtime table, even when empty.
   // A process being alive must not conceal missing migrations or a database outage.
-  await env.DB.prepare('SELECT (SELECT paused FROM ai_budget WHERE id=1) AS paused,(SELECT id FROM ai_reservations LIMIT 1) AS reservation,(SELECT session_id FROM practice_live_leases LIMIT 1) AS lease,(SELECT id FROM learner_accounts LIMIT 1) AS account,(SELECT owner_id FROM ai_lessons LIMIT 1) AS lesson_owner,(SELECT total_steps FROM practice_sessions LIMIT 1) AS steps,(SELECT draft_lesson_id FROM catalogue_entries LIMIT 1) AS catalogue,(SELECT lesson_id FROM catalogue_revisions LIMIT 1) AS revision,(SELECT context FROM learner_reports LIMIT 1) AS report').first();
+  await env.DB.prepare('SELECT (SELECT paused FROM ai_budget WHERE id=1) AS paused,(SELECT id FROM ai_reservations LIMIT 1) AS reservation,(SELECT session_id FROM practice_live_leases LIMIT 1) AS lease,(SELECT id FROM learner_accounts LIMIT 1) AS account,(SELECT owner_id FROM ai_lessons LIMIT 1) AS lesson_owner,(SELECT total_steps FROM practice_sessions LIMIT 1) AS steps,(SELECT draft_lesson_id FROM catalogue_entries LIMIT 1) AS catalogue,(SELECT lesson_id FROM catalogue_revisions LIMIT 1) AS revision,(SELECT context FROM learner_reports LIMIT 1) AS report,(SELECT id FROM practice_questions LIMIT 1) AS question').first();
   if(socialExtractionEnabled(env))await env.DB.prepare('SELECT id,job_kind,metadata_json FROM source_extractions LIMIT 1').first();
   return json({status:'ok',api_version:'v1',runtime:'worker-d1',mock_mode:false,storage:'ready'});
  }
  if(!path.startsWith('/v1/'))return null;
  const user=await requestUser(request);
  if(method!=='GET'&&request.headers.get('origin')&&request.headers.get('origin')!==origin)throw new AppError('origin_denied','Open this action from the Show Once app.',403);
+ const questions=await routeQuestions(request,env,url,user);if(questions)return questions;
  if(path==='/v1/lessons'&&method==='GET')return json({lessons:await publishedLessons(env,origin)});
  if(path==='/v1/lessons'&&method==='POST')return lessonResponse(await ingestLesson(env,await bodyJSON(request),origin,user));
  let match=path.match(/^\/v1\/lessons\/([\w-]+)$/);if(match&&method==='GET'){await authorizeLesson(env,match[1],user,(request.headers.get('authorization')||'').replace(/^Bearer /,''),true);return json(await getLesson(env,match[1],origin));}

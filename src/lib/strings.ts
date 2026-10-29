@@ -233,15 +233,15 @@ export const strings = {
     },
     {
       heading: "What gets saved",
-      body: "Photos submitted through Check my work are saved privately with your practice. You can delete individual photos from practice history. Progress and feedback are also saved. Live camera preview is not recorded; its temporary stills clear when you stop, leave the step or background the page. Show Once does not save camera frames or uploaded pictures sent through the live-practice AI check, but retains the feedback privately.",
+      body: "Photos submitted through Check my work are saved privately with your practice. You can delete individual photos from practice history. Progress and feedback are also saved. Step questions and answers are saved privately with the practice; use Delete question and answer to remove their text. A minimal request record remains to prevent duplicate AI charges. Live camera preview is not recorded; its temporary stills clear when you stop, leave the step or background the page. Show Once does not save camera frames or uploaded pictures sent through the live-practice AI check, but retains the feedback privately.",
     },
     {
       heading: "Where AI runs",
-      body: "AI lessons, illustrations and checks use the Meta Model API in the cloud. Supported video imports can also use Supadata. Free examples, numbered-step creation and local camera practice do not call either provider. Provider credentials stay on the server and are never needed from you in the browser.",
+      body: "AI lessons, illustrations, step questions and checks use the Meta Model API in the cloud. Supported video imports can also use Supadata. Free examples, numbered-step creation and local camera practice do not call either provider. Provider credentials stay on the server and are never needed from you in the browser.",
     },
     {
       heading: "Your practice access",
-      body: "Signed-in practices are linked to your account so you can resume on another device. Browser-only practices keep their access in this browser. Signing out stops the camera and hides the account workspace; it does not delete saved practice. Use the history controls to delete saved photos.",
+      body: "Signed-in practices are linked to your account so you can resume on another device. Browser-only practices keep their access in this browser. Signing out stops the camera and hides the account workspace; it does not delete saved practice. Use the history controls to delete saved photos, or the question controls to delete saved questions and answers.",
     },
   ],
 
