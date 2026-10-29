@@ -46,8 +46,8 @@ function WordmarkAnchor({
 // component's own `dark:` variants on every route, so a non-landing route
 // simply omits them.
 const LIGHT_BODY =
-  "!bg-white/40 !border-black/10 backdrop-blur-xl backdrop-saturate-150";
-const LIGHT_LINKS = "[&_a]:!text-[#121212] [&_a]:hover:!text-white";
+  "!bg-white/65 border !border-white/60 backdrop-blur-xl backdrop-saturate-150";
+const LIGHT_LINKS = "[&_a]:!text-[#121212] [&_a]:hover:!text-[#121212]";
 const LIGHT_MENU = "!bg-white !text-[#121212]";
 
 export function PublicNavbar() {
@@ -58,9 +58,9 @@ export function PublicNavbar() {
   const close = () => setOpen(false);
 
   return (
-    <Navbar className="fixed inset-x-0 top-0 z-40">
+    <Navbar className="fixed inset-x-0 top-0 z-40 px-3 pt-3 sm:px-6 sm:pt-4">
       <NavBody className={LIGHT_BODY}>
-        <WordmarkAnchor className="text-xl" light />
+        <WordmarkAnchor className="text-xl leading-none" light />
         <NavItems items={navItems} className={LIGHT_LINKS} />
         <NavbarButton
           href="/create"
@@ -71,14 +71,14 @@ export function PublicNavbar() {
       </NavBody>
       <MobileNav className={LIGHT_BODY}>
         <MobileNavHeader>
-          <WordmarkAnchor className="text-base" onClick={close} light />
+          <WordmarkAnchor className="text-xl leading-none" onClick={close} light />
           <div ref={menuButton}><MobileNavToggle isOpen={open} onClick={toggle} /></div>
         </MobileNavHeader>
         <MobileNavMenu isOpen={open} onClose={close} className={LIGHT_MENU}>
           <NavItems
             items={navItems}
             onItemClick={close}
-            className={`relative flex flex-col items-start gap-3 ${LIGHT_LINKS}`}
+            className={`!relative !inset-auto !flex w-full flex-col !items-stretch !space-x-0 gap-2 [&_a]:rounded-xl [&_a]:px-4 [&_a]:py-3 [&_a]:hover:bg-black/5 ${LIGHT_LINKS}`}
           />
           <NavbarButton
             href="/create"

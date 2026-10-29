@@ -568,17 +568,17 @@ describe("v2.4 â€” glass navbar, wordmark link, hero CTA, tagline loop (Tasks Aâ
     html.slice(0, html.indexOf("</section>") + 10);
 
   it("the Navbar is an overlay via className (fixed top-0) and NavBody/MobileNav carry always-on light glass (v3)", () => {
-    expect(navSource).toContain('<Navbar className="fixed inset-x-0 top-0 z-40">');
+    expect(navSource).toContain('<Navbar className="fixed inset-x-0 top-0 z-40 px-3 pt-3 sm:px-6 sm:pt-4">');
     expect(navSource).toContain("LIGHT_BODY");
-    expect(navSource).toContain("!bg-white/40");
+    expect(navSource).toContain("!bg-white/65");
     expect(navSource).toContain("backdrop-blur-xl");
     expect(navSource).toContain("backdrop-saturate-150");
-    expect(navSource).toContain("!border-black/10");
+    expect(navSource).toContain("!border-white/60");
   });
 
   it("the navbar light treatment is unconditional on every route (no pathname condition), keeping the amber CTA and NO dark-glass branch (v3)", () => {
     expect(navSource).toContain('const LIGHT_BODY =');
-    expect(navSource).toContain('"!bg-white/40 !border-black/10 backdrop-blur-xl backdrop-saturate-150"');
+    expect(navSource).toContain('"!bg-white/65 border !border-white/60 backdrop-blur-xl backdrop-saturate-150"');
     // no pathname condition for the treatment
     expect(navSource).not.toContain("usePathname");
     expect(navSource).not.toContain("pathname ===");
@@ -595,7 +595,7 @@ describe("v2.4 â€” glass navbar, wordmark link, hero CTA, tagline loop (Tasks Aâ
     expect(navSource).toContain("pointer-events-auto");
     expect(navSource).toContain("cursor-pointer");
     // mobile wordmark closes the menu and carries the unconditional light flag (v3)
-    expect(navSource).toContain('<WordmarkAnchor className="text-base" onClick={close} light />');
+    expect(navSource).toContain('<WordmarkAnchor className="text-xl leading-none" onClick={close} light />');
   });
 
   it("the hero CTA is the Venom stage with a native cursor and no input/panel (v2.6)", async () => {
@@ -778,10 +778,10 @@ describe("v2.12 â€” cloud sky hero, venom CTA, finer particles, ink foreground (
     expect(navSource).not.toContain('const light = pathname === "/"');
     expect(navSource).not.toContain(": \"bg-neutral-950/45");
     // light glass + ink link/wordmark classes are unconditional
-    expect(navSource).toContain("!bg-white/40");
+    expect(navSource).toContain("!bg-white/65");
     expect(navSource).toContain("text-[#121212]");
     expect(navSource).toContain("text-[#D97706]");
     // WordmarkAnchor is passed light unconditionally
-    expect(navSource).toContain('<WordmarkAnchor className="text-xl" light />');
+    expect(navSource).toContain('<WordmarkAnchor className="text-xl leading-none" light />');
   });
 });

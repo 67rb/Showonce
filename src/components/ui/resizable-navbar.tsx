@@ -157,9 +157,9 @@ export const MobileNav = ({ children, className, visible }: MobileNavProps) => {
           ? "0 0 24px rgba(34, 42, 53, 0.06), 0 1px 1px rgba(0, 0, 0, 0.05), 0 0 0 1px rgba(34, 42, 53, 0.04), 0 0 4px rgba(34, 42, 53, 0.08), 0 16px 68px rgba(47, 48, 55, 0.05), 0 1px 0 rgba(255, 255, 255, 0.1) inset"
           : "none",
         width: visible ? "90%" : "100%",
-        paddingRight: visible ? "12px" : "0px",
-        paddingLeft: visible ? "12px" : "0px",
-        borderRadius: visible ? "4px" : "2rem",
+        paddingRight: "16px",
+        paddingLeft: "16px",
+        borderRadius: "24px",
         y: visible ? 20 : 0,
       }}
       transition={{
@@ -169,7 +169,7 @@ export const MobileNav = ({ children, className, visible }: MobileNavProps) => {
         mass: 0.9,
       }}
       className={cn(
-        "relative z-50 mx-auto flex w-full max-w-[calc(100vw-2rem)] flex-col items-center justify-between bg-transparent px-0 py-2 lg:hidden",
+        "relative z-50 mx-auto flex w-full max-w-7xl flex-col items-center justify-between bg-transparent px-4 py-3 lg:hidden",
         visible && "bg-white/80 dark:bg-neutral-950/80",
         className,
       )}
@@ -186,7 +186,7 @@ export const MobileNavHeader = ({
   return (
     <div
       className={cn(
-        "flex w-full flex-row items-center justify-between",
+        "flex min-h-11 w-full flex-row items-center justify-between gap-4",
         className,
       )}
     >
@@ -209,7 +209,7 @@ export const MobileNavMenu = ({
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           className={cn(
-            "absolute inset-x-0 top-16 z-50 flex w-full flex-col items-start justify-start gap-4 rounded-lg bg-white px-4 py-8 shadow-[0_0_24px_rgba(34,_42,_53,_0.06),_0_1px_1px_rgba(0,_0,_0,_0.05),_0_0_0_1px_rgba(34,_42,_53,_0.04),_0_0_4px_rgba(34,_42,_53,_0.08),_0_16px_68px_rgba(47,_48,_55,_0.05),_0_1px_0_rgba(255,_255,_255,_0.1)_inset] dark:bg-neutral-950",
+            "absolute inset-x-0 top-[calc(100%+12px)] z-50 flex w-full flex-col items-start justify-start gap-4 rounded-3xl border border-black/5 bg-white px-4 py-5 shadow-[0_0_24px_rgba(34,_42,_53,_0.06),_0_1px_1px_rgba(0,_0,_0,_0.05),_0_0_0_1px_rgba(34,_42,_53,_0.04),_0_0_4px_rgba(34,_42,_53,_0.08),_0_16px_68px_rgba(47,_48,_55,_0.05),_0_1px_0_rgba(255,_255,_255,_0.1)_inset] dark:bg-neutral-950",
             className,
           )}
         >
@@ -227,8 +227,8 @@ export const MobileNavToggle = ({
   isOpen: boolean;
   onClick: () => void;
 }) => {
-  return <button type="button" aria-label={isOpen?"Close menu":"Open menu"} aria-expanded={isOpen} aria-controls="mobile-navigation" onClick={onClick} className="relative inline-flex items-center justify-center p-0 leading-none after:absolute after:-inset-2">
-    {isOpen?<IconX aria-hidden className="text-black dark:text-white"/>:<IconMenu2 aria-hidden className="text-black dark:text-white"/>}
+  return <button type="button" aria-label={isOpen?"Close menu":"Open menu"} aria-expanded={isOpen} aria-controls="mobile-navigation" onClick={onClick} className="relative inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-black/10 bg-white/75 text-[#121212] transition-colors hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-black">
+    {isOpen?<IconX aria-hidden size={22} stroke={1.8} className="text-[#121212]"/>:<IconMenu2 aria-hidden size={22} stroke={1.8} className="text-[#121212]"/>}
   </button>;
 };
 
