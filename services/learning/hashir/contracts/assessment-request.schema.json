@@ -1,0 +1,126 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://showonce.invalid/contracts/hashir.ai.v1-proposed/assessment-request",
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "const": "hashir.ai.v1-proposed"
+    },
+    "submission_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 2000,
+      "pattern": "\\S"
+    },
+    "lesson_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 2000,
+      "pattern": "\\S"
+    },
+    "step": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000,
+          "pattern": "\\S"
+        },
+        "position": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100
+        },
+        "instructions": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000,
+          "pattern": "\\S"
+        },
+        "expected_visual_result": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000,
+          "pattern": "\\S"
+        },
+        "assessment_criteria": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 2000,
+            "pattern": "\\S"
+          },
+          "maxItems": 30,
+          "minItems": 1
+        },
+        "visual_limits": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 2000,
+            "pattern": "\\S"
+          },
+          "maxItems": 30,
+          "minItems": 1
+        },
+        "source_reference": {
+          "type": "object",
+          "properties": {
+            "url": {
+              "const": "https://origami.me/cup/"
+            },
+            "section": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 2000,
+              "pattern": "\\S"
+            },
+            "text_sha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            }
+          },
+          "required": [
+            "url",
+            "section",
+            "text_sha256"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "id",
+        "position",
+        "instructions",
+        "expected_visual_result",
+        "assessment_criteria",
+        "visual_limits"
+      ],
+      "additionalProperties": false
+    },
+    "mime_type": {
+      "enum": [
+        "image/png",
+        "image/jpeg",
+        "image/webp"
+      ]
+    },
+    "image_base64": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 6990508
+    }
+  },
+  "required": [
+    "schema_version",
+    "submission_id",
+    "lesson_id",
+    "step",
+    "mime_type",
+    "image_base64"
+  ],
+  "additionalProperties": false
+}

@@ -1,0 +1,138 @@
+{
+  "title": "Fold a paper cup",
+  "category": "origami",
+  "materials": [
+    "Square paper, white reverse"
+  ],
+  "difficulty": "Beginner (source: Easy / Level 1)",
+  "practice_restrictions": [
+    "Paper practice only. Photos cannot verify liquid or food suitability.",
+    "Source diagrams are not included. Consult the linked tutorial when a fold is unclear."
+  ],
+  "id": "lesson_cup_dcff9d7098252f24",
+  "schema_version": "hashir.ai.v1-proposed",
+  "source_url": "https://origami.me/cup/",
+  "steps": [
+    {
+      "id": "cup_01",
+      "position": 1,
+      "instructions": "White side up: fold the diamond bottom to top.",
+      "expected_visual_result": "Triangle, tips aligned.",
+      "assessment_criteria": [
+        "Triangle outline; top corners meet"
+      ],
+      "visual_limits": [
+        "A photograph cannot establish paper strength or precise measurements."
+      ],
+      "source_reference": {
+        "url": "https://origami.me/cup/",
+        "section": "Step 1",
+        "text_sha256": "8d1555c947f20f06fe964787686ecd3bacce5acd52b94914d6c1ccbbaebceb09"
+      }
+    },
+    {
+      "id": "cup_02",
+      "position": 2,
+      "instructions": "Bring the upper left edge to the base; mark only the right endpoint.",
+      "expected_visual_result": "Small reference pinch.",
+      "assessment_criteria": [
+        "Right-edge pinch visible"
+      ],
+      "visual_limits": [
+        "Show the right edge close up; a full-sheet view may hide the pinch."
+      ],
+      "source_reference": {
+        "url": "https://origami.me/cup/",
+        "section": "Step 2",
+        "text_sha256": "46d8ced07203975c92c891f113af9409cf78a46aa53aad7c586055b695c80fcb"
+      }
+    },
+    {
+      "id": "cup_03",
+      "position": 3,
+      "instructions": "Fold the left tip to that mark.",
+      "expected_visual_result": "Left flap reaches mark.",
+      "assessment_criteria": [
+        "Left tip meets reference"
+      ],
+      "visual_limits": [
+        "The reference mark must remain visible."
+      ],
+      "source_reference": {
+        "url": "https://origami.me/cup/",
+        "section": "Step 3",
+        "text_sha256": "d29b6f051a13c2972d52364b3dc0fb37e86765faf0491130a2ceebddafeb91ba"
+      }
+    },
+    {
+      "id": "cup_04",
+      "position": 4,
+      "instructions": "Fold the right tip across to the left tip.",
+      "expected_visual_result": "Overlapping side flaps.",
+      "assessment_criteria": [
+        "Side tips meet"
+      ],
+      "visual_limits": [
+        "Overlapping layers can hide alignment."
+      ],
+      "source_reference": {
+        "url": "https://origami.me/cup/",
+        "section": "Step 4",
+        "text_sha256": "d38c8abea518af935dd62328c05efc86e224fc3fb29b94044673b645e391a80d"
+      }
+    },
+    {
+      "id": "cup_05",
+      "position": 5,
+      "instructions": "Lower the front top flap to the rim.",
+      "expected_visual_result": "Front flap below rim.",
+      "assessment_criteria": [
+        "Front flap meets rim"
+      ],
+      "visual_limits": [
+        "Show the front face without hands covering the rim."
+      ],
+      "source_reference": {
+        "url": "https://origami.me/cup/",
+        "section": "Step 5",
+        "text_sha256": "718e958ae5da9fa80cfdbe8147cc742743fff4501a368f3931cddbc875baddf3"
+      }
+    },
+    {
+      "id": "cup_06",
+      "position": 6,
+      "instructions": "Fold the remaining top triangle behind the rim.",
+      "expected_visual_result": "Rear flap behind rim.",
+      "assessment_criteria": [
+        "Rear flap meets rim"
+      ],
+      "visual_limits": [
+        "Show the rear face; the front view cannot verify this fold."
+      ],
+      "source_reference": {
+        "url": "https://origami.me/cup/",
+        "section": "Step 6",
+        "text_sha256": "00abd480fbc8ec4778a5f8785fc770b562f13d5fb71291a2e63eb6db26d8b0ec"
+      }
+    },
+    {
+      "id": "cup_07",
+      "position": 7,
+      "instructions": "Spread the opening and flatten the base.",
+      "expected_visual_result": "Open cup, flat base.",
+      "assessment_criteria": [
+        "Opening and base visible"
+      ],
+      "visual_limits": [
+        "Show both the opening and the base using additional views if needed."
+      ],
+      "source_reference": {
+        "url": "https://origami.me/cup/",
+        "section": "Step 7",
+        "text_sha256": "47654bf1e6c1fad0782f2fea0afd22a2eac3faef161100571f4d1d0d3c872515"
+      }
+    }
+  ],
+  "content_origin": "authored_fixture",
+  "safety_notice": "Visual feedback cannot certify physical safety or hidden properties."
+}

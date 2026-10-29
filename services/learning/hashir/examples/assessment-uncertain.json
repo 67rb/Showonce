@@ -1,0 +1,32 @@
+{
+  "schema_version": "hashir.ai.v1-proposed",
+  "submission_id": "sub_example_001",
+  "lesson_id": "lesson_cup_dcff9d7098252f24",
+  "step_id": "cup_01",
+  "result": "uncertain",
+  "observations": [
+    "Fixture annotation: Blur prevents confirming tip alignment."
+  ],
+  "feedback": "Mock assessment: Blur prevents confirming tip alignment.",
+  "corrections": [],
+  "requested_evidence": [
+    "Show the whole work clearly from above; use the requested view."
+  ],
+  "criteria": [
+    {
+      "criterion": "Triangle outline; top corners meet",
+      "status": "not_visible",
+      "evidence": "This view cannot establish this criterion."
+    }
+  ],
+  "usage": {
+    "estimated_cost_usd": 0,
+    "input_tokens": null,
+    "output_tokens": null
+  },
+  "provider": "mock",
+  "model": "annotated-fixtures-v1",
+  "is_mock": true,
+  "latency_ms": 1.09,
+  "safety_notice": "Visual feedback cannot certify physical safety or hidden properties."
+}

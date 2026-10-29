@@ -1,0 +1,97 @@
+name: Release checks
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+  workflow_dispatch:
+    inputs:
+      public_smoke:
+        description: Check this build against the currently published Practice Studio (free requests only)
+        type: boolean
+        default: false
+permissions:
+  contents: read
+concurrency:
+  group: release-checks-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  frontend:
+    name: Frontend tests, build and smoke
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    env:
+      NEXT_TELEMETRY_DISABLED: '1'
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: actions/setup-node@v7.1.0
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - run: npm run check:secrets
+      - run: npm test
+      - run: npm run build
+      - run: npm run smoke
+      - name: Optional public deployment smoke
+        if: github.event_name == 'workflow_dispatch' && inputs.public_smoke
+        working-directory: services/learning/hashir/public-site
+        run: node scripts/production-smoke.mjs https://showonce-practice-studio.jberry1972.chatgpt.site
+      - uses: actions/upload-artifact@v7.0.2
+        with:
+          name: showonce-combined-${{ github.sha }}
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 7
+          path: |
+            services/learning/hashir/public-site/dist/server/index.js
+            services/learning/hashir/public-site/dist/.openai/hosting.json
+            services/learning/hashir/public-site/drizzle/
+  learning:
+    name: Learning service tests, build and smoke
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: services/learning
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: actions/setup-node@v7.1.0
+        with:
+          node-version: '24'
+      - uses: actions/setup-python@v7.1.0
+        with:
+          python-version: '3.13'
+          cache: pip
+          cache-dependency-path: services/learning/hashir/requirements.txt
+      - run: python -m pip install -r hashir/requirements.txt
+      - name: Original Master compatibility tests
+        run: python -m unittest discover -s backend/tests -v
+        env:
+          PYTHONPATH: backend:hashir
+      - name: Hashir AI and budget tests (provider fixtures)
+        run: python -m unittest discover -s hashir/tests -v
+        env:
+          PYTHONPATH: backend:hashir
+      - name: Build and validate the Worker
+        working-directory: services/learning/hashir/public-site
+        run: |
+          node scripts/assemble.mjs
+          bash scripts/build.sh
+          node scripts/validate-artifact.mjs
+      - name: Worker and browser state regression tests
+        working-directory: services/learning/hashir/public-site
+        run: node --test scripts/*test.mjs
+      - name: Smoke the built Worker over HTTP
+        working-directory: services/learning/hashir/public-site
+        run: node scripts/deployment-smoke.mjs
+      - uses: actions/upload-artifact@v7.0.2
+        with:
+          name: learning-worker-${{ github.sha }}
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 7
+          path: |
+            services/learning/hashir/public-site/dist/server/index.js
+            services/learning/hashir/public-site/dist/.openai/hosting.json
+            services/learning/hashir/public-site/drizzle/

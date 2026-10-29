@@ -1,0 +1,423 @@
+[
+  {
+    "title": "Fold a paper cup",
+    "category": "origami",
+    "materials": [
+      "Square paper, white reverse"
+    ],
+    "difficulty": "Beginner (source: Easy / Level 1)",
+    "practice_restrictions": [
+      "Paper practice only. Photos cannot verify liquid or food suitability.",
+      "Source diagrams are not included. Consult the linked tutorial when a fold is unclear."
+    ],
+    "id": "lesson_cup_dcff9d7098252f24",
+    "schema_version": "hashir.ai.v1-proposed",
+    "source_url": "https://origami.me/cup/",
+    "steps": [
+      {
+        "id": "cup_01",
+        "position": 1,
+        "instructions": "White side up: fold the diamond bottom to top.",
+        "expected_visual_result": "Triangle, tips aligned.",
+        "assessment_criteria": [
+          "Triangle outline; top corners meet"
+        ],
+        "visual_limits": [
+          "A photograph cannot establish paper strength or precise measurements."
+        ],
+        "source_reference": {
+          "url": "https://origami.me/cup/",
+          "section": "Step 1",
+          "text_sha256": "8d1555c947f20f06fe964787686ecd3bacce5acd52b94914d6c1ccbbaebceb09"
+        }
+      },
+      {
+        "id": "cup_02",
+        "position": 2,
+        "instructions": "Bring the upper left edge to the base; mark only the right endpoint.",
+        "expected_visual_result": "Small reference pinch.",
+        "assessment_criteria": [
+          "Right-edge pinch visible"
+        ],
+        "visual_limits": [
+          "Show the right edge close up; a full-sheet view may hide the pinch."
+        ],
+        "source_reference": {
+          "url": "https://origami.me/cup/",
+          "section": "Step 2",
+          "text_sha256": "46d8ced07203975c92c891f113af9409cf78a46aa53aad7c586055b695c80fcb"
+        }
+      },
+      {
+        "id": "cup_03",
+        "position": 3,
+        "instructions": "Fold the left tip to that mark.",
+        "expected_visual_result": "Left flap reaches mark.",
+        "assessment_criteria": [
+          "Left tip meets reference"
+        ],
+        "visual_limits": [
+          "The reference mark must remain visible."
+        ],
+        "source_reference": {
+          "url": "https://origami.me/cup/",
+          "section": "Step 3",
+          "text_sha256": "d29b6f051a13c2972d52364b3dc0fb37e86765faf0491130a2ceebddafeb91ba"
+        }
+      },
+      {
+        "id": "cup_04",
+        "position": 4,
+        "instructions": "Fold the right tip across to the left tip.",
+        "expected_visual_result": "Overlapping side flaps.",
+        "assessment_criteria": [
+          "Side tips meet"
+        ],
+        "visual_limits": [
+          "Overlapping layers can hide alignment."
+        ],
+        "source_reference": {
+          "url": "https://origami.me/cup/",
+          "section": "Step 4",
+          "text_sha256": "d38c8abea518af935dd62328c05efc86e224fc3fb29b94044673b645e391a80d"
+        }
+      },
+      {
+        "id": "cup_05",
+        "position": 5,
+        "instructions": "Lower the front top flap to the rim.",
+        "expected_visual_result": "Front flap below rim.",
+        "assessment_criteria": [
+          "Front flap meets rim"
+        ],
+        "visual_limits": [
+          "Show the front face without hands covering the rim."
+        ],
+        "source_reference": {
+          "url": "https://origami.me/cup/",
+          "section": "Step 5",
+          "text_sha256": "718e958ae5da9fa80cfdbe8147cc742743fff4501a368f3931cddbc875baddf3"
+        }
+      },
+      {
+        "id": "cup_06",
+        "position": 6,
+        "instructions": "Fold the remaining top triangle behind the rim.",
+        "expected_visual_result": "Rear flap behind rim.",
+        "assessment_criteria": [
+          "Rear flap meets rim"
+        ],
+        "visual_limits": [
+          "Show the rear face; the front view cannot verify this fold."
+        ],
+        "source_reference": {
+          "url": "https://origami.me/cup/",
+          "section": "Step 6",
+          "text_sha256": "00abd480fbc8ec4778a5f8785fc770b562f13d5fb71291a2e63eb6db26d8b0ec"
+        }
+      },
+      {
+        "id": "cup_07",
+        "position": 7,
+        "instructions": "Spread the opening and flatten the base.",
+        "expected_visual_result": "Open cup, flat base.",
+        "assessment_criteria": [
+          "Opening and base visible"
+        ],
+        "visual_limits": [
+          "Show both the opening and the base using additional views if needed."
+        ],
+        "source_reference": {
+          "url": "https://origami.me/cup/",
+          "section": "Step 7",
+          "text_sha256": "47654bf1e6c1fad0782f2fea0afd22a2eac3faef161100571f4d1d0d3c872515"
+        }
+      }
+    ],
+    "content_origin": "authored_fixture",
+    "safety_notice": "Visual feedback cannot certify physical safety or hidden properties."
+  },
+  {
+    "schema_version": "hashir.ai.v2-proposed",
+    "id": "example_draw-shading",
+    "title": "Sketch a shaded sphere",
+    "category": "drawing",
+    "difficulty": "Beginner",
+    "materials": [
+      "Paper",
+      "Pencil"
+    ],
+    "source_url": "/examples/draw-shading",
+    "content_origin": "authored_example",
+    "safety_notice": "Visual feedback cannot certify physical safety or hidden properties.",
+    "practice_restrictions": [
+      "Author-written practice example. Consult an appropriate teacher for details beyond these introductory steps."
+    ],
+    "source_text": "Lightly sketch a circle on the paper.\nDraw a small arrow above and to the left of the circle to mark the light direction.\nShade the lower-right part of the circle gradually, leaving the upper-left area lighter.\nDraw a soft oval shadow to the lower right of the circle, outside its outline.",
+    "steps": [
+      {
+        "id": "draw-shading_1",
+        "position": 1,
+        "title": "Draw a circle",
+        "instructions": "Lightly sketch a circle on the paper.",
+        "expected_visual_result": "A single circular outline is visible.",
+        "assessment_criteria": [
+          "One clear circular outline is visible"
+        ],
+        "photo_assessable": true,
+        "visual_limits": [
+          "A photo cannot establish tension, comfort, function or other hidden qualities."
+        ],
+        "source_reference": {
+          "url": "/examples/draw-shading",
+          "section": "Step 1",
+          "quote": "Lightly sketch a circle on the paper."
+        }
+      },
+      {
+        "id": "draw-shading_2",
+        "position": 2,
+        "title": "Choose the light direction",
+        "instructions": "Draw a small arrow above and to the left of the circle to mark the light direction.",
+        "expected_visual_result": "An arrow marks light arriving from the upper left.",
+        "assessment_criteria": [
+          "A light-direction arrow points from the upper left toward the circle"
+        ],
+        "photo_assessable": true,
+        "visual_limits": [
+          "A photo cannot establish tension, comfort, function or other hidden qualities."
+        ],
+        "source_reference": {
+          "url": "/examples/draw-shading",
+          "section": "Step 2",
+          "quote": "Draw a small arrow above and to the left of the circle to mark the light direction."
+        }
+      },
+      {
+        "id": "draw-shading_3",
+        "position": 3,
+        "title": "Build the shadow",
+        "instructions": "Shade the lower-right part of the circle gradually, leaving the upper-left area lighter.",
+        "expected_visual_result": "The lower right is darker than the upper left.",
+        "assessment_criteria": [
+          "Lower-right shading is darker than upper-left shading"
+        ],
+        "photo_assessable": true,
+        "visual_limits": [
+          "A photo cannot establish tension, comfort, function or other hidden qualities."
+        ],
+        "source_reference": {
+          "url": "/examples/draw-shading",
+          "section": "Step 3",
+          "quote": "Shade the lower-right part of the circle gradually, leaving the upper-left area lighter."
+        }
+      },
+      {
+        "id": "draw-shading_4",
+        "position": 4,
+        "title": "Add a cast shadow",
+        "instructions": "Draw a soft oval shadow to the lower right of the circle, outside its outline.",
+        "expected_visual_result": "An oval cast shadow sits outside the circle on the lower right.",
+        "assessment_criteria": [
+          "An oval shadow appears outside the lower-right edge"
+        ],
+        "photo_assessable": true,
+        "visual_limits": [
+          "A photo cannot establish tension, comfort, function or other hidden qualities."
+        ],
+        "source_reference": {
+          "url": "/examples/draw-shading",
+          "section": "Step 4",
+          "quote": "Draw a soft oval shadow to the lower right of the circle, outside its outline."
+        }
+      }
+    ]
+  },
+  {
+    "schema_version": "hashir.ai.v2-proposed",
+    "id": "example_crochet-chain",
+    "title": "Practice a crochet chain",
+    "category": "crochet",
+    "difficulty": "Beginner",
+    "materials": [
+      "Yarn",
+      "Crochet hook"
+    ],
+    "source_url": "/examples/crochet-chain",
+    "content_origin": "authored_example",
+    "safety_notice": "Visual feedback cannot certify physical safety or hidden properties.",
+    "practice_restrictions": [
+      "Author-written practice example. Consult an appropriate teacher for details beyond these introductory steps."
+    ],
+    "source_text": "Make a loop in the yarn. Pull a small loop of the working yarn through it and place this slip knot on the hook.\nBring the working yarn over the hook from back to front.\nDraw the hooked yarn through the existing loop to make a chain stitch.\nRepeat yarn over and draw through until you have a short chain. Keep the loops loose enough for the hook to move.",
+    "steps": [
+      {
+        "id": "crochet-chain_1",
+        "position": 1,
+        "title": "Make a slip knot",
+        "instructions": "Make a loop in the yarn. Pull a small loop of the working yarn through it and place this slip knot on the hook.",
+        "expected_visual_result": "One adjustable yarn loop rests on the hook.",
+        "assessment_criteria": [
+          "One yarn loop is visible around the hook"
+        ],
+        "photo_assessable": true,
+        "visual_limits": [
+          "A photo cannot establish tension, comfort, function or other hidden qualities."
+        ],
+        "source_reference": {
+          "url": "/examples/crochet-chain",
+          "section": "Step 1",
+          "quote": "Make a loop in the yarn. Pull a small loop of the working yarn through it and place this slip knot on the hook."
+        }
+      },
+      {
+        "id": "crochet-chain_2",
+        "position": 2,
+        "title": "Yarn over",
+        "instructions": "Bring the working yarn over the hook from back to front.",
+        "expected_visual_result": "Working yarn crosses the hook, ready to draw through the loop.",
+        "assessment_criteria": [
+          "Working yarn is visibly caught by the hook"
+        ],
+        "photo_assessable": true,
+        "visual_limits": [
+          "A photo cannot establish tension, comfort, function or other hidden qualities."
+        ],
+        "source_reference": {
+          "url": "/examples/crochet-chain",
+          "section": "Step 2",
+          "quote": "Bring the working yarn over the hook from back to front."
+        }
+      },
+      {
+        "id": "crochet-chain_3",
+        "position": 3,
+        "title": "Draw through",
+        "instructions": "Draw the hooked yarn through the existing loop to make a chain stitch.",
+        "expected_visual_result": "A new loop rests on the hook with a chain link beneath it.",
+        "assessment_criteria": [
+          "One loop is on the hook",
+          "At least one chain link is visible below the hook"
+        ],
+        "photo_assessable": true,
+        "visual_limits": [
+          "A photo cannot establish tension, comfort, function or other hidden qualities."
+        ],
+        "source_reference": {
+          "url": "/examples/crochet-chain",
+          "section": "Step 3",
+          "quote": "Draw the hooked yarn through the existing loop to make a chain stitch."
+        }
+      },
+      {
+        "id": "crochet-chain_4",
+        "position": 4,
+        "title": "Repeat the chain",
+        "instructions": "Repeat yarn over and draw through until you have a short chain. Keep the loops loose enough for the hook to move.",
+        "expected_visual_result": "A short connected chain of stitches is visible.",
+        "assessment_criteria": [
+          "Several connected chain links are visible"
+        ],
+        "photo_assessable": true,
+        "visual_limits": [
+          "A photo cannot establish tension, comfort, function or other hidden qualities."
+        ],
+        "source_reference": {
+          "url": "/examples/crochet-chain",
+          "section": "Step 4",
+          "quote": "Repeat yarn over and draw through until you have a short chain. Keep the loops loose enough for the hook to move."
+        }
+      }
+    ]
+  },
+  {
+    "schema_version": "hashir.ai.v2-proposed",
+    "id": "example_guitar-rhythm",
+    "title": "Practice a steady guitar rhythm",
+    "category": "music",
+    "difficulty": "Beginner",
+    "materials": [
+      "Guitar",
+      "Metronome"
+    ],
+    "source_url": "/examples/guitar-rhythm",
+    "content_origin": "authored_example",
+    "safety_notice": "Visual feedback cannot certify physical safety or hidden properties.",
+    "practice_restrictions": [
+      "Author-written practice example. Consult an appropriate teacher for details beyond these introductory steps."
+    ],
+    "source_text": "Sit comfortably with the guitar supported and your strumming hand relaxed.\nSet a metronome to a comfortable slow tempo. Count one, two, three, four along with the clicks.\nStrum down once on each click while continuing to count one, two, three, four.\nStop and listen to a short recording of your practice. Notice where the strums drift from the beat and practice that part again.",
+    "steps": [
+      {
+        "id": "guitar-rhythm_1",
+        "position": 1,
+        "title": "Get comfortable",
+        "instructions": "Sit comfortably with the guitar supported and your strumming hand relaxed.",
+        "expected_visual_result": "A comfortable supported practice position.",
+        "assessment_criteria": [
+          "The guitar is supported"
+        ],
+        "photo_assessable": false,
+        "visual_limits": [
+          "This step needs listening or personal practice; a still photo cannot verify it."
+        ],
+        "source_reference": {
+          "url": "/examples/guitar-rhythm",
+          "section": "Step 1",
+          "quote": "Sit comfortably with the guitar supported and your strumming hand relaxed."
+        }
+      },
+      {
+        "id": "guitar-rhythm_2",
+        "position": 2,
+        "title": "Count a steady beat",
+        "instructions": "Set a metronome to a comfortable slow tempo. Count one, two, three, four along with the clicks.",
+        "expected_visual_result": "A steady count stays aligned with the clicks.",
+        "assessment_criteria": [],
+        "photo_assessable": false,
+        "visual_limits": [
+          "This step needs listening or personal practice; a still photo cannot verify it."
+        ],
+        "source_reference": {
+          "url": "/examples/guitar-rhythm",
+          "section": "Step 2",
+          "quote": "Set a metronome to a comfortable slow tempo. Count one, two, three, four along with the clicks."
+        }
+      },
+      {
+        "id": "guitar-rhythm_3",
+        "position": 3,
+        "title": "Strum with the beat",
+        "instructions": "Strum down once on each click while continuing to count one, two, three, four.",
+        "expected_visual_result": "Strums remain aligned with the metronome beat.",
+        "assessment_criteria": [],
+        "photo_assessable": false,
+        "visual_limits": [
+          "This step needs listening or personal practice; a still photo cannot verify it."
+        ],
+        "source_reference": {
+          "url": "/examples/guitar-rhythm",
+          "section": "Step 3",
+          "quote": "Strum down once on each click while continuing to count one, two, three, four."
+        }
+      },
+      {
+        "id": "guitar-rhythm_4",
+        "position": 4,
+        "title": "Listen and reflect",
+        "instructions": "Stop and listen to a short recording of your practice. Notice where the strums drift from the beat and practice that part again.",
+        "expected_visual_result": "The learner identifies timing that needs practice.",
+        "assessment_criteria": [],
+        "photo_assessable": false,
+        "visual_limits": [
+          "This step needs listening or personal practice; a still photo cannot verify it."
+        ],
+        "source_reference": {
+          "url": "/examples/guitar-rhythm",
+          "section": "Step 4",
+          "quote": "Stop and listen to a short recording of your practice. Notice where the strums drift from the beat and practice that part again."
+        }
+      }
+    ]
+  }
+]

@@ -1,0 +1,39 @@
+{
+  "schema_version": "hashir.ai.v1-proposed",
+  "type": "assessment",
+  "session_id": "session_example",
+  "step_id": "cup_01",
+  "frame_id": "frame_001",
+  "captured_at": "2026-10-27T15:45:47.997403+00:00",
+  "latency_ms": 1.05,
+  "assessment": {
+    "schema_version": "hashir.ai.v1-proposed",
+    "submission_id": "frame_frame_001",
+    "lesson_id": "lesson_cup_dcff9d7098252f24",
+    "step_id": "cup_01",
+    "result": "pass",
+    "observations": [
+      "Fixture annotation: Synthetic reference diagram: Triangle, tips aligned."
+    ],
+    "feedback": "Mock assessment: Synthetic reference diagram: Triangle, tips aligned.",
+    "corrections": [],
+    "requested_evidence": [],
+    "criteria": [
+      {
+        "criterion": "Triangle outline; top corners meet",
+        "status": "supported",
+        "evidence": "Fixture annotation: Synthetic reference diagram: Triangle, tips aligned."
+      }
+    ],
+    "usage": {
+      "estimated_cost_usd": 0,
+      "input_tokens": null,
+      "output_tokens": null
+    },
+    "provider": "mock",
+    "model": "annotated-fixtures-v1",
+    "is_mock": true,
+    "latency_ms": 1.05,
+    "safety_notice": "Visual feedback cannot certify physical safety or hidden properties."
+  }
+}

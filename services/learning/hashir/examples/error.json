@@ -1,0 +1,7 @@
+{
+  "error": {
+    "code": "unsupported_link",
+    "message": "Only https://origami.me/cup/ is supported by this version.",
+    "retryable": false
+  }
+}

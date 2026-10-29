@@ -1,0 +1,126 @@
+{
+  "title": "Fold a paper cup",
+  "category": "origami",
+  "materials": [
+    "Square paper, white reverse"
+  ],
+  "difficulty": "Beginner (source: Easy / Level 1)",
+  "practice_restrictions": [
+    "Paper practice only. Photos cannot verify liquid or food suitability.",
+    "Source diagrams are not included. Consult the linked tutorial when a fold is unclear."
+  ],
+  "steps": [
+    {
+      "id": "cup_01",
+      "position": 1,
+      "instructions": "White side up: fold the diamond bottom to top.",
+      "expected_visual_result": "Triangle, tips aligned.",
+      "assessment_criteria": [
+        "Triangle outline; top corners meet"
+      ],
+      "visual_limits": [
+        "A photograph cannot establish paper strength or precise measurements."
+      ],
+      "accepted_source_hashes": [
+        "4ec86c62eb25de4abf673ad16405683c2d4d28040c5cb2e0c8cefecfb2071cf8",
+        "8d1555c947f20f06fe964787686ecd3bacce5acd52b94914d6c1ccbbaebceb09"
+      ]
+    },
+    {
+      "id": "cup_02",
+      "position": 2,
+      "instructions": "Bring the upper left edge to the base; mark only the right endpoint.",
+      "expected_visual_result": "Small reference pinch.",
+      "assessment_criteria": [
+        "Right-edge pinch visible"
+      ],
+      "visual_limits": [
+        "Show the right edge close up; a full-sheet view may hide the pinch."
+      ],
+      "accepted_source_hashes": [
+        "6bbe65f74202f60378f672ad67b7dac53fa1277a0d3e1dc4ea04ce4ebbf979a1",
+        "46d8ced07203975c92c891f113af9409cf78a46aa53aad7c586055b695c80fcb"
+      ]
+    },
+    {
+      "id": "cup_03",
+      "position": 3,
+      "instructions": "Fold the left tip to that mark.",
+      "expected_visual_result": "Left flap reaches mark.",
+      "assessment_criteria": [
+        "Left tip meets reference"
+      ],
+      "visual_limits": [
+        "The reference mark must remain visible."
+      ],
+      "accepted_source_hashes": [
+        "f09414641709d5a7b44f0e4acb242ff209160f6f4e49a5f15e7feac9f0c65fa6",
+        "d29b6f051a13c2972d52364b3dc0fb37e86765faf0491130a2ceebddafeb91ba"
+      ]
+    },
+    {
+      "id": "cup_04",
+      "position": 4,
+      "instructions": "Fold the right tip across to the left tip.",
+      "expected_visual_result": "Overlapping side flaps.",
+      "assessment_criteria": [
+        "Side tips meet"
+      ],
+      "visual_limits": [
+        "Overlapping layers can hide alignment."
+      ],
+      "accepted_source_hashes": [
+        "66575768563b7075c87b06fbe44500f9b017abd48d7cfd94043e80b09a18f0ee",
+        "d38c8abea518af935dd62328c05efc86e224fc3fb29b94044673b645e391a80d"
+      ]
+    },
+    {
+      "id": "cup_05",
+      "position": 5,
+      "instructions": "Lower the front top flap to the rim.",
+      "expected_visual_result": "Front flap below rim.",
+      "assessment_criteria": [
+        "Front flap meets rim"
+      ],
+      "visual_limits": [
+        "Show the front face without hands covering the rim."
+      ],
+      "accepted_source_hashes": [
+        "e1870069efae8b3b33d5e55aa88045a0eda3cf2f4fd2ecc82f1856b1fe4daa22",
+        "718e958ae5da9fa80cfdbe8147cc742743fff4501a368f3931cddbc875baddf3"
+      ]
+    },
+    {
+      "id": "cup_06",
+      "position": 6,
+      "instructions": "Fold the remaining top triangle behind the rim.",
+      "expected_visual_result": "Rear flap behind rim.",
+      "assessment_criteria": [
+        "Rear flap meets rim"
+      ],
+      "visual_limits": [
+        "Show the rear face; the front view cannot verify this fold."
+      ],
+      "accepted_source_hashes": [
+        "12482b1ef9f118f2ff4851635355ec6362c1e783fbf364f16954d822d31d0367",
+        "00abd480fbc8ec4778a5f8785fc770b562f13d5fb71291a2e63eb6db26d8b0ec"
+      ]
+    },
+    {
+      "id": "cup_07",
+      "position": 7,
+      "instructions": "Spread the opening and flatten the base.",
+      "expected_visual_result": "Open cup, flat base.",
+      "assessment_criteria": [
+        "Opening and base visible"
+      ],
+      "visual_limits": [
+        "Show both the opening and the base using additional views if needed."
+      ],
+      "accepted_source_hashes": [
+        "59a041091fd917766758a47bb7e16d2bdc591b7925d40f638c210d8122d51025",
+        "47654bf1e6c1fad0782f2fea0afd22a2eac3faef161100571f4d1d0d3c872515"
+      ]
+    }
+  ]
+}
