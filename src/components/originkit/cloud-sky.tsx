@@ -391,7 +391,20 @@ export default function CloudSky(props: Props) {
         let leanX = 0
         let leanY = 0
 
+        // Configuration changes only on a React render, not on animation ticks.
+        let uploadedSettings: typeof vRef.current | null = null
+        let viewportWidth = 0, viewportHeight = 0
+        let pendingPointer: { x: number; y: number } | null = null
         const render = (now: number, resumed: boolean) => {
+            if (pendingPointer) {
+                const r = canvas.getBoundingClientRect()
+                if (r.width > 0 && r.height > 0) {
+                    ptrRef.current.x = ((pendingPointer.x - r.left) / r.width) * 2 - 1
+                    ptrRef.current.y = 1 - ((pendingPointer.y - r.top) / r.height) * 2
+                    ptrRef.current.inside = true
+                }
+                pendingPointer = null
+            }
             if (resumed) last = now
             const dt = Math.min(0.05, (now - last) / 1000)
             last = now
@@ -420,28 +433,33 @@ export default function CloudSky(props: Props) {
                 canvas.width = bw
                 canvas.height = bh
             }
-            gl.viewport(0, 0, bw, bh)
-
-            const zen = parseColor(v.zenith as string, [0.369, 0.576, 0.824, 1])
-            const hor = parseColor(v.horizon as string, [0.706, 0.824, 0.941, 1])
-            const cld = parseColor(v.cloud as string, [1, 1, 1, 1])
-            const glow = parseColor(v.glow as string, [0.91, 0.953, 1, 0.9])
-
-            gl.uniform2f(u("uRes"), bw, bh)
+            if (viewportWidth !== bw || viewportHeight !== bh) {
+                gl.viewport(0, 0, bw, bh)
+                gl.uniform2f(u("uRes"), bw, bh)
+                viewportWidth = bw
+                viewportHeight = bh
+            }
+            if (uploadedSettings !== v) {
+                const zen = parseColor(v.zenith as string, [0.369, 0.576, 0.824, 1])
+                const hor = parseColor(v.horizon as string, [0.706, 0.824, 0.941, 1])
+                const cld = parseColor(v.cloud as string, [1, 1, 1, 1])
+                const glow = parseColor(v.glow as string, [0.91, 0.953, 1, 0.9])
+                gl.uniform1f(u("uCoverage"), v.coverage as number)
+                gl.uniform1f(u("uSize"), v.size as number)
+                gl.uniform1f(u("uSoftness"), v.softness as number)
+                gl.uniform1f(u("uShadow"), v.shadow as number)
+                gl.uniform1f(u("uCirrus"), v.cirrus as number)
+                gl.uniform2f(u("uSun"), v.sunX as number, v.sunY as number)
+                gl.uniform3f(u("uZenith"), zen[0], zen[1], zen[2])
+                gl.uniform3f(u("uHorizon"), hor[0], hor[1], hor[2])
+                gl.uniform3f(u("uCloud"), cld[0], cld[1], cld[2])
+                gl.uniform4f(u("uGlow"), glow[0], glow[1], glow[2], glow[3])
+                uploadedSettings = v
+            }
             gl.uniform1f(u("uNearX"), nearX)
             gl.uniform1f(u("uFarX"), farX)
             gl.uniform1f(u("uCirrusX"), cirrusX)
-            gl.uniform1f(u("uCoverage"), v.coverage as number)
-            gl.uniform1f(u("uSize"), v.size as number)
-            gl.uniform1f(u("uSoftness"), v.softness as number)
-            gl.uniform1f(u("uShadow"), v.shadow as number)
-            gl.uniform1f(u("uCirrus"), v.cirrus as number)
-            gl.uniform2f(u("uSun"), v.sunX as number, v.sunY as number)
             gl.uniform2f(u("uParallax"), -leanX * (v.parallax as number) * 0.07, -leanY * (v.parallax as number) * 0.05)
-            gl.uniform3f(u("uZenith"), zen[0], zen[1], zen[2])
-            gl.uniform3f(u("uHorizon"), hor[0], hor[1], hor[2])
-            gl.uniform3f(u("uCloud"), cld[0], cld[1], cld[2])
-            gl.uniform4f(u("uGlow"), glow[0], glow[1], glow[2], glow[3])
 
             gl.drawArrays(gl.TRIANGLES, 0, 3)
         }
@@ -449,13 +467,10 @@ export default function CloudSky(props: Props) {
         // The rect RATIO is zoom-invariant -- offset and size scale together --
         // so this is safe on a zoomed Framer canvas where absolute px are not.
         const track = (e: PointerEvent) => {
-            const r = canvas.getBoundingClientRect()
-            if (r.width <= 0 || r.height <= 0) return
-            ptrRef.current.x = ((e.clientX - r.left) / r.width) * 2 - 1
-            ptrRef.current.y = 1 - ((e.clientY - r.top) / r.height) * 2
-            ptrRef.current.inside = true
+            pendingPointer = { x: e.clientX, y: e.clientY }
         }
         const onLeave = () => {
+            pendingPointer = null
             ptrRef.current.inside = false
         }
 

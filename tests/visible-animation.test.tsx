@@ -1,6 +1,7 @@
 // @vitest-environment jsdom
 import {beforeEach,afterEach,describe,it,expect,vi} from 'vitest';
 import {render,fireEvent,cleanup} from '@testing-library/react';
+import CloudSky from '@/components/originkit/cloud-sky';
 import {visibleAnimation} from '@/lib/visible-animation';
 import {TextParticleAnimation} from '@/components/lightswind/text-particle-animation';
 let frames:Map<number,FrameRequestCallback>,next:number,observers:{notify:(visible:boolean)=>void;disconnect:ReturnType<typeof vi.fn>}[];
@@ -32,5 +33,28 @@ describe('particle rendering preserves visible behavior',()=>{
  });
  it('retains its sampled particles while offscreen and releases all work on unmount',()=>{
   const {fillRect,context}=canvas(),view=render(<TextParticleAnimation text="x" fontSize={2} padding={0} resolution={2}/>);flush();const count=fillRect.mock.calls.length;observers[0].notify(false);fireEvent.mouseDown(view.container.querySelector('canvas')!,{clientX:1,clientY:0});expect(frames.size).toBe(0);flush(1000);expect(fillRect).toHaveBeenCalledTimes(count);observers[0].notify(true);flush(2000);expect(context.getImageData).toHaveBeenCalledOnce();view.unmount();expect(frames.size).toBe(0);
+ });
+});
+
+describe('cloud work without changing cloud motion',()=>{
+ function context(){
+  const calls:Record<string,ReturnType<typeof vi.fn>>={};
+  const gl=new Proxy({}, {get(_target,name:string){if(name.toUpperCase()===name)return 1;return calls[name]||=vi.fn((...args:unknown[])=>name==='getUniformLocation'?args[1]:name.startsWith('create')?{}:name==='getShaderParameter'||name==='getProgramParameter'?true:undefined);}});
+  vi.spyOn(HTMLCanvasElement.prototype,'getContext').mockReturnValue(gl as WebGLRenderingContext);
+  return calls;
+ }
+ it('draws each visible frame while uploading stable colors and settings only once',()=>{
+  const calls=context(),view=render(<CloudSky background="#0075FF" baseColor="#B4D2F0" accentColor="#FFFFFF"/>);
+  flush(16);const uniforms=calls.uniform1f.mock.calls.length;expect(calls.uniform3f).toHaveBeenCalledTimes(3);expect(calls.drawArrays).toHaveBeenCalledOnce();
+  flush(32);expect(calls.drawArrays).toHaveBeenCalledTimes(2);expect(calls.uniform3f).toHaveBeenCalledTimes(3);expect(calls.uniform1f.mock.calls.length-uniforms).toBe(3);expect(calls.viewport).toHaveBeenCalledOnce();
+  view.rerender(<CloudSky background="#FF0000" baseColor="#B4D2F0" accentColor="#FFFFFF"/>);flush(48);expect(calls.uniform3f).toHaveBeenCalledTimes(6);expect(calls.drawArrays).toHaveBeenCalledTimes(3);
+  view.unmount();expect(frames.size).toBe(0);expect(calls.deleteProgram).toHaveBeenCalledOnce();
+ });
+ it('coalesces pointer events into one geometry read using the latest position',()=>{
+  const calls=context(),view=render(<CloudSky/>),canvas=view.container.querySelector('canvas')!;
+  const rect=vi.spyOn(canvas,'getBoundingClientRect').mockReturnValue({left:0,top:0,width:100,height:100} as DOMRect);
+  for(let x=10;x<=90;x+=10)window.dispatchEvent(new MouseEvent('pointermove',{clientX:x,clientY:20}));
+  expect(rect).not.toHaveBeenCalled();flush(16);expect(rect).toHaveBeenCalledOnce();expect(calls.drawArrays).toHaveBeenCalledOnce();flush(32);expect(rect).toHaveBeenCalledOnce();
+  expect(calls.uniform2f.mock.calls.filter(row=>row[0]==='uParallax').some(row=>row[1]<0&&row[2]<0)).toBe(true);
  });
 });
