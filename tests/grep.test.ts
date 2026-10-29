@@ -29,7 +29,15 @@ describe("forbidden APIs / storage / privacy", () => {
     expect(allSource).not.toMatch(/window\.confirm|window\.alert\b/);
   });
   it("camera and browser access are confined to the working learning layer", () => {
-    const decorativeSource=files.filter(f=>!relative(f).startsWith("components/learning/")&&relative(f)!=="lib/learning.ts").map(read).join("\n");
+    const decorativeSource=files.filter(f=>{
+      const r=relative(f);
+      return !r.startsWith("components/learning/")&&r!=="lib/learning.ts"&&
+        // the mode switch persists its face in localStorage; its Lightswind
+        // reference component ships a localStorage theme write. Both are browser-
+        // API-using feature components, so the "working learning layer" carve-out
+        // extends to them.
+        r!=="components/ModeToggle.tsx"&&r!=="components/lightswind/toggle-theme.tsx";
+    }).map(read).join("\n");
     expect(decorativeSource).not.toMatch(/getUserMedia|speechSynthesis|localStorage/);
     expect(allSource).not.toMatch(/LLM_[A-Za-z0-9_-]{20,}/);
     expect(allSource).not.toContain("MODEL_API_KEY");

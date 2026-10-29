@@ -1,0 +1,271 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter+Tight:wght@300..700&family=Share+Tech+Mono&family=Instrument+Serif:ital@0;1&family=Inter:wght@300..700&display=swap");
+
+.hero-69 {
+  --ink: #0d0d0d;
+  --paper: #ffffff;
+  --rule: #ececec;
+  --m: max(10px, 0.87vw);
+  background: var(--paper);
+  font-family: "Share Tech Mono", ui-monospace, Menlo, Consolas, monospace;
+  color: var(--ink);
+  background: var(--paper);
+  -webkit-font-smoothing: antialiased;
+  position: relative;
+  isolation: isolate;
+}
+
+.hero-69,
+.hero-69 *,
+.hero-69 *::before,
+.hero-69 *::after {
+  box-sizing: border-box;
+  margin: 0;
+}
+
+/* On body, not :root, so a host page's body font can't override it. */
+
+.hero-69 button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  cursor: pointer;
+}
+.hero-69 a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.hero-69 .hero {
+  position: relative;
+  height: var(--ok-design-h, 100vh);
+  height: var(--ok-design-h, 100vh);
+  min-height: 620px;
+  overflow: hidden;
+  background: var(--paper);
+}
+
+.hero-69 .mono {
+  font-size: var(--m);
+  line-height: 1.12;
+  letter-spacing: 0.02em;
+}
+
+/* The 3D object. Multiply drops the white backdrop out (grid shows through),
+   brightness lifts the tone-mapped white back to pure white. */
+.hero-69 .husk {
+  position: absolute;
+  inset: 4% 0 0 2%; /* centres the rock where the reference has it */
+  mix-blend-mode: multiply;
+  filter: brightness(1.15); /* ACES maps white to ~0.88 */
+}
+
+.hero-69 .lines,
+.hero-69 .plus {
+  pointer-events: none;
+}
+.hero-69 .lines {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  fill: none;
+  stroke: var(--ink);
+}
+.hero-69 .lines polyline,
+.hero-69 .lines line {
+  stroke-width: 1.5;
+  vector-effect: non-scaling-stroke;
+}
+.hero-69 .lines.grid {
+  z-index: 0; /* behind the rock */
+  stroke: var(--rule);
+}
+.hero-69 .lines.grid line {
+  stroke-width: 1;
+}
+
+.hero-69 .plus {
+  position: absolute;
+  translate: -50% -50%;
+  z-index: 2;
+}
+.hero-69 .plus {
+  width: 0.9vw;
+  height: 0.9vw;
+  background:
+    linear-gradient(#cfcfcf, #cfcfcf) center / 100% 1px no-repeat,
+    linear-gradient(#cfcfcf, #cfcfcf) center / 1px 100% no-repeat;
+}
+
+/* Nav */
+.hero-69 .nav {
+  position: absolute;
+  inset: 0 0 auto;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.6vw 3.5vw;
+}
+.hero-69 .brand {
+  display: flex;
+  align-items: center;
+  gap: 0.6em;
+  font:
+    500 max(15px, 1.25vw) "Inter Tight",
+    sans-serif;
+  letter-spacing: -0.03em;
+}
+.hero-69 .brand svg {
+  width: 1.6em;
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 2.4;
+  stroke-linejoin: round;
+}
+.hero-69 .nav nav {
+  position: absolute;
+  left: 50%;
+  translate: -50% 0;
+  display: flex;
+  gap: 1.9vw;
+}
+.hero-69 .nav nav a,
+.hero-69 .nav-actions a {
+  transition: opacity 0.2s;
+}
+.hero-69 .nav nav a:hover,
+.hero-69 .nav-actions a:hover {
+  opacity: 0.55;
+}
+.hero-69 .nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 2.2vw;
+}
+.hero-69 .signin {
+  background: var(--rule);
+  border-radius: 999px;
+  padding: 1.1em 2em;
+}
+
+/* Headline block */
+.hero-69 .intro {
+  position: absolute;
+  left: 2.8vw;
+  top: 21%;
+  z-index: 3;
+}
+.hero-69 h1 {
+  font:
+    400 4.9vw/0.95 "Instrument Serif",
+    Georgia,
+    serif;
+  letter-spacing: -0.02em;
+}
+.hero-69 .desc {
+  font:
+    400 max(13px, 0.95vw) / 1.45 "Inter",
+    system-ui,
+    sans-serif;
+  letter-spacing: -0.01em;
+}
+.hero-69 .intro p {
+  max-width: 24vw;
+  margin-top: 2.2vw;
+}
+
+/* Bottom-right call to action */
+.hero-69 .cta {
+  position: absolute;
+  right: 4.3vw;
+  top: 72.5%;
+  z-index: 3;
+  width: 24vw;
+  text-align: right;
+}
+.hero-69 .cta-actions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 3vw;
+  margin-top: 2vw;
+}
+.hero-69 .primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.9em;
+  background: var(--ink);
+  color: var(--paper);
+  border-radius: 999px;
+  padding: 1.3em 2.2em 1.3em 1.4em;
+}
+.hero-69 .play {
+  width: 1.8em;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: var(--paper);
+  display: grid;
+  place-items: center;
+}
+.hero-69 .play::after {
+  content: "";
+  margin-left: 0.15em;
+  border-left: 0.55em solid var(--ink);
+  border-block: 0.35em solid transparent;
+}
+.hero-69 .nav a:focus-visible,
+.hero-69 .cta a:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 3px;
+}
+
+/* Tablet and phone: links collapse, copy stacks above and below the rock. */
+@media (max-width: 900px) {
+  .hero-69 .nav nav {
+    display: none;
+  }
+  .hero-69 .nav {
+    padding: 16px;
+  }
+  .hero-69 .intro {
+    left: 16px;
+    right: 16px;
+    top: 90px;
+  }
+  .hero-69 h1 {
+    font-size: clamp(40px, 10vw, 76px);
+  }
+  .hero-69 .intro p,
+  .hero-69 .cta {
+    max-width: 420px;
+    width: auto;
+  }
+  .hero-69 .intro p {
+    margin-top: 16px;
+  }
+  .hero-69 .cta {
+    left: 16px;
+    right: 16px;
+    top: auto;
+    bottom: 24px;
+    margin-left: auto;
+  }
+  .hero-69 .cta-actions {
+    gap: 24px;
+    margin-top: 16px;
+  }
+  .hero-69 .husk {
+    inset: 30% 0 16%;
+  }
+}
+
+@media (max-width: 560px) {
+  .hero-69 .nav-actions > a:first-child {
+    display: none;
+  }
+  .hero-69 .mono {
+    font-size: 11px;
+  }
+}

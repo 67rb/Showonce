@@ -312,3 +312,101 @@ export const sessionResult: SessionResult = {
     sampleLesson.steps[2].caption,
   ],
 };
+
+/* ------------------------------------------------------------------ */
+/* Professional sample lesson (Task B) — a breadboard build, rendered  */
+/* in the KeyframeVisual language. A long board, two power rails,      */
+/* jumper wires as long thin pieces in red/black/green, a              */
+/* microcontroller block, and small components. Step 2 photo is the    */
+/* WRONG state: exactly one wire (the green jumper) sits in the wrong  */
+/* rail. Only Professional screens read this sample.                   */
+/* ------------------------------------------------------------------ */
+const GREEN_WIRE = "#22C55E";
+const BLACK_WIRE = "#2B2B2B";
+
+export const proBreadboardLesson: FixtureLesson = {
+  id: "breadboard",
+  title: strings.proFixtureBreadboardTitle,
+  meta: strings.proFixtureBreadboardMeta,
+  date: "Today",
+  stepCount: 4,
+  steps: [
+    {
+      caption: strings.proFixtureBreadboardStep0,
+      visibleState: "Done",
+      keyframe: scene([
+        b(BONE, 1.0, 1.0, true, "board"),
+        b(BONE, 1.0, 0.3, true, "railTop"),
+        b(BONE, 1.0, 1.7, true, "railBot"),
+      ]),
+      photo: scene([
+        b(BONE, 1.0, 1.0, true, "board"),
+        b(BONE, 1.0, 0.3, true, "railTop"),
+        b(BONE, 1.0, 1.7, true, "railBot"),
+      ]),
+    },
+    {
+      caption: strings.proFixtureBreadboardStep1,
+      visibleState: "Done",
+      keyframe: scene([
+        b(BONE, 1.0, 1.0, true, "board"),
+        b(BONE, 1.0, 0.3, true, "railTop"),
+        b(BONE, 1.0, 1.7, true, "railBot"),
+        b(BLUE, 1.0, 2.0, false, "mcu"),
+      ]),
+      photo: scene([
+        b(BONE, 1.0, 1.0, true, "board"),
+        b(BONE, 1.0, 0.3, true, "railTop"),
+        b(BONE, 1.0, 1.7, true, "railBot"),
+        b(BLUE, 1.0, 2.0, false, "mcu"),
+      ]),
+    },
+    {
+      caption: strings.proFixtureBreadboardStep2,
+      visibleState: "Needed more than one check",
+      // Correct: both jumpers run between the rails — red upper-left, green mid.
+      keyframe: scene([
+        b(BONE, 1.0, 1.0, true, "board"),
+        b(BONE, 1.0, 0.3, true, "railTop"),
+        b(BONE, 1.0, 1.7, true, "railBot"),
+        b(BLUE, 1.0, 2.0, false, "mcu"),
+        b(RED, 0.4, 0.6, true, "wireRed"),
+        b(GREEN_WIRE, 1.0, 1.35, true, "wireGreen"),
+      ]),
+      // WRONG: exactly one wire differs — the green jumper sits in the TOP
+      // rail (wrong rail) instead of between the rails.
+      photo: scene([
+        b(BONE, 1.0, 1.0, true, "board"),
+        b(BONE, 1.0, 0.3, true, "railTop"),
+        b(BONE, 1.0, 1.7, true, "railBot"),
+        b(BLUE, 1.0, 2.0, false, "mcu"),
+        b(RED, 0.4, 0.6, true, "wireRed"),
+        b(GREEN_WIRE, 1.0, 0.6, true, "wireGreen"),
+      ]),
+    },
+    {
+      caption: strings.proFixtureBreadboardStep3,
+      visibleState: "Not started",
+      keyframe: scene([
+        b(BONE, 1.0, 1.0, true, "board"),
+        b(BONE, 1.0, 0.3, true, "railTop"),
+        b(BONE, 1.0, 1.7, true, "railBot"),
+        b(BLUE, 1.0, 2.0, false, "mcu"),
+        b(RED, 0.4, 0.6, true, "wireRed"),
+        b(GREEN_WIRE, 1.0, 1.35, true, "wireGreen"),
+        b(BLACK_WIRE, 1.9, 0.5, true, "wireBlack"),
+        b(BLUE, 2.2, 2.3, true, "comp"),
+      ]),
+      photo: scene([
+        b(BONE, 1.0, 1.0, true, "board"),
+        b(BONE, 1.0, 0.3, true, "railTop"),
+        b(BONE, 1.0, 1.7, true, "railBot"),
+        b(BLUE, 1.0, 2.0, false, "mcu"),
+        b(RED, 0.4, 0.6, true, "wireRed"),
+        b(GREEN_WIRE, 1.0, 1.35, true, "wireGreen"),
+        b(BLACK_WIRE, 1.9, 0.5, true, "wireBlack"),
+        b(BLUE, 2.2, 2.3, true, "comp"),
+      ]),
+    },
+  ],
+};

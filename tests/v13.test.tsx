@@ -487,19 +487,23 @@ describe("v2.3 — Aceternity Resizable Navbar as the public header (Tasks A & B
     expect(privacy).toBeGreaterThan(lessons);
     // no fragment anchors, links go to real pages
     expect(navSource).not.toMatch(/href="#/);
-    // wordmark anchor to root
-    expect(navSource).toContain('href="/"');
-    // CTA to /create with amber pill overrides (via className only)
-    expect((navSource.match(/href="\/create"/g) || []).length).toBeGreaterThan(0);
+    // wordmark anchors to the face home (Task F: "/" on Hobby, /professional on
+    // the Professional face — the ModeToggle is the only way between faces)
+    expect(navSource).toMatch(/href=\{professional \? "\/professional" : "\/"\}/);
+    // CTA is face-aware (4.2.A): Professional -> green pill to
+    // /professional/create, Hobby -> the amber pill to /create.
+    expect(navSource).toMatch(
+      /ctaHref = isProfessional \? "\/professional\/create" : "\/create"/,
+    );
     expect(navSource).toContain("bg-[#F59E0B]");
     expect(navSource).toContain("text-black");
     expect(navSource).toContain("rounded-full");
     expect(navSource).toContain("hover:brightness-110");
-    // variant is left at its default (no variant= prop passed — the
-    // amber pill comes purely from the className overrides)
-    expect(navSource).toMatch(
-      /<NavbarButton\s+href="\/create"\s+className="bg-\[#F59E0B\]/,
+    expect(navSource).toContain(
+      "bg-[#16A34A] text-white hover:bg-[#15803D] rounded-full",
     );
+    // variant is left at its default (no variant= prop passed — the
+    // pill comes purely from the className overrides)
     expect(navSource).not.toMatch(/<NavbarButton[\s\S]*?variant=/);
   });
 
@@ -579,23 +583,27 @@ describe("v2.4 — glass navbar, wordmark link, hero CTA, tagline loop (Tasks A�
   it("the navbar light treatment is unconditional on every route (no pathname condition), keeping the amber CTA and NO dark-glass branch (v3)", () => {
     expect(navSource).toContain('const LIGHT_BODY =');
     expect(navSource).toContain('"!bg-white/65 border !border-white/60 backdrop-blur-xl backdrop-saturate-150"');
-    // no pathname condition for the treatment
-    expect(navSource).not.toContain("usePathname");
-    expect(navSource).not.toContain("pathname ===");
     // no dark-glass branch remains
     expect(navSource).not.toContain("bg-neutral-950/45");
+    // the light glass is applied on every route — the pathname face only swaps
+    // the links, CTA and wordmark colour (4.2.A), never the glass.
+    expect(navSource).toContain('<NavBody className={LIGHT_BODY}>');
+    expect(navSource).toContain('<MobileNav className={LIGHT_BODY}>');
     // amber Start CTA and wordmark ONCE kept
     expect(navSource).toContain("bg-[#F59E0B]");
     expect(navSource).toContain("text-[#D97706]");
   });
 
   it("the wordmark is a Next Link to / with pointer-events-auto in both desktop and mobile (Task B)", () => {
-    expect(navSource).toContain('<Link\n      href="/"');
+    expect(navSource.replace(/\r\n/g, "\n")).toContain('<Link\n      href={professional ? "/professional" : "/"}');
     expect(navSource).toContain('aria-label="Show Once — home"');
     expect(navSource).toContain("pointer-events-auto");
     expect(navSource).toContain("cursor-pointer");
-    // mobile wordmark closes the menu and carries the unconditional light flag (v3)
-    expect(navSource).toContain('<WordmarkAnchor className="text-xl leading-none" onClick={close} light />');
+    // mobile wordmark closes the menu and carries the unconditional light flag
+    // and the face-aware professional prop (4.2.A)
+    expect(navSource).toContain(
+      '<WordmarkAnchor className="text-xl leading-none" onClick={close} light professional={isProfessional} />',
+    );
   });
 
   it("the hero CTA is the Venom stage with a native cursor and no input/panel (v2.6)", async () => {
@@ -774,14 +782,16 @@ describe("v2.12 — cloud sky hero, venom CTA, finer particles, ink foreground (
   });
 
   it("the navbar light treatment is unconditional on every route (v3 supersedes the v2.12 pathname scoping)", () => {
-    expect(navSource).not.toContain("usePathname");
     expect(navSource).not.toContain('const light = pathname === "/"');
     expect(navSource).not.toContain(": \"bg-neutral-950/45");
     // light glass + ink link/wordmark classes are unconditional
     expect(navSource).toContain("!bg-white/65");
     expect(navSource).toContain("text-[#121212]");
     expect(navSource).toContain("text-[#D97706]");
-    // WordmarkAnchor is passed light unconditionally
-    expect(navSource).toContain('<WordmarkAnchor className="text-xl leading-none" light />');
+    // WordmarkAnchor is passed light unconditionally, the face only changes
+    // the ONCE colour (green on Professional, amber on Hobby — 4.2.A)
+    expect(navSource).toContain(
+      '<WordmarkAnchor className="text-xl leading-none" light professional={isProfessional} />',
+    );
   });
 });

@@ -24,7 +24,24 @@ const routes: { path: string; label: string }[] = [
   { path: "/lesson/sample/live", label: "Live mode" },
   { path: "/lesson/sample/complete", label: "Completion" },
   { path: "/privacy", label: "Privacy" },
+  { path: "/professional", label: "Professional face (stub)" },
   { path: "/design", label: "Design index" },
+];
+
+// Professional face routes — the /design index is shared by BOTH faces, and
+// later Professional routes join this group as they are built.
+const proRoutes: { path: string; label: string }[] = [
+  { path: "/professional", label: "Professional landing" },
+  { path: "/professional/create", label: "Create — import" },
+  { path: "/professional/create/processing", label: "Create — processing" },
+  { path: "/professional/create/review", label: "Create — review" },
+  { path: "/professional/lessons", label: "Your lessons" },
+  { path: "/professional/lesson/sample", label: "Lesson overview" },
+  { path: "/professional/lesson/sample/play", label: "Player" },
+  { path: "/professional/lesson/sample/play/camera", label: "Camera" },
+  { path: "/professional/lesson/sample/live", label: "Live mode" },
+  { path: "/professional/lesson/sample/complete", label: "Completion" },
+  { path: "/professional/privacy", label: "Privacy" },
 ];
 
 const variants: { path: string; label: string }[] = [
@@ -105,12 +122,29 @@ export default function DesignPage() {
         </header>
 
         <SectionCard title="Routes">
+          <p className="mb-2 text-small font-semibold text-site-muted">Hobby</p>
           <ul className="grid gap-2 sm:grid-cols-2">
             {routes.map((r) => (
               <li key={r.path}>
                 <a
                   href={r.path}
                   className="inline-flex items-center gap-2 rounded-full border border-site-border bg-site-page px-3 py-1.5 text-small text-site-ink transition-colors duration-[150ms] hover:border-accent hover:text-accent"
+                >
+                  <span className="font-semibold text-site-muted">{r.path}</span>
+                  — {r.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+          <p className="mb-2 mt-6 text-small font-semibold text-[#16A34A]">
+            Professional
+          </p>
+          <ul className="grid gap-2 sm:grid-cols-2">
+            {proRoutes.map((r) => (
+              <li key={r.path}>
+                <a
+                  href={r.path}
+                  className="inline-flex items-center gap-2 rounded-full border border-site-border bg-site-page px-3 py-1.5 text-small text-site-ink transition-colors duration-[150ms] hover:border-[#16A34A] hover:text-[#16A34A]"
                 >
                   <span className="font-semibold text-site-muted">{r.path}</span>
                   — {r.label}

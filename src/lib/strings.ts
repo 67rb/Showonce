@@ -10,7 +10,7 @@ export const strings = {
   /* Brand */
   wordmarkShow: "SHOW",
   wordmarkOnce: "ONCE",
-  privacyClaim: "checks your work, saves your progress.",
+  privacyClaim: "checks photos, keeps nothing.",
 
   /* Shared chrome */
   yourLessonsLink: "Your lessons",
@@ -99,7 +99,7 @@ export const strings = {
     "Hands-on team onboarding",
   ],
 
-  privacyHeading: "checks your work, saves your progress.",
+  privacyHeading: "checks photos, keeps nothing.",
   privacyBody:
     "Photo checks run through Meta. Submitted photos are saved privately with your practice and can be deleted from history. Live camera frames are not saved.",
   privacyLink: "Read the privacy page",
@@ -270,6 +270,73 @@ export const strings = {
   fixtureWallStep0: "Lay the first course of bricks.",
   fixtureWallStep1: "Add the second course, staggered.",
   fixtureWallStep2: "Fill in the last bricks.",
+
+  /* Mode switch — two faces (Hobby default / Professional) */
+  modeHobby: "Hobby",
+  modeProfessional: "Professional",
+  modeSwitchToHobby: "Switch to Hobby",
+  modeSwitchToProfessional: "Switch to Professional",
+  proStubHeading: "Show Once for professionals",
+  proStubLine:
+    "For teaching hands-on work — every trainee's step checked the same way, every time.",
+
+  /* Professional face — landing (4.1) */
+  proHeroHeadline: "Show the job once.",
+  proHeroHeadlineAccent: "Checked at every step.",
+  proHeroSub:
+    "Paste a video of the job — a wiring run, a plumbing fit, a board build. Show Once turns it into steps and checks each one from a photo, the same way for every trainee, every time.",
+  proHeroPrimaryCta: "Start a lesson",
+  proHeroSecondaryCta: "Your lessons",
+  proHowStep1Title: "Bring the job on video",
+  proHowStep1Line:
+    "Paste a video of a wiring run, a plumbing fit, or a board build — or start with your own numbered instructions.",
+  proHowStep2Title: "Get the steps",
+  proHowStep2Line:
+    "Show Once breaks the job into clear steps, each with a picture of what done looks like, so every trainee works to the same target.",
+  proHowStep3Title: "Do it, checked",
+  proHowStep3Line:
+    "Each trainee does one step and takes one photo. It tells them right, wrong, or can't tell before they move on.",
+  proCapabilitiesHeading: "What SHOW ONCE checks.",
+  proCanLine: "Hands-on skills a photo from above can judge, taught to a trade standard.",
+  proCanItems: [
+    "Electrical work",
+    "Plumbing",
+    "Raspberry Pi and breadboard builds",
+    "Carpentry",
+    "Assembly and packing",
+    "Classroom practicals",
+  ],
+  proPracticeTitle: "Your trainers",
+  proPracticeLine: "A steady, repeatable check on every trainee's step.",
+  proPracticeItems: [
+    "Every step checked the same way across a class",
+    "One clear target to work to each time",
+    "A photo record of each finished step",
+    "Reusable for the next intake",
+  ],
+  proFinalCtaHeadline: "Show it once. Teach it right.",
+  proFinalCtaButton: "Start teaching",
+  proFooterLine: "Show Once for trades and training.",
+
+  /* Professional face — create flow (4.2, mirrors the Hobby create flow) */
+  proCreateHeading: "Teach the job, checked.",
+  proCreateScopeNote:
+    "Bring a job you want to teach — a wiring run, a plumbing fit, a board build. Turn it into steps your trainees check from a photo, the same way every time.",
+  proImportLinkPlaceholder: "Paste a training video link",
+  proReviewRemove: "Remove",
+
+  /* Professional sample lesson — breadboard build (only Professional screens) */
+  proFixtureBreadboardTitle: "Wire the breadboard power rails",
+  proFixtureBreadboardMeta: "4 steps · source: board build",
+  proFixtureBreadboardStep0: "Lay down the long board and its two power rails.",
+  proFixtureBreadboardStep1: "Seat the microcontroller block on the board.",
+  proFixtureBreadboardStep2: "Run the red and green jumper wires between the rails.",
+  proFixtureBreadboardStep3: "Close the black jumper and seat the small component.",
+
+  /* Professional face — lessons, player, live, complete (4.3) */
+  proLessonsEmptyLine: "No lessons yet. Start a lesson to make your first one.",
+  proDifferenceWrong:
+    "The green jumper is in the top rail. In the step it runs between the rails.",
 } as const;
 
 export type Strings = typeof strings;

@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import {
   Navbar,
   NavBody,
@@ -13,31 +14,56 @@ import {
   NavbarButton,
 } from "@/components/ui/resizable-navbar";
 import s from "@/lib/strings";
+import { ModeToggle } from "@/components/ModeToggle";
 
-const navItems = [
+// The Professional face lives under /professional; everything else is Hobby.
+// The same shared component renders both — only these face-derived values
+// change, and the Hobby path returns exactly the pre-change output.
+const PROFESSIONAL_PREFIX = "/professional";
+
+// Face-aware route targets. Hobby targets are byte-identical to the former
+// module-level `navItems` so the Hobby rendering is unchanged.
+const HOBBY_ITEMS = [
   { name: s.navCreate, link: "/create" },
   { name: s.yourLessonsLink, link: "/lessons" },
   { name: s.navPrivacy, link: "/privacy" },
+];
+const PROFESSIONAL_ITEMS = [
+  { name: s.navCreate, link: "/professional/create" },
+  { name: s.yourLessonsLink, link: "/professional/lessons" },
+  { name: s.navPrivacy, link: "/professional/privacy" },
 ];
 
 function WordmarkAnchor({
   className = "",
   onClick,
   light = false,
+  professional = false,
 }: {
   className?: string;
   onClick?: () => void;
   light?: boolean;
+  professional?: boolean;
 }) {
   return (
     <Link
-      href="/"
+      href={professional ? "/professional" : "/"}
       onClick={onClick}
       aria-label="Show Once — home"
       className={`wordmark relative z-20 pointer-events-auto cursor-pointer select-none ${className}`}
     >
       <span className={light ? "text-[#121212]" : ""}>{s.wordmarkShow}</span>
-      <span className={light ? "text-[#D97706]" : "text-accent"}>{s.wordmarkOnce}</span>
+      <span
+        className={
+          professional
+            ? "text-[#16A34A]"
+            : light
+              ? "text-[#D97706]"
+              : "text-accent"
+        }
+      >
+        {s.wordmarkOnce}
+      </span>
     </Link>
   );
 }
@@ -47,10 +73,19 @@ function WordmarkAnchor({
 // simply omits them.
 const LIGHT_BODY =
   "!bg-white/65 border !border-white/60 backdrop-blur-xl backdrop-saturate-150";
-const LIGHT_LINKS = "[&_a]:!text-[#121212] [&_a]:hover:!text-[#121212]";
+const LIGHT_LINKS = "[&_a]:!text-[#121212] [&_a]:hover:!text-white";
 const LIGHT_MENU = "!bg-white !text-[#121212]";
 
 export function PublicNavbar() {
+  const pathname = usePathname();
+  const isProfessional =
+    typeof pathname === "string" && pathname.startsWith(PROFESSIONAL_PREFIX);
+  const navItems = isProfessional ? PROFESSIONAL_ITEMS : HOBBY_ITEMS;
+  const ctaHref = isProfessional ? "/professional/create" : "/create";
+  const ctaClass = isProfessional
+    ? "bg-[#16A34A] text-white hover:bg-[#15803D] rounded-full"
+    : "bg-[#F59E0B] text-black hover:brightness-110 rounded-full";
+
   const [open, setOpen] = useState(false);
   const menuButton = useRef<HTMLDivElement>(null);
   useEffect(()=>{if(!open)return;const escape=(event:KeyboardEvent)=>{if(event.key==="Escape"){setOpen(false);menuButton.current?.querySelector<HTMLButtonElement>("button")?.focus();}};document.addEventListener("keydown",escape);return()=>document.removeEventListener("keydown",escape);},[open]);
@@ -60,30 +95,37 @@ export function PublicNavbar() {
   return (
     <Navbar className="fixed inset-x-0 top-0 z-40 px-3 pt-3 sm:px-6 sm:pt-4">
       <NavBody className={LIGHT_BODY}>
-        <WordmarkAnchor className="text-xl leading-none" light />
-        <NavItems items={navItems} className={LIGHT_LINKS} />
-        <NavbarButton
-          href="/create"
-          className="bg-[#F59E0B] text-black hover:brightness-110 rounded-full"
-        >
-          {s.importStart}
-        </NavbarButton>
+        <WordmarkAnchor className="text-xl leading-none" light professional={isProfessional} />
+        <NavItems
+          items={navItems}
+          className={`!relative !inset-auto min-w-0 whitespace-nowrap ${LIGHT_LINKS}`}
+        />
+        <div className="flex shrink-0 items-center gap-3">
+          <ModeToggle />
+          <NavbarButton
+            href={ctaHref}
+            className={ctaClass}
+          >
+            {s.importStart}
+          </NavbarButton>
+        </div>
       </NavBody>
       <MobileNav className={LIGHT_BODY}>
         <MobileNavHeader>
-          <WordmarkAnchor className="text-xl leading-none" onClick={close} light />
+          <WordmarkAnchor className="text-xl leading-none" onClick={close} light professional={isProfessional} />
           <div ref={menuButton}><MobileNavToggle isOpen={open} onClick={toggle} /></div>
         </MobileNavHeader>
         <MobileNavMenu isOpen={open} onClose={close} className={LIGHT_MENU}>
           <NavItems
             items={navItems}
             onItemClick={close}
-            className={`!relative !inset-auto !flex w-full flex-col !items-stretch !space-x-0 gap-2 [&_a]:rounded-xl [&_a]:px-4 [&_a]:py-3 [&_a]:hover:bg-black/5 ${LIGHT_LINKS}`}
+            className={`!relative !inset-auto !flex w-full flex-col !items-stretch !space-x-0 gap-2 [&_a]:rounded-xl [&_a]:px-4 [&_a]:py-3 ${LIGHT_LINKS}`}
           />
+          <ModeToggle />
           <NavbarButton
-            href="/create"
+            href={ctaHref}
             onClick={close}
-            className="bg-[#F59E0B] text-black hover:brightness-110 rounded-full"
+            className={ctaClass}
           >
             {s.importStart}
           </NavbarButton>

@@ -1,0 +1,38 @@
+/* hero-18 — Zentra tornado particle hero (from sridhar-raj/Tornado-Section) */
+
+@import url("https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@300;400;500;600;700&family=Lato:wght@400;700&display=swap");
+
+/* The @theme font tokens for hero-18 were hoisted by the installer into
+   src/app/originkit-section-themes.css (imported from globals.css, where
+   Tailwind processes @theme). Keeping them here too makes the Turbopack/Tailwind
+   loader warn "Unknown at rule: @theme", so they are omitted here. */
+
+.h18-background {
+  background-image: linear-gradient(90deg, rgb(10, 10, 10) 0%, rgb(10, 10, 10) 100%),
+    url("data:image/svg+xml;utf8,<svg viewBox='0 0 1440 769' xmlns='http://www.w3.org/2000/svg' preserveAspectRatio='none'><rect x='0' y='0' height='100%25' width='100%25' fill='url(%23grad)' opacity='1'/><defs><radialGradient id='grad' gradientUnits='userSpaceOnUse' cx='0' cy='0' r='10' gradientTransform='matrix(4.4087e-15 38.45 -72 2.3544e-15 720 384.5)'><stop stop-color='rgba(34,31,114,1)' offset='0'/><stop stop-color='rgba(22,21,76,1)' offset='0.5'/><stop stop-color='rgba(11,10,39,1)' offset='1'/></radialGradient></defs></svg>");
+}
+
+.h18-logo-fade {
+  mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%);
+}
+
+.h18-logo-track {
+  animation: h18-logo-scroll 32s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .h18-logo-track {
+    animation-play-state: paused;
+  }
+}
+
+@keyframes h18-logo-scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+

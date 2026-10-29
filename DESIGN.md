@@ -610,12 +610,114 @@ render that fixture state; this is a review mechanism only, no logic.
 | `/lesson/[id]/live` (minimal)          | Live mode (no camera access)                  | on-track · `check` · `wrong`                |
 | `/lesson/[id]/complete` (minimal)      | Completion (counts + time only, no grades)    | —                                           |
 | `/privacy` (public)                    | Privacy                                       | —                                           |
+| `/professional` (root)                 | Professional landing (hero-69 + mirrored sections, green accent) | —                                  |
+| `/professional/create` (root)          | Professional create — import         | default · `invalid` · `failed` · `not-configured` |
+| `/professional/create/processing` (root) | Professional create — processing   | —                                   |
+| `/professional/create/review` (root)   | Professional create — review (breadboard sample) | —                    |
+| `/professional/lessons` (root)         | Professional library — list + empty | `?state=empty`                       |
+| `/professional/lesson/[id]` (root)     | Professional lesson overview (breadboard sample for any id) | —    |
+| `/professional/lesson/[id]/play` (root)| Professional player                  | step · `checking` · `right` · `wrong` · `canttell` |
+| `/professional/lesson/[id]/play/camera` (root) | Professional camera (no camera access) | —            |
+| `/professional/lesson/[id]/live` (root)| Professional live                     | on-track · `check` · `wrong`          |
+| `/professional/lesson/[id]/complete` (root) | Professional completion (counts + time only, no grades) | — |
+| `/professional/privacy` (root)         | Professional privacy                   | —                                   |
 | `/design` (public)                     | Design index / review page                    | —                                           |
 | `not-found`, `error` (root)            | 404 and error boundaries                      | —                                           |
 
 Player and camera/live/complete use the **minimal chrome** layout (small
 wordmark, step progress, exit link). All other public pages use the shared
 header/footer chrome.
+
+## Two-face model — Hobby / Professional (face switch)
+
+The product ships as TWO presentation faces switched like a language toggle:
+
+- **Hobby** is the default face at the existing routes (`, /create, /lessons,
+  /lesson/*, /privacy`).
+- **Professional** is a new face living under **`/professional`** — its landing
+  is the installed OriginKit **hero-69** (owner-picked `?preset=…variant-2`
+  ember-husk hero; colours **as installed**: white paper, ink `#0d0d0d` mono
+  chrome, green `#04E762` husk core; content slots branded to SHOW ONCE —
+  wordmark + green ONCE, `ModeToggle` in the nav, pro* headline/CTA slots)
+  above sections that mirror the Hobby landing
+  (how it works → capabilities → scope → privacy → final CTA → footer) with the
+  two 4.1 transformations: **accent green `#16A34A` / hover `#15803D`** in place
+  of amber, and **Professional copy** (trades, trainees, workshops) under `pro*`
+  keys. The footer mirrors the Hobby footer with ONCE in Professional green.
+- **Route parity is COMPLETE (4.3):** the Professional face mirrors every Hobby
+  route — create flow, lessons, lesson overview, play + camera, live, complete,
+  privacy. No forward links remain on the Professional face; every navbar, hero
+  and in-flow link resolves to a real route.
+- **Per-screen mirror choices (live source vs canonical design, 4.3):** the live
+  Hobby lessons/lesson/play/camera/live/complete routes render the divergent dark
+  `learning/Workspace` (your teammates' functional build). Following the 4.2
+  create-flow precedent, every Professional counterpart mirrors the **canonical
+  design** recorded here (v3.1/v3.3): `/professional/lessons` (canonical v3.3
+  library), `/professional/lesson/[id]` overview (canonical v3.1 learning path +
+  mode choice), `/professional/lesson/[id]/play` (canonical v3.1 player, all five
+  states), `/play/camera` (canonical v3.1 camera), `/live` (canonical v3.3 live,
+  three states), `/complete` (canonical v3.3 completion), `/professional/privacy`
+  (canonical v3.3 privacy). Content is `proBreadboardLesson`; the check pattern
+  (verdict bands, dashed difference ring on `wireGreen`, scan) is functional and
+  identical to Hobby; only chrome accents are green. The 4.2 `create` flow was
+  likewise canonical-design. None of these used the live `Workspace` directly.
+- **Shared, face-aware navbar (4.2):** `PublicNavbar` is ONE shared component;
+  it reads the face from the pathname (any path starting `/professional` =
+  Professional, like `ModeToggle`). On Professional its nav links point at the
+  Professional routes (`/professional/create`, `/professional/lessons`,
+  `/professional/privacy`), the ONCE wordmark is Professional green `#16A34A`,
+  and the Start CTA is the green pill (`#16A34A` bg / white text / `#15803D`
+  hover) to `/professional/create`. Hobby renders byte-identically (same glass,
+  scroll morph, layout; amber Start pill). It is provided to Professional pages
+  by `src/app/professional/layout.tsx` (mirroring the public segment's chrome;
+  no footer is mounted there — the landing owns its footer, the create-flow
+  screens are light tool screens). `ModeToggle`'s focus ring follows the face
+  (amber Hobby / green Professional). The landing's duplicate top row (hero-69's
+  internal wordmark+toggle header) was removed so the landing has exactly one
+  header.
+- **Professional create flow (4.2):** `/professional/create` + `processing` +
+  `review` mirror the Hobby create flow's canonical structure (DESIGN v3.2) —
+  import (link field + upload + privacy line, with the same state variants),
+  processing (source card + stages + progress), review (title, reorderable rows
+  of KeyframeVisual thumbs + reorder/remove with the ConfirmDialog, ink-pill
+  "Start lesson" → `/professional/lesson/sample`, "Back" → `/professional/create`).
+  Accent green in place of amber; trades copy under `pro*` keys; face-neutral
+  mechanism labels (import errors, processing stages, review labels, the
+  `privacyClaim` "checks photos, keeps nothing.") reuse the shared strings.
+- **Professional sample (4.2):** `proBreadboardLesson` in `src/design/fixtures.ts`
+  — a breadboard build (long board, two power rails, red/green/black jumper
+  wires, a microcontroller block, small components) rendered in the existing
+  KeyframeVisual language; its step-2 photo is the single wrong-variant (exactly
+  one wire — the green jumper — in the wrong rail). Only Professional screens
+  read this sample; every Hobby screen keeps its existing fixtures.
+- The **`/design` index is SHARED** by both faces: it keeps the Hobby route group
+  and adds a clearly labelled **Professional** group; later Professional routes
+  join that group.
+- The shared switch is **`ModeToggle`** (`src/components/ModeToggle.tsx`), built
+  on the installed Lightswind **ToggleTheme** (`src/components/lightswind/
+  toggle-theme.tsx`) and its **circle-spread** View Transition animation
+  (duration 600) — its theme/dark-class toggling is stripped. The face is read
+  from the pathname (any path starting `/professional` = Professional), not from
+  a theme class. `showonce-mode` is persisted to `localStorage`.
+- Engine and lesson data are fully shared between faces; the faces are
+  **presentation only**.
+- **Face sealing (4.4):** the faces are sealed so the ModeToggle is the only way
+  between them. The **wordmark goes to that face's home** on every route within a
+  face (Professional → `/professional`, Hobby → `/`), and every link that
+  renders inside a face resolves inside that face's routes (/professional/* on
+  Professional, the default routes on Hobby). The only sanctioned escapes from a
+  face are the **ModeToggle** (the cross-face switch), the shared **`/design`**
+  index, and the shared not-found/error pages (face-neutral territory).
+- **Professional studio background (4.4, revised):** `ProfessionalBackground`
+  (`src/components/professional/ProfessionalBackground.tsx`) is a light "green
+  studio" backdrop mounted on exactly two pages — `/professional/create` and
+  `/professional/lessons` (list and empty state). It layers a near-white
+  cool-green ground gradient, two soft radial green glows (`#16A34A` at ~10–13%,
+  `#15803D` lower-right), a faint dot grid, and a feather into the navbar seam —
+  all `aria-hidden`/`pointer-events-none`, behind the content, spanning the full
+  scrollable page. No Hobby page, and no other Professional page, carries it.
+  (The Lightswind `InteractiveGridBackground` installed for 4.4 was removed per
+  owner direction.)
 
 ## Copy & content rules (enforced by the scaffold)
 

@@ -184,6 +184,7 @@ describe("privacy, error pages, design index", () => {
       "/lesson/sample/live",
       "/lesson/sample/complete",
       "/privacy",
+      "/professional",
       "/design",
     ];
     for (const r of routes) expect(html).toContain(r);
