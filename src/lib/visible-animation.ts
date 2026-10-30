@@ -1,3 +1,4 @@
+/* Copyright © 2026 Robé Berry. All rights reserved. See COPYRIGHT.md. */
 /** Schedule unchanged animation frames only while their surface can be seen.
  * A draw returning false is idle until request() or visibility resumes it.
  */

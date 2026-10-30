@@ -1,3 +1,4 @@
+/* Copyright © 2026 Robé Berry. All rights reserved. See COPYRIGHT.md. */
 // Exercises public API behavior with fresh, synthetic free-practice records.
 // Never submits a valid image or an AI source, and never logs session capabilities.
 import assert from 'node:assert/strict';

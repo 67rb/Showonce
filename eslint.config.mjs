@@ -1,3 +1,4 @@
+/* Copyright © 2026 Robé Berry. All rights reserved. See COPYRIGHT.md. */
 import { defineConfig, globalIgnores } from "eslint/config";
 import nextVitals from "eslint-config-next/core-web-vitals";
 import nextTs from "eslint-config-next/typescript";

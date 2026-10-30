@@ -1,3 +1,4 @@
+-- Copyright © 2026 Robé Berry. All rights reserved. See COPYRIGHT.md.
 ALTER TABLE professional_requests ADD COLUMN trade TEXT NOT NULL DEFAULT 'Other trade';
 ALTER TABLE professional_requests ADD COLUMN experience_level TEXT NOT NULL DEFAULT 'beginner';
 ALTER TABLE professional_requests ADD COLUMN success_criteria TEXT NOT NULL DEFAULT '';

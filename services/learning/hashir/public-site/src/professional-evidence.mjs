@@ -1,3 +1,4 @@
+/* Copyright © 2026 Robé Berry. All rights reserved. See COPYRIGHT.md. */
 // Free evidence journal. Instructor access requires explicit learner sharing.
 function evidenceRecord(row){return {id:row.id,lesson_id:row.lesson_id,criterion_id:row.criterion_id||null,notes:row.notes,status:row.status,has_photo:!!row.image_key&&row.status==='ready',created_at:row.created_at};}
 async function evidenceAccess(env,id,user){

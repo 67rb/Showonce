@@ -1,3 +1,4 @@
+# Copyright © 2026 Robé Berry. All rights reserved. See COPYRIGHT.md.
 """Sampled frames, one request in flight and one replaceable pending frame."""
 import collections
 import copy

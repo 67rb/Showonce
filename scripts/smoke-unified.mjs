@@ -1,3 +1,4 @@
+/* Copyright © 2026 Robé Berry. All rights reserved. See COPYRIGHT.md. */
 import assert from 'node:assert/strict';
 import {createServer} from 'node:http';
 import {spawn} from 'node:child_process';

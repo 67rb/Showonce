@@ -1,3 +1,4 @@
+/* Copyright © 2026 Robé Berry. All rights reserved. See COPYRIGHT.md. */
 // Local development only. Not imported into the deployed Worker.
 import {DatabaseSync} from 'node:sqlite';
 import {mkdirSync,readFileSync,readdirSync} from 'node:fs';

@@ -1,3 +1,4 @@
+/* Copyright © 2026 Muhammad Hashir (https://github.com/mateir0). All rights reserved. See COPYRIGHT.md. */
 "use client";
 
 /* eslint-disable react-hooks/set-state-in-effect -- render after mount, SSR-safe */

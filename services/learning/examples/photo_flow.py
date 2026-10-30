@@ -1,3 +1,4 @@
+# Copyright © 2026 Robé Berry. All rights reserved. See COPYRIGHT.md.
 """End-to-end HTTP demo. Start the backend before running this file."""
 import json
 import os

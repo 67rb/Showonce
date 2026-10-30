@@ -1,3 +1,4 @@
+/* Copyright © 2026 Muhammad Hashir (https://github.com/mateir0). All rights reserved. See COPYRIGHT.md. */
 'use strict';
 function interrupted(message,code='request_interrupted'){const error=new Error(message);error.code=code;error.retryable=true;return error;}
 async function serviceRequest(path,body,options={},image=false){

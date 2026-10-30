@@ -1,3 +1,4 @@
+# Copyright © 2026 Robé Berry. All rights reserved. See COPYRIGHT.md.
 """Local, loopback-only component demonstration; never a production frontend."""
 import base64
 import binascii

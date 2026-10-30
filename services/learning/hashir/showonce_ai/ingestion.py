@@ -1,3 +1,4 @@
+# Copyright © 2026 Robé Berry. All rights reserved. See COPYRIGHT.md.
 """One deliberately narrow source: the reviewed Origami.me cup HTML tutorial."""
 import hashlib
 import concurrent.futures

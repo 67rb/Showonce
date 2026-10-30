@@ -1,3 +1,4 @@
+-- Copyright © 2026 Robé Berry. All rights reserved. See COPYRIGHT.md.
 -- Keep old images and billing records for audit, but never serve unchecked v1 art.
 CREATE TABLE illustration_candidates (
  id TEXT PRIMARY KEY,

@@ -1,3 +1,4 @@
+/* Copyright © 2026 Muhammad Hashir (https://github.com/mateir0). All rights reserved. See COPYRIGHT.md. */
 'use strict';
 const $=s=>document.querySelector(s),h=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const api=(p,b)=>window.ShowOncePublic.request(p,p==='/api/assess'&&state.session?{...b,session_id:state.session.id}:b,p==='/api/assess'&&state.session?{token:state.session.token}:{});

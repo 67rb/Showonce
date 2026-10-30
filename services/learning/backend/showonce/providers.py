@@ -1,3 +1,4 @@
+# Copyright © 2026 Robé Berry. All rights reserved. See COPYRIGHT.md.
 """Hashir owns real implementations of these provider interfaces."""
 from typing import Protocol
 

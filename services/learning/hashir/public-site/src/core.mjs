@@ -1,3 +1,4 @@
+/* Copyright © 2026 Robé Berry. All rights reserved. See COPYRIGHT.md. */
 export const VERSION='hashir.ai.v2-proposed';
 export const AI_BUDGET_MICRO=5_000_000;
 export const SAFETY='Visual feedback cannot certify physical safety, hidden properties, or professional competence.';

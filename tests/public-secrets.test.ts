@@ -1,3 +1,4 @@
+/* Copyright © 2026 Robé Berry. All rights reserved. See COPYRIGHT.md. */
 import {describe,it,expect} from 'vitest';
 import {secretRules,scanPublicFiles} from '../scripts/check-public-secrets.mjs';
 import {mkdtemp,mkdir,writeFile,rm} from 'node:fs/promises';

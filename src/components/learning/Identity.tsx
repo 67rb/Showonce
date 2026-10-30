@@ -1,3 +1,4 @@
+/* Copyright © 2026 Muhammad Hashir (https://github.com/mateir0). All rights reserved. See COPYRIGHT.md. */
 "use client";
 import {createContext,useCallback,useContext,useEffect,useRef,useState,type ReactNode} from 'react';
 import {workspaceHref,LearningError,browserEntries,rememberBrowser,entryFrom,type Account,type Config,type Entry,type Lesson,type Progress} from '@/lib/learning';

@@ -1,3 +1,4 @@
+/* Copyright © 2026 Robé Berry. All rights reserved. See COPYRIGHT.md. */
 // Catalogue pointers are mutable; lesson revisions and existing practices are not.
 function shortText(value,label,max=400,required=true){
  if(typeof value!=='string'||value.length>max||required&&!value.trim()||/[\u0000-\u0008\u000b\u000c\u000e-\u001f]/.test(value))throw new AppError('invalid_'+label,'Provide valid '+label.replaceAll('_',' ')+' (up to '+max+' characters).');

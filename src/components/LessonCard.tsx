@@ -1,3 +1,4 @@
+/* Copyright © 2026 Muhammad Hashir (https://github.com/mateir0). All rights reserved. See COPYRIGHT.md. */
 import type { LibraryLesson } from "@/design/fixtures";
 import { sampleLesson } from "@/design/fixtures";
 import { KeyframeVisual } from "@/components/KeyframeVisual";

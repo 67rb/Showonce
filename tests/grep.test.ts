@@ -1,3 +1,4 @@
+/* Copyright © 2026 Robé Berry. All rights reserved. See COPYRIGHT.md. */
 import { describe, it, expect } from "vitest";
 import fs from "node:fs";
 import path from "node:path";

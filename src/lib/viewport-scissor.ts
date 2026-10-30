@@ -1,3 +1,4 @@
+/* Copyright © 2026 Robé Berry. All rights reserved. See COPYRIGHT.md. */
 /** Crop fragment work to the visible portion of a page-sized canvas, without
  * changing resolution, shader coordinates or the rendered visible pixels. */
 export function viewportScissor(gl:WebGLRenderingContext,canvas:HTMLCanvasElement,overscan=160){

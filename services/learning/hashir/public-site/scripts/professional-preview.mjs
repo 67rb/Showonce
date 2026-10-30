@@ -1,3 +1,4 @@
+/* Copyright © 2026 Robé Berry. All rights reserved. See COPYRIGHT.md. */
 import {createServer} from 'node:http';
 import {readFile} from 'node:fs/promises';
 import {professionalLocalDB,professionalLocalBucket} from './professional-local-store.mjs';

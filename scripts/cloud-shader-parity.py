@@ -1,3 +1,4 @@
+# Copyright © 2026 Robé Berry. All rights reserved. See COPYRIGHT.md.
 from pathlib import Path
 import re,json
 # Generate a local-only WebGL comparison page; serve its output for browser QA.

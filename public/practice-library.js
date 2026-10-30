@@ -1,3 +1,4 @@
+/* Copyright © 2026 Muhammad Hashir (https://github.com/mateir0). All rights reserved. See COPYRIGHT.md. */
 'use strict';
 (function(){
  const KEY='showonce-library-v1',LEGACY_KEY='showonce-practice-v2';

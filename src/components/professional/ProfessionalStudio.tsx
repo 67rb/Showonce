@@ -1,3 +1,4 @@
+/* Copyright © 2026 Muhammad Hashir (https://github.com/mateir0). All rights reserved. See COPYRIGHT.md. */
 "use client";
 import {useCallback,useEffect,useRef,useState,type ReactNode} from 'react';
 import {AccountBar,useIdentity} from '@/components/learning/Identity';

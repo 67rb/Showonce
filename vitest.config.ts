@@ -1,3 +1,4 @@
+/* Copyright © 2026 Robé Berry. All rights reserved. See COPYRIGHT.md. */
 import { defineConfig } from "vitest/config";
 import path from "node:path";
 

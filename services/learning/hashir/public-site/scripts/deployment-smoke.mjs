@@ -1,3 +1,4 @@
+/* Copyright © 2026 Robé Berry. All rights reserved. See COPYRIGHT.md. */
 // Run the real HTTP smoke against the built Worker with migrated in-memory D1
 // and an isolated bucket. No model key, public listener or persistent test data.
 import {createServer} from 'node:http';

@@ -1,3 +1,4 @@
+/* Copyright © 2026 Robé Berry. All rights reserved. See COPYRIGHT.md. */
 export type Step = {id:string;position:number;title?:string;instructions:string;expected_visual_result:string;assessment_criteria:string[];visual_limits:string[];photo_assessable?:boolean;source_reference?:{url?:string;quote?:string};coaching_origin?:string};
 export type Lesson = {id:string;title:string;category:string;materials:string[];difficulty?:string;steps:Step[];source_url?:string;source_attribution?:string;safety_notice?:string;practice_restrictions?:string[];content_origin?:string};
 export type Progress = {session_id:string;lesson_id:string;access_token?:string;account_owned?:boolean;status:string;current_step_id:string|null;completed_step_ids:string[];completed_checkpoints:{step_id:string;kind:string;observations?:string[]}[];total_steps:number;updated_at:string};

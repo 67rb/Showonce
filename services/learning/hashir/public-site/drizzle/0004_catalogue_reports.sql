@@ -1,3 +1,4 @@
+-- Copyright © 2026 Robé Berry. All rights reserved. See COPYRIGHT.md.
 CREATE TABLE catalogue_entries (id TEXT PRIMARY KEY NOT NULL, draft_lesson_id TEXT, published_lesson_id TEXT, version INTEGER NOT NULL DEFAULT 0, created_at INTEGER NOT NULL, updated_at INTEGER NOT NULL);
 --> statement-breakpoint
 CREATE TABLE catalogue_revisions (lesson_id TEXT PRIMARY KEY NOT NULL REFERENCES ai_lessons(id), entry_id TEXT NOT NULL REFERENCES catalogue_entries(id), created_by TEXT NOT NULL REFERENCES learner_accounts(id), created_at INTEGER NOT NULL);

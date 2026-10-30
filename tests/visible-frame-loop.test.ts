@@ -1,3 +1,4 @@
+/* Copyright © 2026 Robé Berry. All rights reserved. See COPYRIGHT.md. */
 // @vitest-environment jsdom
 import {afterEach,expect,it,vi} from 'vitest';
 import {createVisibleFrameLoop} from '@/lib/visible-frame-loop';

@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# Copyright © 2026 Robé Berry. All rights reserved. See COPYRIGHT.md.
 set -euo pipefail
 
 project_root=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)

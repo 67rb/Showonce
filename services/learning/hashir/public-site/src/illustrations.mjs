@@ -1,3 +1,4 @@
+/* Copyright © 2026 Robé Berry. All rights reserved. See COPYRIGHT.md. */
 // One durable claim per target prevents refreshes and concurrent tabs from buying duplicates.
 async function stepIllustration(env,lesson,step,generate=false,fetcher=fetch){
  const id='illustration_'+await digest(lesson.id+'|'+step.id+'|v2');

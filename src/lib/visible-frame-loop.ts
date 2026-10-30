@@ -1,3 +1,4 @@
+/* Copyright © 2026 Robé Berry. All rights reserved. See COPYRIGHT.md. */
 /** Run visual work only while visible. Keeps elapsed animation time across pauses. */
 export function createVisibleFrameLoop(element:Element,draw:(frame:{time:number;delta:number;reduced:boolean})=>void,{rootMargin='0px'}={}){
  const media=window.matchMedia('(prefers-reduced-motion: reduce)');

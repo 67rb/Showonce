@@ -1,3 +1,4 @@
+# Copyright © 2026 Robé Berry. All rights reserved. See COPYRIGHT.md.
 """Run against Master's real Backend class, with temporary local persistence.
 
 No edits to Master's files, no API calls, no server or production data changes.

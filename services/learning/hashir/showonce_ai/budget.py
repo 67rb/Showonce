@@ -1,3 +1,4 @@
+# Copyright © 2026 Robé Berry. All rights reserved. See COPYRIGHT.md.
 """Durable, concurrent reservations for Hashir's authorized $5 Meta allowance."""
 import math
 import sqlite3

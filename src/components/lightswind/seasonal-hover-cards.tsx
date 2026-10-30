@@ -1,3 +1,4 @@
+/* Copyright © 2026 Muhammad Hashir (https://github.com/mateir0). All rights reserved. See COPYRIGHT.md. */
 // SeasonalHoverCards — adapted (v2.31): THREE-card expanding hover row. The row
 // container, flex row, width/flex transition timing (`duration-500`) and the
 // export name/file location are kept; the mechanics are retuned for three cards —

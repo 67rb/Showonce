@@ -1,3 +1,4 @@
+-- Copyright © 2026 Robé Berry. All rights reserved. See COPYRIGHT.md.
 CREATE TABLE professional_assignments (
  id TEXT PRIMARY KEY,
  enrollment_id TEXT NOT NULL UNIQUE REFERENCES professional_enrollments(id),

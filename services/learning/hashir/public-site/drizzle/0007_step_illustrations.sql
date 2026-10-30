@@ -1,3 +1,4 @@
+-- Copyright © 2026 Robé Berry. All rights reserved. See COPYRIGHT.md.
 CREATE TABLE step_illustrations (
  id TEXT PRIMARY KEY,
  lesson_id TEXT NOT NULL,

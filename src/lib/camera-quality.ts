@@ -1,3 +1,4 @@
+/* Copyright © 2026 Robé Berry. All rights reserved. See COPYRIGHT.md. */
 /** Free local frame quality gate. No network, no storage. Pure + canvas helper. */
 export type FrameQuality={brightness:number;sharpness:number;dark:boolean;bright:boolean;blurry:boolean;hints:string[];ok:boolean};
 export const DARK_THRESHOLD=45;

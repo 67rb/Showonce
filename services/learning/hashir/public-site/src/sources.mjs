@@ -1,3 +1,4 @@
+/* Copyright © 2026 Robé Berry. All rights reserved. See COPYRIGHT.md. */
 import {AppError,sourceURL,socialPlatform,fetchTutorial,digest,providerJSON,validModelJSON} from './core.mjs';
 
 const SOURCE_PENDING={status:'source_processing',retry_after_ms:5000};

@@ -1,3 +1,4 @@
+/* Copyright © 2026 Robé Berry. All rights reserved. See COPYRIGHT.md. */
 /** Shared read-only cache for saved step illustrations (AI target images, never user photos).
  * StepIllustration populates it when the target card loads; LiveCamera reads it so the
  * compare view needs no second fetch and free flows keep making zero API calls. */

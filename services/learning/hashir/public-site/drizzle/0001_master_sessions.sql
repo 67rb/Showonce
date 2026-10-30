@@ -1,3 +1,4 @@
+-- Copyright © 2026 Robé Berry. All rights reserved. See COPYRIGHT.md.
 CREATE TABLE practice_sessions (id TEXT PRIMARY KEY NOT NULL, lesson_id TEXT NOT NULL, token_hash TEXT NOT NULL, current_index INTEGER NOT NULL DEFAULT 0, created_at INTEGER NOT NULL, updated_at INTEGER NOT NULL);
 --> statement-breakpoint
 CREATE TABLE practice_submissions (id TEXT PRIMARY KEY NOT NULL, session_id TEXT NOT NULL REFERENCES practice_sessions(id), step_id TEXT NOT NULL, idem_key TEXT NOT NULL, request_hash TEXT NOT NULL, status TEXT NOT NULL, assessment TEXT, image_key TEXT, mime_type TEXT, created_at INTEGER NOT NULL, UNIQUE(session_id,idem_key));

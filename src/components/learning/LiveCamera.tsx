@@ -1,3 +1,4 @@
+/* Copyright © 2026 Muhammad Hashir (https://github.com/mateir0). All rights reserved. See COPYRIGHT.md. */
 "use client";
 import {useCallback,useEffect,useReducer,useRef,useState} from 'react';
 import {aiChecksAvailable,photoData,type Assessment,type Lesson,type Progress,type Step} from '@/lib/learning';

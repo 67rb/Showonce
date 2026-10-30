@@ -1,3 +1,4 @@
+/* Copyright © 2026 Robé Berry. All rights reserved. See COPYRIGHT.md. */
 // Compatibility implementation of Master's API v1 for D1/R2. The Python source
 // remains the contract reference; request state is owned here, never by the UI.
 const sid=prefix=>prefix+'_'+crypto.randomUUID().replaceAll('-','');

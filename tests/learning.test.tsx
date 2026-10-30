@@ -1,3 +1,4 @@
+/* Copyright © 2026 Robé Berry. All rights reserved. See COPYRIGHT.md. */
 import {renderToString} from 'react-dom/server';
 // @vitest-environment jsdom
 import {beforeEach,afterEach,describe,it,expect,vi} from 'vitest';

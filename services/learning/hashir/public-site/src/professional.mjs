@@ -1,3 +1,4 @@
+/* Copyright © 2026 Robé Berry. All rights reserved. See COPYRIGHT.md. */
 // Isolated professional edition. AI feedback never writes instructor decisions.
 const PRO_CATALOGUE=JSON.parse(new TextDecoder().decode(Uint8Array.from(atob(ASSETS['/professional-catalogue.json'].data),c=>c.charCodeAt(0))));
 const proCourse=id=>{const value=PRO_CATALOGUE.courses.find(item=>item.id===id);if(!value)throw new AppError('course_not_found','Choose an available course.',404);return value;};

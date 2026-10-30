@@ -132,18 +132,18 @@
     },
     {
       "path": "eslint.config.mjs",
-      "bytes": 465,
-      "sha256": "870f1adccecf3051cbcd9fd307cef51d7633cf510979c181a81f4b1797273493"
+      "bytes": 541,
+      "sha256": "0a1093abef65c482b96113b61a4704dc9b22c2fa523b61c1f91bf8867d85632d"
     },
     {
       "path": "next-env.d.ts",
-      "bytes": 288,
-      "sha256": "1862ac4bbbc5192d4bf562161df66ea547ed3e67173100656ab606ae9797db2b"
+      "bytes": 364,
+      "sha256": "0cf0e2652845b0ef158a5ea60427fd873297096a30464da84223d095316f2d51"
     },
     {
       "path": "next.config.ts",
-      "bytes": 1393,
-      "sha256": "4bb15190c845d4fb2c033b2a6bba46a1cdf9cbfb0a66a56afc7a27f1a36dfc58"
+      "bytes": 1469,
+      "sha256": "6cae217f2752cc8e5afe311b69b8635a7d464b4f9507ae0b24dce1e6d7a99bd4"
     },
     {
       "path": "package-lock.json",
@@ -157,13 +157,13 @@
     },
     {
       "path": "public/icons/icon-192.svg",
-      "bytes": 144,
-      "sha256": "08fd4ebf84c2813ee3b023c05e6d99a061f5303ce6d4f208f21f651591ffae4c"
+      "bytes": 256,
+      "sha256": "cfbcfee4f973bb657dcd431334e4d9d3abdbb81202a05f34f6efd98ca3aff78e"
     },
     {
       "path": "public/icons/icon-512.svg",
-      "bytes": 144,
-      "sha256": "afe4ecb4e3f05566adb012b06de51d52a95c9ab28c167f459b9e66e47625dc34"
+      "bytes": 256,
+      "sha256": "5724ce7de6a6ff12a9ccfb8d800ccc561d5b302daafb77f2b5b297b350528e7a"
     },
     {
       "path": "public/originkit/hero-18/diagonal-lines-1.svg",
@@ -242,53 +242,53 @@
     },
     {
       "path": "public/practice-library.js",
-      "bytes": 7250,
-      "sha256": "5c837c51aeda74b03ef5a88183f3a995303f8101aa6db5cf46b7256b41928f43"
+      "bytes": 7359,
+      "sha256": "645d0544db8b860a2b5808a2ceeacb4edda43525d0b85ac69b2513d9253cf000"
     },
     {
       "path": "scripts/assemble-app.mjs",
-      "bytes": 503,
-      "sha256": "f6ab22fbb251a8b07d1bd133aedf02fb90b302b6c13855fe9cf49d00218794ce"
+      "bytes": 579,
+      "sha256": "b0fc7dee6ea9a2196b06e6c92e16123342ffcee9180da83f278812a0a4204d0e"
     },
     {
       "path": "scripts/check-public-secrets.mjs",
-      "bytes": 2754,
-      "sha256": "66d6893489f7a7c1d6067c03bf93e5d77bf432fa3758e9f9370b203a2b1a78c9"
+      "bytes": 2830,
+      "sha256": "e31ea41e87acc5ebcd680cc9287a2aacf4864d654340e385dd0fc9da2426fe99"
     },
     {
       "path": "scripts/cloud-shader-parity.py",
-      "bytes": 2866,
-      "sha256": "4ebca546229601dc0e3139e745555cc98d08bf4069a6af90ffa86ad02de92cd7"
+      "bytes": 2938,
+      "sha256": "35325c1e4a367f06eb69aa6baf35a69ab0972c40998a607812b833f5c78ea298"
     },
     {
       "path": "scripts/dev.mjs",
-      "bytes": 1010,
-      "sha256": "8c955b64cd1e3b81c65982d89f7f53933f9f8e06c15089048cb03333c9578cee"
+      "bytes": 1086,
+      "sha256": "9df8db02e130cf27775557779c6d5cece774a1e68ce27f8be3075c388aaba2ab"
     },
     {
       "path": "scripts/prepare-service.mjs",
-      "bytes": 380,
-      "sha256": "36e4304b6383fc13145b16a8a1c94acbc8f79ae26d04abcab63bc895852ea5a9"
+      "bytes": 456,
+      "sha256": "5c01239ad224a93bef22766c7225a007df71981a70c320b9fc3d9f699440a749"
     },
     {
       "path": "scripts/professional-build.mjs",
-      "bytes": 295,
-      "sha256": "4032ac6d1660166d7dd1885b88a6db97a7c0b3301ea09358ab6149ad965f0860"
+      "bytes": 371,
+      "sha256": "cdbad6f5b614526b457cf35541b0b0ff784961eef9beef15d267f6effb5b0705"
     },
     {
       "path": "scripts/professional-dev.mjs",
-      "bytes": 659,
-      "sha256": "0e644edfdaad3810718436aa7475f875ff74b29e9e46962092e6c60bbfa12853"
+      "bytes": 735,
+      "sha256": "d89907ed3d022b9726eae624d31aef1b576f2766f546273c6c22e927dbf8db5c"
     },
     {
       "path": "scripts/smoke-frontend.mjs",
-      "bytes": 1989,
-      "sha256": "722f60b96533568c65e76c0d218aaa04c44bd3e64fe979038f334576d98d2855"
+      "bytes": 2065,
+      "sha256": "2915efce77aa679fe137e9807a042156455a712b214c6e3d701be0559424d326"
     },
     {
       "path": "scripts/smoke-unified.mjs",
-      "bytes": 3013,
-      "sha256": "9d695aa6627814d755946b5c86ef5a61e352bb71d8ae1ecf22ce7f58f6424226"
+      "bytes": 3089,
+      "sha256": "618aef0e32159fb751ce2a1c09cf57cda4584e8c68f3a8ccc67d3cf5455025db"
     },
     {
       "path": "services/learning/.gitignore",
@@ -307,28 +307,28 @@
     },
     {
       "path": "services/learning/backend/showonce/__init__.py",
-      "bytes": 68,
-      "sha256": "9f4153f038c4b27f2a38e9478267ac22458f7978a9d2d7e42e0dede347683cb4"
+      "bytes": 140,
+      "sha256": "b8a8a82a0c258c2034011ea153f1c2ff5442eae2729496251c9c4f88f5f4da48"
     },
     {
       "path": "services/learning/backend/showonce/core.py",
-      "bytes": 18512,
-      "sha256": "5a81c0ae8670fb69c3d87261b7b03ab65ab8b377e59656f3ff4d50eab5131e78"
+      "bytes": 18584,
+      "sha256": "1c89de0207d6dc465c336a4fecebca52642af896b7635c4acc42d69da26ad722"
     },
     {
       "path": "services/learning/backend/showonce/providers.py",
-      "bytes": 2137,
-      "sha256": "088b32764a27dea0662448249422fb780dc528477c8993fa40009d53292fa53c"
+      "bytes": 2209,
+      "sha256": "9e89209ee65b9ac5585dc8679b7f4ae04febb452e75d1423f3477ff1c91ad6e1"
     },
     {
       "path": "services/learning/backend/showonce/server.py",
-      "bytes": 6537,
-      "sha256": "8e56bd1f22a38e970a5899812080b58d24dcd4693f0d09395eacfe654596b32b"
+      "bytes": 6609,
+      "sha256": "586a2cf67a5304a4c00ffc345083db045b83632eecd5dd95104c150e410381ef"
     },
     {
       "path": "services/learning/backend/tests/test_backend.py",
-      "bytes": 12383,
-      "sha256": "87cd908f3cb7df1dd20ec74c402cc236cefde6b4fe8fe8365fd6332728cc0c79"
+      "bytes": 12455,
+      "sha256": "247c7f65e84a1816f9c0e279645db2315fbb3290d6412608592aa2a3369b2450"
     },
     {
       "path": "services/learning/docs/API.md",
@@ -352,8 +352,8 @@
     },
     {
       "path": "services/learning/examples/photo_flow.py",
-      "bytes": 1524,
-      "sha256": "abcd3f9255e4cd1a7faa5a2ec64bfcf7e5e9cd54e9a4c840cd58b7f618fabfc0"
+      "bytes": 1596,
+      "sha256": "454a19f1eb48f0b66d71a2489715e60627b258ee72a9584361b1b9e7f7331f3b"
     },
     {
       "path": "services/learning/hashir/README.md",
@@ -407,18 +407,18 @@
     },
     {
       "path": "services/learning/hashir/demo/app.js",
-      "bytes": 31440,
-      "sha256": "5681ca38b101c777a41109d63b5abe8b03d214c4a7975fe85c3421459f356fcc"
+      "bytes": 31516,
+      "sha256": "4e7eda4e93edd633666f7116089be5bc86f7dcaf722425d433873992243e7a0e"
     },
     {
       "path": "services/learning/hashir/demo/index.html",
-      "bytes": 3714,
-      "sha256": "7d389c4e2130935fb72c77fc7a3fb17d14d6747afdb8a8c641e4a427d9c41bd1"
+      "bytes": 3793,
+      "sha256": "dc2645c71c462a1af8d6b8887174cdd32af301b846f1fe9f2921e3cde226e20a"
     },
     {
       "path": "services/learning/hashir/demo/styles.css",
-      "bytes": 34271,
-      "sha256": "fbb5b305bdcb2da3dc3b42f9cfbb2e11518847974d3a19e6c39de1b4b8a3ca26"
+      "bytes": 34347,
+      "sha256": "fc43fd7a74baf2e7924fe089c392d3ed1a11753213814c4a7ce2ef170ae5eb54"
     },
     {
       "path": "services/learning/hashir/examples/assessment-pass.json",
@@ -472,8 +472,8 @@
     },
     {
       "path": "services/learning/hashir/examples/master_wiring.py",
-      "bytes": 1869,
-      "sha256": "fb44d4b0db70c6bd7f26722c7d5c717f141fc2c0c92e29833d3b06a51f36e015"
+      "bytes": 1941,
+      "sha256": "1f5e90e57bb1b75d7b338f092603a90427529a67f4d5c263dee2691ad972fe40"
     },
     {
       "path": "services/learning/hashir/examples/meta-live-frame-event.json",
@@ -492,8 +492,8 @@
     },
     {
       "path": "services/learning/hashir/examples/steven-client.js",
-      "bytes": 1955,
-      "sha256": "15d179584a23de8b387f192384bf13b6228c4eaf3c21f3b05a3dd70f399204b8"
+      "bytes": 2031,
+      "sha256": "e7d87b722c66c7def2b8f7cf2a7b60ee4f716de4b48513b82d3619a255904129"
     },
     {
       "path": "services/learning/hashir/examples/vision-output.json",
@@ -512,8 +512,8 @@
     },
     {
       "path": "services/learning/hashir/fixtures/cup.html",
-      "bytes": 692,
-      "sha256": "eb016b04ee8243ccf44a43568d22cabcc749870fd8ad3c55e8bd966de12f9750"
+      "bytes": 771,
+      "sha256": "b87815710f2f604cfc203f7fa0e3fb0414f9401041f4c3f983e1037ade8dda69"
     },
     {
       "path": "services/learning/hashir/fixtures/images.json",
@@ -637,83 +637,83 @@
     },
     {
       "path": "services/learning/hashir/public-site/drizzle/0000_public_ai.sql",
-      "bytes": 294,
-      "sha256": "6b121bfa28d79761a8bfaeb526d1c267289aa53bda62a95bf443e6b331787e37"
+      "bytes": 367,
+      "sha256": "8739f4c17de81285255d82a4f0b50be029500ea2f21eb15cab06bdc03599a0da"
     },
     {
       "path": "services/learning/hashir/public-site/drizzle/0001_master_sessions.sql",
-      "bytes": 1324,
-      "sha256": "ba609fd8b1884bb344f59df11764828c5f39f03ec3090beb567d0c424079a26d"
+      "bytes": 1397,
+      "sha256": "e9b280fa6cc4721575bc205852c1347b08924e30dd2b56aa4a6c05d78503a585"
     },
     {
       "path": "services/learning/hashir/public-site/drizzle/0002_runtime_reliability.sql",
-      "bytes": 760,
-      "sha256": "a9dfddf3c1a50c4b3c6bdaff63dfe3b4e668c42c5c8232c3e37db6845447fd47"
+      "bytes": 833,
+      "sha256": "14c7177c36516e721f203d2696ce7299645aa2bafc0f103498f88e2b2570eeee"
     },
     {
       "path": "services/learning/hashir/public-site/drizzle/0003_accounts.sql",
-      "bytes": 635,
-      "sha256": "ca9d19b86ce60d2963aed6f83dbf607cae3919e1907cb825acfffdbdf2ee8914"
+      "bytes": 708,
+      "sha256": "f2f328dcc4dbd09d727dce8439189427b8cc0e6dba644310e5ad782df4133c43"
     },
     {
       "path": "services/learning/hashir/public-site/drizzle/0004_catalogue_reports.sql",
-      "bytes": 1731,
-      "sha256": "ce59ecfb31f3884d68f16919c811c11cfedd470b9fecaa6efaf4d0588ce71dff"
+      "bytes": 1804,
+      "sha256": "fe09cc3845dfd273e2848414f3090ee757e3fe9cfb9dadc6fa0df4de7809d0c1"
     },
     {
       "path": "services/learning/hashir/public-site/drizzle/0005_social_sources.sql",
-      "bytes": 382,
-      "sha256": "3dee6e431b7a52298a2b93849f878539923eaffe67940a7a42cc95036d55948d"
+      "bytes": 455,
+      "sha256": "aa5a052ded8033b9d605498e815d6945cdcd5406e2c6acdfc02eb6dc9e28ec57"
     },
     {
       "path": "services/learning/hashir/public-site/drizzle/0006_video_demonstrations.sql",
-      "bytes": 174,
-      "sha256": "ad8783f0130e18c1b764383d380b85bcccaf6e746cd43ecded84fa75f0eca266"
+      "bytes": 247,
+      "sha256": "f59eb4784476c0b3c22164922d7859a0f308281c28f92dbdf974d4d3975058cc"
     },
     {
       "path": "services/learning/hashir/public-site/drizzle/0007_step_illustrations.sql",
-      "bytes": 300,
-      "sha256": "5b23eb166eedd403c0a58ea8bea3972bbff9fd1c5297b7b3bcaf1c2bb0eb6a1f"
+      "bytes": 373,
+      "sha256": "733312aa1a938d930e6fe1e8d9e23eec1bb5140a87552cdc570f67445ad8f377"
     },
     {
       "path": "services/learning/hashir/public-site/drizzle/0008_illustration_quality.sql",
-      "bytes": 408,
-      "sha256": "a96d6312199123f0e55eccae5b04faec8179a36c1fc630f2ff924667ac386688"
+      "bytes": 481,
+      "sha256": "d2017bd1f4b39f53f68704e057902bc5471baa4fcf176fc1409ef0f28ec8b01e"
     },
     {
       "path": "services/learning/hashir/public-site/drizzle/0009_step_questions.sql",
-      "bytes": 558,
-      "sha256": "0f0f44e472665e8e213bd7d1fbf1f732a8bbe23caf3056de83f5c0a7f8e254c0"
+      "bytes": 631,
+      "sha256": "ae1072a0f2c37832a4af1be7f0bbf594da1aa31864fe11969f9709ed84790047"
     },
     {
       "path": "services/learning/hashir/public-site/drizzle/0010_ack_observations.sql",
-      "bytes": 68,
-      "sha256": "ecb8a38baf328420fd52357c170223f6d65db8a3efc043518289fb4332ae7acb"
+      "bytes": 141,
+      "sha256": "45a01f9baf75057cfd378089b501f0468fcd20236f467de48830f3f89788fa24"
     },
     {
       "path": "services/learning/hashir/public-site/drizzle/0011_ack_request_hash.sql",
-      "bytes": 68,
-      "sha256": "a3d85a10045f830bffdd9afef923a69c6e9c4691e29d3fbec576f0c5e88d8526"
+      "bytes": 141,
+      "sha256": "0e97be52e225affc9cbffca1053b76887766b98738d093fbc96a32e1ee11cf82"
     },
     {
       "path": "services/learning/hashir/public-site/drizzle/0012_professional_courses.sql",
-      "bytes": 905,
-      "sha256": "30fd40d9fa1d46ac9c90794642e4e79b4b4bb5d4c300e015fe50064ab077978d"
+      "bytes": 978,
+      "sha256": "542484f78530f13880baa42144795cd14e617385819bd4fba2f137cc4b8ad507"
     },
     {
       "path": "services/learning/hashir/public-site/drizzle/0013_professional_requests.sql",
-      "bytes": 576,
-      "sha256": "2251f5f32c27628aa3145a7c01fd881abf4f3b5c23bed5b8819b1ee3bdca7ef5"
+      "bytes": 649,
+      "sha256": "28ff1dd918fe2e517e2a52154f41b8b87d1f86b3791b0a2286997c17f7292b83"
     },
     {
       "path": "services/learning/hashir/public-site/drizzle/0014_professional_workspace.sql",
-      "bytes": 936,
-      "sha256": "fcd654ef3ebb76815e44d38854df87c21c84d8812d2ed8ab580573e1f67c7140"
+      "bytes": 1009,
+      "sha256": "edeeab92b864cea393137ce9f4627d01f2daf597ff0109b2f6ed561f5cf06354"
     },
     {
       "path": "services/learning/hashir/public-site/drizzle/0015_professional_assignments.sql",
-      "bytes": 1462,
-      "sha256": "633d94d617317b2986fbe82c9a064c4fa6c1276fc00f8fbf7b714cb12277eb9e"
+      "bytes": 1535,
+      "sha256": "8bb47d7f40e9c58188f39b73e4add28f0915331c6c93735b1f6c50dad890f96f"
     },
     {
       "path": "services/learning/hashir/public-site/drizzle/meta/_journal.json",
@@ -722,63 +722,63 @@
     },
     {
       "path": "services/learning/hashir/public-site/scripts/accounts-client-test.mjs",
-      "bytes": 8858,
-      "sha256": "7d41d7e2fe8436dbe865bcc3688e26230afd461143ee70ee0430d7031d0c61b2"
+      "bytes": 8934,
+      "sha256": "83e4fe909d6ea5a9f3caf86d0cef6950af1c71d781cd606369ac96ab4a67d574"
     },
     {
       "path": "services/learning/hashir/public-site/scripts/accounts-test.mjs",
-      "bytes": 10100,
-      "sha256": "cd02c56b2a7646e855b257c2da8f6a51dc31d30b51d8d728e0e9fd99215c70ad"
+      "bytes": 10176,
+      "sha256": "0ad52fedea9fca5869eccaf0a32bd993cbc3d622eee46f6a5f4e37b130c71a6c"
     },
     {
       "path": "services/learning/hashir/public-site/scripts/assemble.mjs",
-      "bytes": 2997,
-      "sha256": "0e3215267782c415a98bf27c3e5b38c73a98cae9a92f78fbd6f88f032befc944"
+      "bytes": 3073,
+      "sha256": "0c18705d92b366f3bf6df0d78c04021490727fc8e3a0bd9427729e0a96dae293"
     },
     {
       "path": "services/learning/hashir/public-site/scripts/build.sh",
-      "bytes": 366,
-      "sha256": "76bddebeb2accb38b37de0673778d7bf3119bc7da7ed5ae4c1d4c9884969848f"
+      "bytes": 438,
+      "sha256": "b62dc31aac889cb8154e34f059bb2fbee577bb2c656a84fc1cd9c9ebed29b04c"
     },
     {
       "path": "services/learning/hashir/public-site/scripts/d1-local.mjs",
-      "bytes": 1230,
-      "sha256": "00753c44a1e27f2c4c5fccf6a13a549888499e30f8620254088e2e9de87cb4ac"
+      "bytes": 1306,
+      "sha256": "fc3edf676190561443d50fa678fea70328e35709017ff34b2b6803335a5c19c0"
     },
     {
       "path": "services/learning/hashir/public-site/scripts/demonstration-test.mjs",
-      "bytes": 15107,
-      "sha256": "bc7ef6e2a92731aa14b5d3487782ab1cf5a59b7740d1271995c29370d02a1d34"
+      "bytes": 15183,
+      "sha256": "935d314934c45e99a5563d16fee58187e09ab5b5ca6c9d32eba04ab30a1f8949"
     },
     {
       "path": "services/learning/hashir/public-site/scripts/deployment-smoke.mjs",
-      "bytes": 1861,
-      "sha256": "862f392e4955158fabc1e5db78780f14f25def2e3168a93dd8c962150b49a741"
+      "bytes": 1937,
+      "sha256": "4ed6d68e16d32d0a28f70d2c4973c29bbe4e86f9dae1f638cf35f13784d76e48"
     },
     {
       "path": "services/learning/hashir/public-site/scripts/frontend-test.mjs",
-      "bytes": 12566,
-      "sha256": "06ae45120a197987d01cab5eb456a1f73b8cd6f07457750e92c7c26f2b012185"
+      "bytes": 12642,
+      "sha256": "d182b98b8e428e7c829109362d3ad49a14a9d87fd1c4c41906833223aec22839"
     },
     {
       "path": "services/learning/hashir/public-site/scripts/illustration-prefetch-test.mjs",
-      "bytes": 3165,
-      "sha256": "ebf7cc25550805f0cb9481f5be637c63004876689959d54f76eac74f5ab043d4"
+      "bytes": 3241,
+      "sha256": "24238bfc3e0839ad3eea64e69e7450dae1e6f6b2cd4497144626ccc3669d804b"
     },
     {
       "path": "services/learning/hashir/public-site/scripts/illustration-test.mjs",
-      "bytes": 6116,
-      "sha256": "02e5cdb87fcbbd20f23da438625fcdabd70bef7fabbf5505dc467c11f6964862"
+      "bytes": 6192,
+      "sha256": "cddea260659cbb5158f7000be4c1b0d787c4478ea80c97f502061c62eb71d59d"
     },
     {
       "path": "services/learning/hashir/public-site/scripts/large-source-smoke.mjs",
-      "bytes": 1269,
-      "sha256": "844e9e096bae73655459d54d447d25e262baf9da59eb532a6f7718953917c51a"
+      "bytes": 1345,
+      "sha256": "8a96da022f0d3e27fef30e9c92d92fdf1566f5ae7d7364c50b9dd72f630e2007"
     },
     {
       "path": "services/learning/hashir/public-site/scripts/library-test.mjs",
-      "bytes": 10105,
-      "sha256": "a8f5bdb106a8d67a563cddb19ba759db06297ebecc3d1e5c7b365dfe634915e7"
+      "bytes": 10181,
+      "sha256": "d39a38f3cbca81ffbac66d6898fc7404a681a1f4a515965333635a26fef6e59a"
     },
     {
       "path": "services/learning/hashir/public-site/scripts/master-reference.json",
@@ -787,138 +787,138 @@
     },
     {
       "path": "services/learning/hashir/public-site/scripts/master-test.mjs",
-      "bytes": 19656,
-      "sha256": "4dee9096f253b2842a134fbb3f4914d1af62bdc71e2cdd6f96477e701cebc436"
+      "bytes": 19732,
+      "sha256": "64c799582ff55b36500867116b5fa63de8a7233b4aad5986db64fb99bb0a6a05"
     },
     {
       "path": "services/learning/hashir/public-site/scripts/preview.mjs",
-      "bytes": 2425,
-      "sha256": "c569dbda174b8a38998e06493b5e5ebf423a65368296cfa7d938ab9028b075fc"
+      "bytes": 2501,
+      "sha256": "9b74cdee2bfcd4dff61b7d06f76366df13033703628b52357d765cd5b855bbf2"
     },
     {
       "path": "services/learning/hashir/public-site/scripts/production-smoke.mjs",
-      "bytes": 6290,
-      "sha256": "3c9e3790db5be65663c4bda2385ee39bea8dbc7a5c1a4e81abc261d7edde9954"
+      "bytes": 6366,
+      "sha256": "3a43e6a4a7e88dea5557deca11daad2c80d2638c2fea53099a64feef3f8905a6"
     },
     {
       "path": "services/learning/hashir/public-site/scripts/professional-local-store.mjs",
-      "bytes": 2146,
-      "sha256": "fe304375082987e9dcb0dc298cd3254bd7a36d091522dfea5092b7000f170140"
+      "bytes": 2222,
+      "sha256": "dd19323ab87bcefa9a3e22c8e45314420f2d78986311c192ae98605b53b7fde2"
     },
     {
       "path": "services/learning/hashir/public-site/scripts/professional-preview.mjs",
-      "bytes": 2842,
-      "sha256": "289b7ebead31f9ed9e1c2e3635198f747798fc8127a36d50d50e5824d3bcfe71"
+      "bytes": 2918,
+      "sha256": "205083955bbe48ff8f31f14b8ee783c0b5cb540394643b4b39bff0e084041ca9"
     },
     {
       "path": "services/learning/hashir/public-site/scripts/professional-test.mjs",
-      "bytes": 36325,
-      "sha256": "cb3ed4a6811ab32cc0002aeb20faaeec4af808e1825981bc3ea6b5a2c04ecb41"
+      "bytes": 36401,
+      "sha256": "331d36ed6c8ead8560e64bba8899096d3ff2aa8b73651d6213b1a0b5b62d9ecc"
     },
     {
       "path": "services/learning/hashir/public-site/scripts/public-api-test.mjs",
-      "bytes": 2405,
-      "sha256": "7d4071718dd7ed0140493d859c1f5a286486824825557881db0e6d49ec9e6a13"
+      "bytes": 2481,
+      "sha256": "5b8a85bc01eaad4672ed241426d92eb9db2ae3332b566c7ea562cf1fc96b8b68"
     },
     {
       "path": "services/learning/hashir/public-site/scripts/questions-test.mjs",
-      "bytes": 13220,
-      "sha256": "bc2a480373f81a174ecbcb1d056dd56651d06ad8553ff313132929fea709b277"
+      "bytes": 13296,
+      "sha256": "643742bf10be016b3d8658f510ef9b4c63a73b1d2dc77ddc60caf8ef082eeed2"
     },
     {
       "path": "services/learning/hashir/public-site/scripts/social-source-test.mjs",
-      "bytes": 5218,
-      "sha256": "387620d8210aacd1b30b5192dc60d482011a944a0acbe0f77eda162d7fbb7999"
+      "bytes": 5294,
+      "sha256": "6e1a399612b64c11974131796c5a15acc95944b3775f1c8980967608c29c034c"
     },
     {
       "path": "services/learning/hashir/public-site/scripts/source-stream-test.mjs",
-      "bytes": 4460,
-      "sha256": "5360e6b876bff9bdcb668ef28c5a868a6893d860e7d71b17cd6a1181efa9943c"
+      "bytes": 4536,
+      "sha256": "b6a7e272bc332edf02ea29085a3371b537406c1aac85403877ed2e345707cbb5"
     },
     {
       "path": "services/learning/hashir/public-site/scripts/supadata-test.mjs",
-      "bytes": 12210,
-      "sha256": "87bdeaf6f15641ea0afd564bc573ea44656b6cef37a26abffc1ff435acc95933"
+      "bytes": 12286,
+      "sha256": "6b331ffe73b3db1181315620ccc8122ac4565170cfc9543c0c04e444683df7b5"
     },
     {
       "path": "services/learning/hashir/public-site/scripts/systems-test.mjs",
-      "bytes": 27242,
-      "sha256": "c0f31eb15b692ba343eca613c89373daeefb91ffecabfdb7e85cf58301e93a9c"
+      "bytes": 27318,
+      "sha256": "c4b246503f426e3e1d18d68b4b1a404e5b88a6cbfce41cfd0e1853df4c3d8495"
     },
     {
       "path": "services/learning/hashir/public-site/scripts/team-test.mjs",
-      "bytes": 18387,
-      "sha256": "b9566e4fd337b40f768146faf708d9465458094e37c3c4b82f3a6703de73e8b1"
+      "bytes": 18463,
+      "sha256": "7fc8818c5c838e8236728453763a0a0824702d09c12b37d18afc552f848c5d0b"
     },
     {
       "path": "services/learning/hashir/public-site/scripts/test.mjs",
-      "bytes": 11594,
-      "sha256": "87ef0097eed2d9ebd7471c583749ea7924db4a3109909f8cc5b2f5626b15b66a"
+      "bytes": 11670,
+      "sha256": "c7e22abf089d49116514f2aac053d296cd4cd26ed135d8b7dc2f8c53a051f46b"
     },
     {
       "path": "services/learning/hashir/public-site/scripts/validate-artifact.mjs",
-      "bytes": 1346,
-      "sha256": "621bde3444b390a8ec40793eb195b91ff101d45cb8be673a61444b7cd285209a"
+      "bytes": 1422,
+      "sha256": "3eaf78546ea88b7a83397b3489d2f9def063ef78806a7d5e26337ccdaefb5b7c"
     },
     {
       "path": "services/learning/hashir/public-site/scripts/workspace-test.mjs",
-      "bytes": 15076,
-      "sha256": "1de8269727048f2b8b3ab98371c1fb218c570c41d861d8b14e7e5a57591fd749"
+      "bytes": 15152,
+      "sha256": "ca6f762610f0894b7342f18edd0e37b3d32185b2222e07bbb33e5825b3830340"
     },
     {
       "path": "services/learning/hashir/public-site/src/accounts.mjs",
-      "bytes": 6996,
-      "sha256": "591d0478e4bb7553480cd8f69d74c0ad872d77a16924ff3f207f1a07522eb93a"
+      "bytes": 7072,
+      "sha256": "0f54af9e6caf755b0f6f62e7bcd6c03593d1bcc687e38aec8b4dd31b893cc65b"
     },
     {
       "path": "services/learning/hashir/public-site/src/core.mjs",
-      "bytes": 37852,
-      "sha256": "fba69bdabde99db5a9bd560a866e81b4666acbbe71835bdf5769ba7ee1aa307f"
+      "bytes": 37928,
+      "sha256": "783f0d282d701a56eba034c8e88ccd2781cfa73138e4390d9738809752ce5166"
     },
     {
       "path": "services/learning/hashir/public-site/src/illustrations.mjs",
-      "bytes": 7651,
-      "sha256": "313e4d8de0d7cd98609095b44aef145a7ddaf9d878c8387999845d9ef0af4266"
+      "bytes": 7727,
+      "sha256": "957a37249e5f474cdd2bfd22dbb492b9043a323799c6cdca8311152b885323ec"
     },
     {
       "path": "services/learning/hashir/public-site/src/professional-evidence.mjs",
-      "bytes": 8398,
-      "sha256": "cdf9d7d2aad8cd1a4dbf525bc089496aff00a07cf861313473b7747acc2668b4"
+      "bytes": 8474,
+      "sha256": "87c595cceb4a8b1230d11bf54f9ea23b8a3cb2f4741e7f91b6554971bbf39a8d"
     },
     {
       "path": "services/learning/hashir/public-site/src/professional-requests.mjs",
-      "bytes": 10784,
-      "sha256": "5f6a3d841b6a37358c23b338519da5f93a375d9feee8b4ee42c0526e8bdb2aad"
+      "bytes": 10860,
+      "sha256": "c3774831319e68f7fc4cb0d8e589f6a71974d44e6f278937b9341605bc79663a"
     },
     {
       "path": "services/learning/hashir/public-site/src/professional.mjs",
-      "bytes": 21948,
-      "sha256": "bd4d6f73dbfa54e321e3cf3ef1176282cd54dc5c565761e0e291aa3796559d38"
+      "bytes": 22024,
+      "sha256": "14c8b1e19f3242c19742c804b3ed078f193df4dd8f1d9bb165b187942736d99d"
     },
     {
       "path": "services/learning/hashir/public-site/src/questions.mjs",
-      "bytes": 9188,
-      "sha256": "37454790fe660389fc28f7faf55236daa2b3c7f01b28e6859b0c03f62c68cbb2"
+      "bytes": 9264,
+      "sha256": "01cbea10db1fe1d9b4613d0ad167b0e1bf6225410fdcbaea1ee470da9b570d29"
     },
     {
       "path": "services/learning/hashir/public-site/src/routes.mjs",
-      "bytes": 10725,
-      "sha256": "9fd20fe67b7718150b9832b46914bbe30eb931fac6a3ed83706cec8d65590ec4"
+      "bytes": 10801,
+      "sha256": "4c35d49552ba5aff6f82289cfe07745fa1e43c07e9f467285f072b80a985477c"
     },
     {
       "path": "services/learning/hashir/public-site/src/sessions.mjs",
-      "bytes": 22283,
-      "sha256": "1f393324e240f6f1951c05a551d2967842de41ac2062dadb48a9f91d09a0ec17"
+      "bytes": 22359,
+      "sha256": "66806056b1f945373baf49d7e6982e0575f3865836501d0e352210386a3ebdec"
     },
     {
       "path": "services/learning/hashir/public-site/src/sources.mjs",
-      "bytes": 20617,
-      "sha256": "8ebd1d3049700f0e8256b7d30150edbb5a9f1e8c38ad9b13942ff0c35f838fbb"
+      "bytes": 20693,
+      "sha256": "551e7b68acd957b4e82fc0389aeb01adfc7391a068e3792692c194beb931d1a1"
     },
     {
       "path": "services/learning/hashir/public-site/src/team.mjs",
-      "bytes": 16381,
-      "sha256": "46aa8526c26ed93ad6a96eeb7c1ecc07d0048822692c3777cf5e5910ffc5d84d"
+      "bytes": 16457,
+      "sha256": "098c4feee1e7157ae5744b8527996abab7fc50c2cb7b27267f16a9ad9f044e70"
     },
     {
       "path": "services/learning/hashir/public-site/web/_headers",
@@ -927,8 +927,8 @@
     },
     {
       "path": "services/learning/hashir/public-site/web/app.js",
-      "bytes": 76197,
-      "sha256": "9bb197529ab627ce30c12963760e9ed1d977ba392189778e4cb20ec779637f96"
+      "bytes": 76306,
+      "sha256": "185608543a9f32a753733e36cfcf9e0b8cc006ec1537396fffb64eb2b32a9aba"
     },
     {
       "path": "services/learning/hashir/public-site/web/examples.json",
@@ -997,8 +997,8 @@
     },
     {
       "path": "services/learning/hashir/public-site/web/index.html",
-      "bytes": 3850,
-      "sha256": "9d5a8b252ad87b7fbace757ec921a24616ab22f2773fc67d3c870edf49e6cc36"
+      "bytes": 3962,
+      "sha256": "59b2d7744513bbb5a2dd64bb8d66b4a0383d9afe5d56e79d9bdd0bc40af91f99"
     },
     {
       "path": "services/learning/hashir/public-site/web/lesson.json",
@@ -1007,8 +1007,8 @@
     },
     {
       "path": "services/learning/hashir/public-site/web/practice-library.js",
-      "bytes": 7250,
-      "sha256": "5c837c51aeda74b03ef5a88183f3a995303f8101aa6db5cf46b7256b41928f43"
+      "bytes": 7359,
+      "sha256": "645d0544db8b860a2b5808a2ceeacb4edda43525d0b85ac69b2513d9253cf000"
     },
     {
       "path": "services/learning/hashir/public-site/web/professional-catalogue.json",
@@ -1017,43 +1017,43 @@
     },
     {
       "path": "services/learning/hashir/public-site/web/professional.css",
-      "bytes": 761,
-      "sha256": "9744f98c865710527d0e1362982a2a980c08116b506df7fa945efab8d31c48a3"
+      "bytes": 870,
+      "sha256": "27c4f6e0cdbb06fba0298a915658ae895542a7943e7a9cbf54e8cc81d1af47a2"
     },
     {
       "path": "services/learning/hashir/public-site/web/professional.html",
-      "bytes": 2770,
-      "sha256": "d385f491fd3f72ff6b90db1c83c5cfe22d6c8263202562f59f3caaa338eeb443"
+      "bytes": 2882,
+      "sha256": "37f54d4c60cff43f242199f5d065bb4f68e759ea357e19e4d86898145f3b7035"
     },
     {
       "path": "services/learning/hashir/public-site/web/professional.js",
-      "bytes": 11539,
-      "sha256": "3a4ddb84b8c01ed5f51c07e03361b244dfe11dfec9c30f03aab3d9d31c67dd2c"
+      "bytes": 11648,
+      "sha256": "52ad134abf0338f54301929f79672f61ca8150cbd82df6d8f3b0404e7bc9df6a"
     },
     {
       "path": "services/learning/hashir/public-site/web/public-api.js",
-      "bytes": 2441,
-      "sha256": "0178c5515c50f8ed60ab0aab5bc7c55f0fd34559686d954084b518c01f69fb2c"
+      "bytes": 2550,
+      "sha256": "35167b859087ab127a7fb83cbb28580e3ca54900bcffe9c2788e52c679212f6b"
     },
     {
       "path": "services/learning/hashir/public-site/web/styles.css",
-      "bytes": 44493,
-      "sha256": "6548f6b3f8aa0037e41b51143298057f2ab78685d1273ba15195d5b69333f348"
+      "bytes": 44602,
+      "sha256": "46ae2c204cb77b70a3cc4ca47376de8e027829ef2a2b3465f0580c96ba4e90b3"
     },
     {
       "path": "services/learning/hashir/public-site/web/team.css",
-      "bytes": 344,
-      "sha256": "606bd798b61980211b396afc0be54a912bcf76ed8782b3d9edddca0077fae94c"
+      "bytes": 453,
+      "sha256": "12d863c41b389442c1ba41b8dfd5dfff158d0ab279b4bb9f8b53d5711851edea"
     },
     {
       "path": "services/learning/hashir/public-site/web/team.html",
-      "bytes": 1260,
-      "sha256": "7ea02a549d2703c4a65c1232d0a5300b0f256bf039f9b59a57a64329837b224b"
+      "bytes": 1372,
+      "sha256": "43670b821fed08c4647c7192e327ca3c2650bfc824860d1bd67783f4969982b7"
     },
     {
       "path": "services/learning/hashir/public-site/web/team.js",
-      "bytes": 14479,
-      "sha256": "7a76759231b7a5b7b885c7cd02f91d999b691e16172bcf10da8253f8c07ad7bc"
+      "bytes": 14588,
+      "sha256": "f115729e3b55d0913826da9d3fd221268a604d795c6afa0a4abe2f56e593f9c6"
     },
     {
       "path": "services/learning/hashir/requirements.txt",
@@ -1062,158 +1062,158 @@
     },
     {
       "path": "services/learning/hashir/showonce_ai/__init__.py",
-      "bytes": 343,
-      "sha256": "ca7d54b46a5dec9e02cc5bfdd3f8e6551eb819260e88aa8818ba54d554e90964"
+      "bytes": 415,
+      "sha256": "ac5d08a6b51afd36a013832fdbd040e1f2924250b4c2c12f0095e26af0d410c7"
     },
     {
       "path": "services/learning/hashir/showonce_ai/__main__.py",
-      "bytes": 5277,
-      "sha256": "7da0743f612cead7d95b3c83276a36753417f9558db87e9b1fafdc8ae0108a40"
+      "bytes": 5349,
+      "sha256": "3557ac5cd0743f98a59421b6f4c39ffb84ec520bfc1a6741369764c8cdab7354"
     },
     {
       "path": "services/learning/hashir/showonce_ai/assessment.py",
-      "bytes": 6812,
-      "sha256": "3a2b751971776c2e3a85255aa0d0fd6b2f07b46e0cc9b67579e25dea67c3fd79"
+      "bytes": 6884,
+      "sha256": "766038becbd1a9ebcfada606dd9d5fa3c572cdf31ae7edb4cad7aad69f2640f2"
     },
     {
       "path": "services/learning/hashir/showonce_ai/budget.py",
-      "bytes": 4043,
-      "sha256": "a9bf83aacd515691103ed5511e7cbd9d7e48d8c320ec8ff5df131e262879a2ec"
+      "bytes": 4115,
+      "sha256": "b956685953bef6c842f153a338a22a689446d810a3b79812189c30a2fa752dae"
     },
     {
       "path": "services/learning/hashir/showonce_ai/common.py",
-      "bytes": 1425,
-      "sha256": "f1813e434c22f287f7a418f78e512b33198c440bb3b444294b6044b1aea88c87"
+      "bytes": 1497,
+      "sha256": "78b985414d614a95e341f35131a22838ce52df3b24cddd8d1e73bea1b7844259"
     },
     {
       "path": "services/learning/hashir/showonce_ai/demo.py",
-      "bytes": 8451,
-      "sha256": "b623bfcc55d0cd34cb2fce2896f0e851719d8002fe12d8de4dd58d1d758184c2"
+      "bytes": 8523,
+      "sha256": "c8c48bb296fbd3ab854dc9e23ac20608224b925827f48a85c421a873e4677488"
     },
     {
       "path": "services/learning/hashir/showonce_ai/ingestion.py",
-      "bytes": 9620,
-      "sha256": "f3865bc63f754008749047c8bca9e9aba935b69fe7e00b526b43db1e43ad29ec"
+      "bytes": 9692,
+      "sha256": "0533d541bef148387cb71b5e47f552eb6a522bee55aa48bdebf5a18acee51ac5"
     },
     {
       "path": "services/learning/hashir/showonce_ai/live.py",
-      "bytes": 7671,
-      "sha256": "0937b660cb4be444b7a92ab7c780b475d9eceb5ea9a77644b3965a4506ddbeda"
+      "bytes": 7743,
+      "sha256": "533ef92aa0107f2a883cf81dfb38bd92b85092c78eb7ab07f282fc47e939534f"
     },
     {
       "path": "services/learning/hashir/showonce_ai/meta.py",
-      "bytes": 7074,
-      "sha256": "23404af38b0309c171913e8f48cab3809a9a6de32efd11462ae2c1cb1142b39a"
+      "bytes": 7146,
+      "sha256": "2c02ab74beb49010bbb6e9047c622f91ee181335d25934f99a7d5a23da4738a1"
     },
     {
       "path": "services/learning/hashir/showonce_ai/nvidia.py",
-      "bytes": 4211,
-      "sha256": "98d16a3f8a8053ed158e89f25f773d17260f93676e1e7b2a10d1b89e125d7b41"
+      "bytes": 4283,
+      "sha256": "3a14113b130165f75adf837f3f7187078406ebfac5a1a6f7628346e5c23267fb"
     },
     {
       "path": "services/learning/hashir/tests/test_ai.py",
-      "bytes": 21460,
-      "sha256": "0477edb5b20d5ce1428ddda9b084db3db02b85ace3afbcedad82b871315ce881"
+      "bytes": 21532,
+      "sha256": "c8ce4e8cca8a2808c4ebf7a263811e8933c72f1685cf8277eb1335e789aa7035"
     },
     {
       "path": "services/learning/hashir/tests/test_meta.py",
-      "bytes": 7713,
-      "sha256": "7dc9c6598288e726f4ee702daee2cf3d8ad1a01f9e4db04189202f9ad08f963c"
+      "bytes": 7785,
+      "sha256": "5b6ac667d606c142e69d190869bbb69bb6aad7692fe7b803043c3942e0eee545"
     },
     {
       "path": "src/app/(minimal)/layout.tsx",
-      "bytes": 472,
-      "sha256": "ece06e6a243e13abba00c864a95d5d4ee37d2af2630fa098436bd8afc57d508c"
+      "bytes": 581,
+      "sha256": "37bb996e4693e60827032b3a3914d3f4124b86d25a0cbdf1b9c2a4821f6d88e9"
     },
     {
       "path": "src/app/(minimal)/lesson/[id]/complete/page.tsx",
-      "bytes": 217,
-      "sha256": "a300a02f2c9f6636165531e36c4bc495ef984eeb97eb0b62478900704e4bda37"
+      "bytes": 326,
+      "sha256": "00bb850867e44bc4952a5372113ccaa2d73b612d02145c9906954abdd181d8c5"
     },
     {
       "path": "src/app/(minimal)/lesson/[id]/live/page.tsx",
-      "bytes": 213,
-      "sha256": "ece8bbfd56b9e3d248087233d9099bd37aa2dbae5e83550e976e97388cb9eb02"
+      "bytes": 322,
+      "sha256": "b3f4ef28450f9e8d0de1f26ab85b616f65ba18613480565f8256e79d93d88301"
     },
     {
       "path": "src/app/(minimal)/lesson/[id]/play/camera/page.tsx",
-      "bytes": 213,
-      "sha256": "ece8bbfd56b9e3d248087233d9099bd37aa2dbae5e83550e976e97388cb9eb02"
+      "bytes": 322,
+      "sha256": "b3f4ef28450f9e8d0de1f26ab85b616f65ba18613480565f8256e79d93d88301"
     },
     {
       "path": "src/app/(minimal)/lesson/[id]/play/page.tsx",
-      "bytes": 213,
-      "sha256": "dffee790cf1a825f1282de18a7ac3440606121662becb08f40000844193196d2"
+      "bytes": 322,
+      "sha256": "866cd2dac33d1c1b3d5c9677b0a23b783bcd257d6c0ef87fda5719754d8c6070"
     },
     {
       "path": "src/app/(public)/create/page.tsx",
-      "bytes": 148,
-      "sha256": "41a69e605c11d4e80b26fa859ba6f0ffce500cdfaf05308258a31b77d3abfa61"
+      "bytes": 257,
+      "sha256": "ac341a129d854557ddc611ec5293d0e65afbd88c787730049298334fa73d8bf4"
     },
     {
       "path": "src/app/(public)/create/processing/page.tsx",
-      "bytes": 148,
-      "sha256": "41a69e605c11d4e80b26fa859ba6f0ffce500cdfaf05308258a31b77d3abfa61"
+      "bytes": 257,
+      "sha256": "ac341a129d854557ddc611ec5293d0e65afbd88c787730049298334fa73d8bf4"
     },
     {
       "path": "src/app/(public)/create/review/page.tsx",
-      "bytes": 150,
-      "sha256": "439aad8eba4b83102e10ec4cdb95ac6e01ea3e221955c57b3abd1275d9e5a594"
+      "bytes": 259,
+      "sha256": "7db03fcf11854dbd8b28fa6421e291410ca94e48020b99bc3e21d539d6ec7b48"
     },
     {
       "path": "src/app/(public)/design/page.tsx",
-      "bytes": 12475,
-      "sha256": "4540e7aaf7f2f53902886dc11fd0fbe6cd30470d8a4029a7da7d202d4e569f95"
+      "bytes": 12584,
+      "sha256": "9ba2e3b1edfb9d59c9e858d0e06b5080a027ca2f88ce421f3b06454a7ba61b4c"
     },
     {
       "path": "src/app/(public)/layout.tsx",
-      "bytes": 655,
-      "sha256": "2f01954498a054eb7e1e4c2af1cdce2812beb45021942e29da4e5e304895c4ce"
+      "bytes": 764,
+      "sha256": "162e80686c2977e7bdfbcb4ae938aeacdca555656a6be5883d60c53602ef71e4"
     },
     {
       "path": "src/app/(public)/lesson/[id]/page.tsx",
-      "bytes": 217,
-      "sha256": "eba0a01c3f0416e1902140a5d4c06e3e8b42302b83ed3bf13b83c3ef58d821f1"
+      "bytes": 326,
+      "sha256": "45cd6f385c5ea5e8e63f4260c70e03efb6e79b75bb64c36bb900fba83354a5bb"
     },
     {
       "path": "src/app/(public)/lessons/page.tsx",
-      "bytes": 149,
-      "sha256": "72e2887960b2473253099ff37677dfed2b4445dc371d856a45e0719bcdc15b47"
+      "bytes": 258,
+      "sha256": "adeaa0214bbeb3d7aa5028e2b33baa7dfd689febdeba69bd6dec999a70d3d82b"
     },
     {
       "path": "src/app/(public)/page.tsx",
-      "bytes": 10098,
-      "sha256": "a039d395a76a97c4b2ff94ef445c183dfe461ddcb7b2d26011bf71f66b903fb3"
+      "bytes": 10207,
+      "sha256": "8b35b77089268834beff0c0b4b5ad4c31450b4babb63e79e6861e55bda0d40b9"
     },
     {
       "path": "src/app/(public)/privacy/page.tsx",
-      "bytes": 1503,
-      "sha256": "396400446973c5ca2fecec38a8f2e22b30e836a72e9f1ccd1bae696d41b552ff"
+      "bytes": 1612,
+      "sha256": "e91bd534c6926f068becea76ac9d90551dde98976feda6324c27e160bc172bfa"
     },
     {
       "path": "src/app/error.tsx",
-      "bytes": 1514,
-      "sha256": "0ab73e35c5a52164b7a75c396b5a555fdf4f6fe2b77105cb5b7dc8178e9a3aa5"
+      "bytes": 1623,
+      "sha256": "2e2f335efd31d497e5a9c09375589e9359018a57929cc8d16cf53029b2635fe2"
     },
     {
       "path": "src/app/globals.css",
-      "bytes": 16777,
-      "sha256": "60e10b5a76baa2c1aab227700314c9e63336928645c72821e8861fb0b6b193da"
+      "bytes": 16886,
+      "sha256": "2f45040db5d2428422d5299d242993c8aecaa89b10552d364d5a6545297ecf6a"
     },
     {
       "path": "src/app/icon.svg",
-      "bytes": 138,
-      "sha256": "e36cd446e9b95cbee882f1c805944b96ce027dad4794b5537cb2983e1720684d"
+      "bytes": 250,
+      "sha256": "312986e38743444d452e3556fab31ac6a2037192812a06a34d10f568cbdae82a"
     },
     {
       "path": "src/app/layout.tsx",
-      "bytes": 2194,
-      "sha256": "bd5593dcf21c86be87fb555d00260739907414573520f592a2d210711aeaca72"
+      "bytes": 2303,
+      "sha256": "dafd8799d7bf6d609742518cbc7480d5a05c6a4eff5f1ad264832d7affe79fc4"
     },
     {
       "path": "src/app/learning.css",
-      "bytes": 4525,
-      "sha256": "80feff8928b865cc02e01991708f6f774d8b9641ffe65737d7825eb56335aa0d"
+      "bytes": 4634,
+      "sha256": "9650e7179fbfdb506c1d39ce02f52b63046f44e40a13ecf42c6d27439f5312c5"
     },
     {
       "path": "src/app/manifest.json",
@@ -1222,8 +1222,8 @@
     },
     {
       "path": "src/app/not-found.tsx",
-      "bytes": 1447,
-      "sha256": "c60031b6e89228e61bd8f40914058c0a8f6d6861a09fa904f91516a597a59818"
+      "bytes": 1556,
+      "sha256": "75b1f8ebfa23d8f3b00a5492af8e6a84a1c8bb77e313993a7917e60ca7f88d93"
     },
     {
       "path": "src/app/originkit-section-theme.css",
@@ -1237,328 +1237,328 @@
     },
     {
       "path": "src/app/professional/create/page.tsx",
-      "bytes": 489,
-      "sha256": "5e4db2a1890b0280a1def34de187ed16be590c8367d389a939b9260541ffa6a7"
+      "bytes": 598,
+      "sha256": "29c90f2f600d3a13b7d424f026395062fe9d3fb530785885d593c84d568d7684"
     },
     {
       "path": "src/app/professional/create/processing/page.tsx",
-      "bytes": 147,
-      "sha256": "3af670538c8e35389fb862d4f7a8cfc6efefd9b5b4eece739ca1dfdffe68b61d"
+      "bytes": 256,
+      "sha256": "06db1569e135133a75eb2efcbb7d597875e33e79892710d84a326a8453ec3834"
     },
     {
       "path": "src/app/professional/create/review/page.tsx",
-      "bytes": 143,
-      "sha256": "9d796176d65f6f240d6aab842c1cd67f25010a4a5a16b8d4272a59b2506cb03e"
+      "bytes": 252,
+      "sha256": "be013842f69b35f1bfd2e742a76f1ad90ec3af8fac9d303a999c2596a411d211"
     },
     {
       "path": "src/app/professional/instructor/page.tsx",
-      "bytes": 299,
-      "sha256": "53be2198582051f7c907a7cd8dcdd62ac97ae632f6c1ad00541505cc7671da30"
+      "bytes": 408,
+      "sha256": "110ca86f378a7dbafa5a2778ba8d065cff9404ad4342483a5eea6318299ac21e"
     },
     {
       "path": "src/app/professional/layout.tsx",
-      "bytes": 253,
-      "sha256": "a6701f06b7f74aa1e58d88d8a5c5510980a6dc6afcc38f171f8e147afe0e0920"
+      "bytes": 362,
+      "sha256": "a5adbf4d7f26ad7167099c7a77e24431d2bc601a912887680b6de0c2bb7697e4"
     },
     {
       "path": "src/app/professional/lesson/[id]/(player)/complete/page.tsx",
-      "bytes": 385,
-      "sha256": "2ed1fe213f671b29b1dbb0df4f6f5c39ef81d4f895de9e8de1c24d52a5b46adb"
+      "bytes": 494,
+      "sha256": "76699e6f0dab72a1b50fe00a70ce264503ce0657dfd487817dcdda3fdcaf35f1"
     },
     {
       "path": "src/app/professional/lesson/[id]/(player)/layout.tsx",
-      "bytes": 714,
-      "sha256": "298ea359ae81a391c4d7419013c49ecf451c1808e5f212ea764e7babb2acb115"
+      "bytes": 823,
+      "sha256": "31a9d67f8c3fde009e49a34580ba3381d7a8fd96c194680210a432f680697632"
     },
     {
       "path": "src/app/professional/lesson/[id]/(player)/live/page.tsx",
-      "bytes": 373,
-      "sha256": "607b2a6f5f30954e091ca7505c604fcd399ed33d00c030779a0e9fc2adbbeffc"
+      "bytes": 482,
+      "sha256": "1cae7975601ae93366dfb7c3cbee73b38473fcdc82ac5e560438da59f3d83978"
     },
     {
       "path": "src/app/professional/lesson/[id]/(player)/play/camera/page.tsx",
-      "bytes": 379,
-      "sha256": "33f09a5fb65bc25446149dbffa6e5a3b3983b15b620ce51b841ae07dc7ac0717"
+      "bytes": 488,
+      "sha256": "55ca9d0ac8983ee7f997b7bf3485388d542e20a81b9f810f25dae263484bc5dd"
     },
     {
       "path": "src/app/professional/lesson/[id]/(player)/play/page.tsx",
-      "bytes": 381,
-      "sha256": "b24e13d4cb217811d0d9e60c0a67ae875e2add18ad961cb132ef24f59ef145bf"
+      "bytes": 490,
+      "sha256": "c2267c8b69109cee78aca6c93a58228469a475c55f5ee8b83237c732e6193d98"
     },
     {
       "path": "src/app/professional/lesson/[id]/page.tsx",
-      "bytes": 546,
-      "sha256": "35732a48d4875c7061ee021a5fcf3c95e6fae3a056474ce725673c6987bcce31"
+      "bytes": 655,
+      "sha256": "ea0e05609fac899aa5148fcda472206a2721a8ff6a8384c34c80360727c9a75b"
     },
     {
       "path": "src/app/professional/lessons/page.tsx",
-      "bytes": 525,
-      "sha256": "46e790e325cc482f4a2106ae6941779c298d73cafc1f7898db3cff9fc5fed773"
+      "bytes": 634,
+      "sha256": "2fff20663eb4db660e5706cb674552122411db5eac0ffdbfaf7b497f348736f6"
     },
     {
       "path": "src/app/professional/page.tsx",
-      "bytes": 9293,
-      "sha256": "eb17d2df12b22521f675849b758ca11176ded32be6362e6478eb8aacb9469456"
+      "bytes": 9402,
+      "sha256": "e662dd4530f707ab418fcb44cc325c47649e5576c1e14572bee84bf86d3f32e2"
     },
     {
       "path": "src/app/professional/privacy/page.tsx",
-      "bytes": 2881,
-      "sha256": "853d81d1fcd1ce38846f2da79ba5c4b52d3f8bf0265f4ec19ca4bd2252e1554b"
+      "bytes": 2990,
+      "sha256": "fe139bd6677f06c13a153eaf4559676e3bc16ea049488b1a2564a114f7a2b80d"
     },
     {
       "path": "src/app/professional/professional.css",
-      "bytes": 3613,
-      "sha256": "f033e5ce3f535088328b37dfb689e12e297261a6d26be08809488623c47b8ce6"
+      "bytes": 3722,
+      "sha256": "bc13fe739742ff5aee5f8cbaa5c3f15750c12908622a4040755c97f62f874dad"
     },
     {
       "path": "src/components/Banner.tsx",
-      "bytes": 450,
-      "sha256": "0440ef25585db0fe6758a2a1ff99a6b07b3630952258f2e49800537d2dc1c424"
+      "bytes": 559,
+      "sha256": "7f7ffe12da0df1c73e0e72dbc03d22e5d77f87156d13d354d5e8a9b2ade8efc1"
     },
     {
       "path": "src/components/Button.tsx",
-      "bytes": 2224,
-      "sha256": "569b7b9a091cee5750de9f849b11bf1e00cbb4b26a7e0006f9629640a790fd63"
+      "bytes": 2333,
+      "sha256": "d8cb9e2f8d5d00a50d98058803052408b24f7e1778cdb23e6cfa5939bbcd7c14"
     },
     {
       "path": "src/components/ConfirmDialog.tsx",
-      "bytes": 1404,
-      "sha256": "d68430254bdd7c8c22cef3166d92cabf4939ab3a09223e0b8969862733c3c9fa"
+      "bytes": 1513,
+      "sha256": "4967261c86235a8332915b9b7ee6889ac34b35d23b026291f99d3c4c19bcc24c"
     },
     {
       "path": "src/components/CursorBadge.tsx",
-      "bytes": 2544,
-      "sha256": "3d742554b3450915b3c6df99c4c5c4f4bf7bc2e5755ba3493be1a9588ea7ce51"
+      "bytes": 2653,
+      "sha256": "eef012a0d89e13ca5dc4f8fd35234861c7e39dfb1f916863037f347c0028478c"
     },
     {
       "path": "src/components/EmptyState.tsx",
-      "bytes": 680,
-      "sha256": "be321c66ce2f2ccb2cd4e00736fc604504011566ad64f01b75ee2cfc473075fa"
+      "bytes": 789,
+      "sha256": "d2470d98b85b9c55190763294ab9a3509d3e71b0c8a0ecde8f0a2cacc408f110"
     },
     {
       "path": "src/components/EndSessionButton.tsx",
-      "bytes": 833,
-      "sha256": "5cf89f8e00bd31e84251c65af6525cd74219e3d1a002130fe792e58784f2dbff"
+      "bytes": 942,
+      "sha256": "6a6aea5af35d93d563225ecf357057dfe27553f6c5e2fd042bb59222d77a2342"
     },
     {
       "path": "src/components/HeroParticleHeadline.tsx",
-      "bytes": 4283,
-      "sha256": "79098cdd65f2843032b3082e715bda009c97e2f142970cc4281554e2a05556b7"
+      "bytes": 4392,
+      "sha256": "18b7ca4b1ea388dc9094dffd230ec085da37f455cf15f54c7da6f9b2f2b6f14b"
     },
     {
       "path": "src/components/HeroVenomCta.tsx",
-      "bytes": 1015,
-      "sha256": "786e17dba701e9f1c9430888b596a27d521c50ed45223dd24c852823e1777be8"
+      "bytes": 1124,
+      "sha256": "68930737a3241ea00b6cee1577e7f692add4266e40e04bb13f04930e002dcf20"
     },
     {
       "path": "src/components/HorizontalGallery.tsx",
-      "bytes": 5579,
-      "sha256": "9b85ca98517453cf490b76e5f059e258ea8df5d7b5c1ba0f9d37d70bb207025a"
+      "bytes": 5688,
+      "sha256": "bd0dcd37291a1c05cf4f7b7a3559010733c7ac01d76672f3ed90ad781ef52687"
     },
     {
       "path": "src/components/ImportPanel.tsx",
-      "bytes": 829,
-      "sha256": "34fd8a018dfd1ecefea36186b619f787e65e9f466004f1afa1cadb4f20cddc06"
+      "bytes": 938,
+      "sha256": "15eaf37251b7835195485f63870e497db33dc8b1cc113a67b696b17ec33369e5"
     },
     {
       "path": "src/components/Input.tsx",
-      "bytes": 1581,
-      "sha256": "3ce21ad6e06db6c5a0d01667b446f57e906d64e3fcec266649f52f1f1831371e"
+      "bytes": 1690,
+      "sha256": "6754d5a3fff7f63942d8a3f006ef74455a781df329096e25ae995cbd6a019890"
     },
     {
       "path": "src/components/KeyframeVisual.tsx",
-      "bytes": 11013,
-      "sha256": "9b8f357efb685e8d0ae2786bc148c0acc823000899c38633033ff8d749abd146"
+      "bytes": 11122,
+      "sha256": "88f0102bd96efa9a51bbe40939a0ef636b97bc1dbf47c95caf3c5468c95cc370"
     },
     {
       "path": "src/components/LessonCard.tsx",
-      "bytes": 1536,
-      "sha256": "0765b308af46e29db567f4faaa1cf00cce4a10a02fae4cfce51f3d15dfa3ea16"
+      "bytes": 1645,
+      "sha256": "a86c9037fdf93867e3c4c8efa1fc0f633c238cab6ab921c1ca3eac8c019ec428"
     },
     {
       "path": "src/components/Magnetic.tsx",
-      "bytes": 1378,
-      "sha256": "d94bbae366fedba870215d2f5eb849973e7ce2f45a970cf24ba6f3f3d8ae1bc1"
+      "bytes": 1487,
+      "sha256": "3dbd3ebad887481961410f4fdb1abfd38eb47ee1a1f8cc36ee9b1ee5c3ca753b"
     },
     {
       "path": "src/components/MinimalChrome.tsx",
-      "bytes": 1624,
-      "sha256": "b4d0577c19d079ce7c31d6df6e84d488d9bb9c22b28bd7d785ea4a720951994a"
+      "bytes": 1733,
+      "sha256": "9149aad2aa3e34b030aae820640162f7f112efcbc4288360ff7cdb2a92341755"
     },
     {
       "path": "src/components/ModeChoice.tsx",
-      "bytes": 1635,
-      "sha256": "46583af314414eaa242dd029356b6bc3730997dfae05ec64dac1dda0e8252aed"
+      "bytes": 1744,
+      "sha256": "f4fb46617efd98da2948f403b771f312ec735a20d043d2bf78309b9e0b912b85"
     },
     {
       "path": "src/components/ModeToggle.tsx",
-      "bytes": 4885,
-      "sha256": "d0630cb29c37ae6937678f8478adeb89937b998c17fcb2599232f2f866bb74e6"
+      "bytes": 4994,
+      "sha256": "415e3303d4f9c3d52bba20663bf4ae2deef31884344514a099162653076b669f"
     },
     {
       "path": "src/components/Parallax.tsx",
-      "bytes": 3413,
-      "sha256": "ea14101d2eeac8c744224c48b4e6eed0b8184694d9db192c3e26234abb39f316"
+      "bytes": 3522,
+      "sha256": "af6c2dbdfb220db8a41a8fb3223f07816dcbe2f67272d81689798ca88085eb76"
     },
     {
       "path": "src/components/ProgressSteps.tsx",
-      "bytes": 806,
-      "sha256": "e42c7e27943785c79e2bc2e3ae79cd1182fd82ba32c7a600d9fa1e4fc07c8cde"
+      "bytes": 915,
+      "sha256": "64bec410fe627faccbeba72a6e11b587e4320b336a895579c86ef1b32b76031c"
     },
     {
       "path": "src/components/PublicFooter.tsx",
-      "bytes": 1178,
-      "sha256": "4ff43cb297fe4e601c1c71967a03a03d721671ff7526a60e915a3bf9b7f1dd96"
+      "bytes": 1287,
+      "sha256": "d9193572922d4c5bc879a81e8b73e5f0bc0302bba0be353f753a8c2483d2975c"
     },
     {
       "path": "src/components/PublicNavbar.tsx",
-      "bytes": 4986,
-      "sha256": "9ab7697290db00bc6b53754ba9028cb0457827846ad6705a8e228c939c0151a3"
+      "bytes": 5095,
+      "sha256": "d35800ef9a8a2ebd5dcc533c5aeddbe13652fe9010534a75bfadc78480b635b2"
     },
     {
       "path": "src/components/Reveal.tsx",
-      "bytes": 3503,
-      "sha256": "c248c62f4c6aed50c3b22efb0d3656d99c7de4afd537d724d34717965d648cbe"
+      "bytes": 3612,
+      "sha256": "9db9fab2e77a25802d988285185bd37acd198f38aaacb6fdb13a71d346789a04"
     },
     {
       "path": "src/components/ScrollProgress.tsx",
-      "bytes": 668,
-      "sha256": "d31d085c9d53675cdc8ed2297bad0baed1febab45f2e16bd43ead16debb237a0"
+      "bytes": 777,
+      "sha256": "18e25fe66132d539e798a53d8bdfd1058c8528feb755c13b5de1abf2ea493c8e"
     },
     {
       "path": "src/components/ShaderBackdrop.tsx",
-      "bytes": 1443,
-      "sha256": "4307b8cf74cc8737e99c669e23567c50f6ead0686aae1fc8e1a4bb4a55459219"
+      "bytes": 1552,
+      "sha256": "0cd4ac292ba31c71989ba73ff57cf049de5c830c57596f5ced7123e00582ab15"
     },
     {
       "path": "src/components/SkeletonCard.tsx",
-      "bytes": 331,
-      "sha256": "51b9a50e7b67194afcb76e7656c43296d5de25d885515f165307b7420dcbdcf5"
+      "bytes": 440,
+      "sha256": "9ba418020433a8184c8a263cbd8dafe05e5b65b6cd42513a3174aab0ceb01417"
     },
     {
       "path": "src/components/SkyGate.tsx",
-      "bytes": 1593,
-      "sha256": "8e26f9b3902b12c6e9a55fb5cfc90e75157aa854a9cc4eb5b33f713bf64db655"
+      "bytes": 1702,
+      "sha256": "c5bc55a14558ee6c7010fb0ec11a8256cf9c47c243c8e7667045b0b1336ac632"
     },
     {
       "path": "src/components/SmoothScroll.tsx",
-      "bytes": 4452,
-      "sha256": "b4b0e343d20e974bd6c8751e45c98d203a0586ec862909ff1073735fd5b38765"
+      "bytes": 4561,
+      "sha256": "3c9a4bec50098d6a30630627ce9bef78a0a0beaf8d4d83ca71723bee6699e650"
     },
     {
       "path": "src/components/SpotlightCard.tsx",
-      "bytes": 1848,
-      "sha256": "945d1fb3a72efe6a423cc383160e4e31389a900a6e2980f0376e178380ee155c"
+      "bytes": 1957,
+      "sha256": "bceefdf2bd31b6cf6783a8d1137bcb483119574f7138dced11e989a47fb5776e"
     },
     {
       "path": "src/components/StartLearningButton.tsx",
-      "bytes": 291,
-      "sha256": "e9f0e7be8aef9dc185e6e30ac2aff2a40a0e0b406e403360b4293ea94622482f"
+      "bytes": 400,
+      "sha256": "4c406e758992ee2e263bf13877894769d031c90257812e372a94d63a7c3ccb2a"
     },
     {
       "path": "src/components/StepCard.tsx",
-      "bytes": 1486,
-      "sha256": "d91d16d9266cbb16aae345bf08042ad093c8bb50a256b43874ef0b19e65fa87f"
+      "bytes": 1595,
+      "sha256": "c11fe0a9e080e30acb94fcebe61374405ec6ab7573b09b41be869200c61db8ac"
     },
     {
       "path": "src/components/VerdictChip.tsx",
-      "bytes": 733,
-      "sha256": "fae3e4c3fa872a7662d0439d7f1cfe5283c9380b3446b3660273581efeb11bbf"
+      "bytes": 842,
+      "sha256": "0304d300a8483cd1373019df68147c991fb2a67c5d1bc2967d534f9193b45217"
     },
     {
       "path": "src/components/Wordmark.tsx",
-      "bytes": 742,
-      "sha256": "f9e876f49a91e33623f066a47ca9134f58cef0fc70d38751d44674db31428bcf"
+      "bytes": 851,
+      "sha256": "7c5d5e85c6590c994e96ae1dcf0c9a916f215fbd5ec52e009502a690388d2042"
     },
     {
       "path": "src/components/create/SatinBackdrop.tsx",
-      "bytes": 926,
-      "sha256": "d6ec8d7cd9e7536fd0370e2d388bfcc205457be57fa86a9fa08acef2e8147f8e"
+      "bytes": 1035,
+      "sha256": "fe7393d989a52a072bcc53c2af4a8723224cb2c689aaf177785d1adcf114bb94"
     },
     {
       "path": "src/components/learning/AiAllowance.tsx",
-      "bytes": 2545,
-      "sha256": "4a80f6891c740570aedb5e95e1983289a0272347496f03b7d37f4600446f5cfc"
+      "bytes": 2654,
+      "sha256": "ffd447493db9e041f443b2915c8450cf76fd4b56e535d807d77601d6e4079fed"
     },
     {
       "path": "src/components/learning/Identity.tsx",
-      "bytes": 8073,
-      "sha256": "0853b125795e7e16c59fe082456bf3e48644ffdf37da7227939721c695048901"
+      "bytes": 8182,
+      "sha256": "48639f726850af4e0d5cb60a05ad5fc3e4b09aba1f71fc4adcf1be7d0884da50"
     },
     {
       "path": "src/components/learning/LiveCamera.tsx",
-      "bytes": 38046,
-      "sha256": "65e0ef66082d8c59f94f2ee50513401dff7c942ab4978da78d5892bc16565b35"
+      "bytes": 38155,
+      "sha256": "c147bda50d194860d395ee7338df8e8b1ce8c668b8318cd11776b8ae46ad80db"
     },
     {
       "path": "src/components/learning/SavedLessonCover.tsx",
-      "bytes": 2314,
-      "sha256": "6e215bbdbf98346017e52f51eeb6dbfc3ae0592a98e4da3009e0f8716a8b6878"
+      "bytes": 2423,
+      "sha256": "abf399b29ff0e83629b40ee12f42cdbda4b6c984168e635fb9c637c0ae2cc555"
     },
     {
       "path": "src/components/learning/StepIllustration.tsx",
-      "bytes": 4383,
-      "sha256": "5208af254af7aa874cd2ef888f3e30c88de282fa4d5e1bffe97081b1daba334e"
+      "bytes": 4492,
+      "sha256": "88d39577e300378dbf80c63338930f2f67d5c71dcfef6a5f67ce2532280000ca"
     },
     {
       "path": "src/components/learning/StepQuestions.tsx",
-      "bytes": 8380,
-      "sha256": "bfe4b6a9c52f37b1c064d6855f026bc10538398a4d2e1914ea8e6167e367a51b"
+      "bytes": 8489,
+      "sha256": "f478e3eb9ac966029984539bae44d8a5fe1e1fe5e0dc71fb727829a581b8abfb"
     },
     {
       "path": "src/components/learning/Workspace.tsx",
-      "bytes": 43121,
-      "sha256": "8eeb5d069ca2f054dc61d11a48719376b71b3b361247ae41329ad18cff32f85e"
+      "bytes": 43230,
+      "sha256": "7696084688e7839459ab9ac185deb98d6990743709a178446319949176969a29"
     },
     {
       "path": "src/components/lightswind/3d-scroll-trigger.tsx",
-      "bytes": 9641,
-      "sha256": "2727f217ba2833e9fe2e2bc1578d76a1e397bd4435c18a71717cbf4abc3646ba"
+      "bytes": 9750,
+      "sha256": "7f94745ec4e317eac5d587ca2fb39ad9b13d6bbbbecc47d5d9823fb8132e04e6"
     },
     {
       "path": "src/components/lightswind/animated-grain.tsx",
-      "bytes": 18802,
-      "sha256": "c708ec4ce31f2510371e2f5b682dfb905d3904b160e9b9b33ebf5fa85ef04c09"
+      "bytes": 18911,
+      "sha256": "d7d6c9a4715dae54a6228945262380548359aa36fafc9d1251afded8d5f2a49b"
     },
     {
       "path": "src/components/lightswind/border-beam.tsx",
-      "bytes": 2952,
-      "sha256": "c8fac6ef9778900dab8789d4c2213beb54d8ad815fa19479a2f04cbd9f9c37cf"
+      "bytes": 3061,
+      "sha256": "7beec90ed44a5ce763d2dc32c2a150ec0e24ed61730bfa73c603b3876014fade"
     },
     {
       "path": "src/components/lightswind/liquid-glass-card.tsx",
-      "bytes": 8625,
-      "sha256": "c76546cf8a6fde9a6458d38db31a526ad4ff9647cbabf9f04b66fc9d4b0a3cf2"
+      "bytes": 8734,
+      "sha256": "a87e812b7a57f12ec0acf84136e34db57ba673054b5025859eb1e7d340647830"
     },
     {
       "path": "src/components/lightswind/looping-words.tsx",
-      "bytes": 3560,
-      "sha256": "b42170b68f2fe80abb34fc88f3e342869364fc543e7a3889ae811b28d0d26824"
+      "bytes": 3669,
+      "sha256": "380581b4483192a464f3825050506774c8a9d8a8a42358cd0f4b28184e1f8048"
     },
     {
       "path": "src/components/lightswind/satin-flow.tsx",
-      "bytes": 12672,
-      "sha256": "68e536961f7f48158858b3e55676356c85bd6c702ec9dd2a59670c3240632c96"
+      "bytes": 12781,
+      "sha256": "159e2fd31d3ae7f8cb3576e6fca605e1ec3236bf9036458531100698ab46fd81"
     },
     {
       "path": "src/components/lightswind/seasonal-hover-cards.tsx",
-      "bytes": 3046,
-      "sha256": "d971c935b771f96973205881379e97079d7c048039012149e99a472b0472ea18"
+      "bytes": 3155,
+      "sha256": "0acab3c98fc5a59c43c9579ef1f7dde9af75539b8e72c2c77745bfce888fbb38"
     },
     {
       "path": "src/components/lightswind/shader-background.tsx",
-      "bytes": 6947,
-      "sha256": "f2d9441fc32b221ea242e2b265ed74d6e45bde573d33368c3805fb1302c56a61"
+      "bytes": 7056,
+      "sha256": "06d97f94490c30e98e4d32c84c6f3e373d9699c57080d57e71441c093a52227d"
     },
     {
       "path": "src/components/lightswind/text-particle-animation.tsx",
-      "bytes": 6577,
-      "sha256": "8df4e2400594f8a20dd7863fad4d53f931abd2185473ac956891b797bc80a9f4"
+      "bytes": 6686,
+      "sha256": "da7e4e03f8fffabd88aae0e6384cb9dbfb77d96e1b76287548b24be3ca42d088"
     },
     {
       "path": "src/components/lightswind/toggle-theme.tsx",
-      "bytes": 11849,
-      "sha256": "49e3a4881e45ce1459210c7950f4ccd29e43993f170ff22a9b1a1f896b8e1b95"
+      "bytes": 11958,
+      "sha256": "feb8409bf4fbfebd74ee922121344407e0f60512541964a055b84d062c41a76b"
     },
     {
       "path": "src/components/originkit/cloud-sky.tsx",
@@ -1622,203 +1622,203 @@
     },
     {
       "path": "src/components/professional/CreateFlow.tsx",
-      "bytes": 476,
-      "sha256": "9919597e919ef9dc6b87560eaabcbc05305377696d6f3dc90b13bd1889071bee"
+      "bytes": 585,
+      "sha256": "b44dd33d3a816d319b2ea8493b9a85241a0559e9f7fd07eccc8720002cc8c62c"
     },
     {
       "path": "src/components/professional/EvidenceJournal.tsx",
-      "bytes": 8022,
-      "sha256": "d329321b3914e787ff437557b35f6a9962362c0840d91943acdea5b24e8b4ae3"
+      "bytes": 8131,
+      "sha256": "de12975ceb9b2f5f30152c659c9b670998a0102c0d2c216af9dd94a308f52f3d"
     },
     {
       "path": "src/components/professional/LessonFlow.tsx",
-      "bytes": 438,
-      "sha256": "8f733de466c6da154b2982e2bf38fe215cfca6cf041d0c7bd288d9bb7bf5f2a7"
+      "bytes": 547,
+      "sha256": "6152a95c4e0fc66fcfc2d23e92d696cd201d45a7643b003ff560db333b79dc77"
     },
     {
       "path": "src/components/professional/ProfessionalBackground.tsx",
-      "bytes": 2451,
-      "sha256": "b8cd4e349cb61a9f62095060f583ed3941d5a7a493cb25c162997c43ab43879b"
+      "bytes": 2560,
+      "sha256": "09e981fd9d353363bdee1b692a66e66a2df24bc9e2e2e75c27492f3abf6917a2"
     },
     {
       "path": "src/components/professional/ProfessionalChrome.tsx",
-      "bytes": 538,
-      "sha256": "3ab076884c250cc381a83e12ea8791a2280a42ec1402f5ad72ddaf9647062119"
+      "bytes": 647,
+      "sha256": "7610981784861c362b326d25ac50e6fa9db071f55db946c2883e361b05a9914f"
     },
     {
       "path": "src/components/professional/ProfessionalStudio.tsx",
-      "bytes": 41072,
-      "sha256": "9e4035bccac7f8c11e90cddb433b23dff8776051c313c3d00734e09139e3eb35"
+      "bytes": 41181,
+      "sha256": "44d5dac4755d2ef1209ede83a64c46179e41ac679cb1e1e93d0c1c6a490bd685"
     },
     {
       "path": "src/components/ui/resizable-navbar.tsx",
-      "bytes": 8627,
-      "sha256": "b3f95bf1df0073ee55119fa18fcc91918ae1d867001f356096e71215b84f6086"
+      "bytes": 8736,
+      "sha256": "ed93f0f80b31d3c208c4d881cb29425393e8895506557cb5af1374f5692782fd"
     },
     {
       "path": "src/components/venom-button/index.ts",
-      "bytes": 101,
-      "sha256": "e98bc08426a791a9c1375c9a769bf3cd76d33992077d994132efe3af3c8e6ced"
+      "bytes": 210,
+      "sha256": "7858b5cccc070b4c184906053882b9db44da805defa4459be7d1a77e1f523f10"
     },
     {
       "path": "src/components/venom-button/venom-button.tsx",
-      "bytes": 44204,
-      "sha256": "91d0bc01a4800a40ee9d89f285f8f0e712a2daaa18fcb5ce7e7589a43dd2607a"
+      "bytes": 44313,
+      "sha256": "76611470c44ea4c4c32b2e8caa9d729fb701fb078d2f5ab730b610ed1fcaced1"
     },
     {
       "path": "src/design/fixtures.ts",
-      "bytes": 12227,
-      "sha256": "4ab1599cbf45ebe43cc3fb19d9f58cf678d2965f7add3fa63ee15368b0b2e2d6"
+      "bytes": 12303,
+      "sha256": "6f52506fe337743c1c6d5dfebc8a21bdfcbfb9a6c8e2e1673532d83fb54f2438"
     },
     {
       "path": "src/lib/camera-quality.ts",
-      "bytes": 4155,
-      "sha256": "51d852063acb2a2767c1f9f0c16ebba527a61d6b371c4f75cd02d1a273360927"
+      "bytes": 4231,
+      "sha256": "15265252ac5e0e4d626cf07f45d22849941e288f6aed76f4493a65893ad6f39e"
     },
     {
       "path": "src/lib/illustration-cache.ts",
-      "bytes": 1141,
-      "sha256": "b096632e4180a69be16ebefa6c40f6164004611b17a3113b93bc2e2b56026dc5"
+      "bytes": 1217,
+      "sha256": "e21c7818d9b0ddd91711ceeb0fe3238d584f0ff940c965c9b65cdda45d7dae4b"
     },
     {
       "path": "src/lib/learning.ts",
-      "bytes": 5224,
-      "sha256": "7239c3fb40f829296d7734e15a6340f3696122fa56454960f76341e4a7d84b76"
+      "bytes": 5300,
+      "sha256": "e44d1b1a012eebc3975d663c7bd21400e33c3245f6e5450c493f03d1b3dcb956"
     },
     {
       "path": "src/lib/strings.ts",
-      "bytes": 16944,
-      "sha256": "736b5849f39038decc215290a3c434f53a3918ccf3568319ffe6cdcb5f0a7ff7"
+      "bytes": 17020,
+      "sha256": "4ded08921419b08b0e96c94a7e48902fcf6ed09e74eda0702352cf9c83bbb9c3"
     },
     {
       "path": "src/lib/utils.ts",
-      "bytes": 1936,
-      "sha256": "0d9853d57cb2df8b25b910da31ce17f347fd2019106443dd043939baeba28deb"
+      "bytes": 2012,
+      "sha256": "c677208a2b3cf17d52c3aa2e60ce979fb6772365d2853f6e373f4471ed1462be"
     },
     {
       "path": "src/lib/viewport-scissor.ts",
-      "bytes": 1648,
-      "sha256": "94a966a55ed51c4b1d26e343386120eae3accc6345c7a50c977607901364b284"
+      "bytes": 1724,
+      "sha256": "dcfb8d807807d99ab4c837cda67ca24f63309d5323d71600fce2902c07f24ae8"
     },
     {
       "path": "src/lib/visible-animation.ts",
-      "bytes": 1211,
-      "sha256": "f485c6d8174f67acbd3a617963a238d4db3083a31e0dc12729739a2d63ba9740"
+      "bytes": 1287,
+      "sha256": "51a16275ebe07092d9042723149bb22aa73fb63daa639631c2070077e142c673"
     },
     {
       "path": "src/lib/visible-frame-loop.ts",
-      "bytes": 1537,
-      "sha256": "795ffe1ee98d5665530ff6c23012c3b8a48429628b3603382d5e2ea02534c2ea"
+      "bytes": 1613,
+      "sha256": "6402a19d33cfa651e3b7f9c04ebd86144da6d5143d785728e2134cac3e518cab"
     },
     {
       "path": "src/lightswind.css",
-      "bytes": 18423,
-      "sha256": "9d24ca139ac062758c4caf1b92c7842bc31cf654cd5ea48ffd7325f160d55a41"
+      "bytes": 18499,
+      "sha256": "bbaa2d095ff20ec72be1765d3bf07a3d39f37fce6bdc22753ae90494e69f0400"
     },
     {
       "path": "tests/ai-allowance.test.tsx",
-      "bytes": 2002,
-      "sha256": "271434e5492d3e228fd21531c2dcab5b17db5b01e9b3078aedadd9a0474d0fd3"
+      "bytes": 2078,
+      "sha256": "83a98b63046bfbd057b898d2c4d3ba50ab25660ffc90dabbb59e68b57337cafa"
     },
     {
       "path": "tests/camera-quality.test.ts",
-      "bytes": 3690,
-      "sha256": "2173f65b6958346421c25a99d560353d6db1aede57b271fc319ca1338e8c9b7c"
+      "bytes": 3766,
+      "sha256": "b54e573acc1108fcc5f164b83ce5693779cba5f1c60ef3214f1075d06ff1e469"
     },
     {
       "path": "tests/grep.test.ts",
-      "bytes": 8832,
-      "sha256": "09546479662d334acd8ada7636d49224b640c2f0aea64e4982f958e44e700a44"
+      "bytes": 8908,
+      "sha256": "4610341936d068903d99175f14363236389908086740fb959e10077e66d4ab90"
     },
     {
       "path": "tests/horizontal-gallery.test.tsx",
-      "bytes": 6498,
-      "sha256": "452dbac51e5a5136e6e32a600e22212b34510d1eab26d04e6e4ac961cc07e6df"
+      "bytes": 6574,
+      "sha256": "5611efbe93043bd7ca196ce58267910eda200deb5c5d674be18ac7eaeb093322"
     },
     {
       "path": "tests/interactions.test.tsx",
-      "bytes": 1665,
-      "sha256": "cc7b4ce53d1d1c5a13ade33e78ef48b7432c684b33bb60c91ea16e6fbcc1dbf1"
+      "bytes": 1741,
+      "sha256": "eb7048c2919838f3e534996bc815057bb0f9e8d369391e46166e4bfe40e3d7e4"
     },
     {
       "path": "tests/inventory.test.tsx",
-      "bytes": 8092,
-      "sha256": "22e535956ce64e7d514bbd414ae1c781cc617005f6e2952d945c62430e138e43"
+      "bytes": 8168,
+      "sha256": "d049c033505fc18a8070657509becfc532bb5b5f6947e8d683fc991ac37c3f85"
     },
     {
       "path": "tests/learning.test.tsx",
-      "bytes": 30109,
-      "sha256": "4a23442b9f96138f97872c94100cb23492dc0b5003cc6e24f7ef2b179178b87d"
+      "bytes": 30185,
+      "sha256": "9e02619054a580fa2541b18edad658d88c16ef76c795aeef52b45edef45cc562"
     },
     {
       "path": "tests/live-camera.test.tsx",
-      "bytes": 56822,
-      "sha256": "f4f743f63757d0b1704a544752c2731f60efa89a651b8fe28d1756203fec8be2"
+      "bytes": 56898,
+      "sha256": "0fe40adab7eb2f46481a71d1947f488c3d4a82c34ed43a0abd4a92de0809a2c3"
     },
     {
       "path": "tests/performance-controls.test.tsx",
-      "bytes": 2567,
-      "sha256": "a4ad1b10516615b26adf6a4bfc39f05d7951e398a36f1ac5cda8a8984ea6070a"
+      "bytes": 2643,
+      "sha256": "97b1163c6d1ff3c90757640ea5690c84585cfd3085d44dee4a9967bb4d4a37ab"
     },
     {
       "path": "tests/professional-studio.test.tsx",
-      "bytes": 19297,
-      "sha256": "b9f565c845d7784a0d9030dd1234709693d13619c1582b7a74ed40cc7420395e"
+      "bytes": 19373,
+      "sha256": "bc5b35e06bdac3fbe2202ff63498937c3df728eb289179a86235e06306400a84"
     },
     {
       "path": "tests/public-secrets.test.ts",
-      "bytes": 2064,
-      "sha256": "a9354752e88db2721333b318c1c81bdc03765338127863fb61c5bd232cbdde93"
+      "bytes": 2140,
+      "sha256": "e713350eae3bf2ae6cd01bbdb275ca35f36a18ecc7560769bdc4628accfce85c"
     },
     {
       "path": "tests/setup.ts",
-      "bytes": 950,
-      "sha256": "675a2ea7fa7a9c02ccd425a2d9f6c2e40882159a7467873e8ac5ed1dad8d9afb"
+      "bytes": 1026,
+      "sha256": "f223f6056b669d8ed9fc56fb6f333a2a2ea97a533bd05c3deae32c39ff07a0e8"
     },
     {
       "path": "tests/shader-lifecycle.test.tsx",
-      "bytes": 3340,
-      "sha256": "7b340d9a809ad36291dec831fbee02c277c99f393ac7aa0d43b4eff9d511eb6b"
+      "bytes": 3416,
+      "sha256": "a1a3fc12ec71a134e93fb6213727412241b3043a1769c47da1836d3f610fb46a"
     },
     {
       "path": "tests/step-questions.test.tsx",
-      "bytes": 6779,
-      "sha256": "20d955234b19e4e7b09ba2139cfd6a3b9ebb3563695250addc1ea22531babc66"
+      "bytes": 6855,
+      "sha256": "5a5872b3dd65fabc9e8156e6497f7ec51486b6181315a5ac113f047652126381"
     },
     {
       "path": "tests/task-d.test.tsx",
-      "bytes": 7682,
-      "sha256": "abc1d336f3069edeb810de8d38ac18dc236bee40493453521c26fc69a6e1ce53"
+      "bytes": 7758,
+      "sha256": "1c57af04f3ccb77fd0f56d0655ee865ec514445bf1a811cab1eefdc80cdc94bb"
     },
     {
       "path": "tests/v13.test.tsx",
-      "bytes": 36909,
-      "sha256": "7c66cba4c9be7be87d8a9c5be2bdb0d9f2d94d720c764c0df824342f9c2c651a"
+      "bytes": 36985,
+      "sha256": "5564bd6ac3462ffd1cde4a75deadf68780f99101af50915bd28e3c7392a7c3d0"
     },
     {
       "path": "tests/venom-performance.test.tsx",
-      "bytes": 3374,
-      "sha256": "323f74c5183b81a260819e462b3fcffcf399dd70452c3fce4786efa0e0962aa1"
+      "bytes": 3450,
+      "sha256": "137ace2c94d2e5169fe3ab323e5eafc1b1111a1fb716d68988f4e4ab041ec59d"
     },
     {
       "path": "tests/viewport-scissor.test.ts",
-      "bytes": 2439,
-      "sha256": "9b97ea1e397d6062b4fd425f259d0e8ebaf4d261e7e0ee53838238730e2fe78e"
+      "bytes": 2515,
+      "sha256": "8318271a0c4a9939f29879aa998e7a84c1b66b7c77f6c2448d9a1491347874cd"
     },
     {
       "path": "tests/visible-animation.test.tsx",
-      "bytes": 9186,
-      "sha256": "ef3e769911a741a014a8c90f15086c5c3881f8ef5d1c8df7bdace55e1cc6247f"
+      "bytes": 9262,
+      "sha256": "9e5c2131e5461423c02171bce1761847484fd3013c18b79e3a3ad6b9c8924a66"
     },
     {
       "path": "tests/visible-frame-loop.test.ts",
-      "bytes": 3028,
-      "sha256": "b0e83607ec9ae5c952a6f9af74b74c28ad9c459ca87d888b760f3c580d546cb4"
+      "bytes": 3104,
+      "sha256": "7608f6ada310ed82dcf9f040a951ab9bf58417f43b53a96ee853822c04924e9b"
     },
     {
       "path": "tests/visual.test.tsx",
-      "bytes": 5073,
-      "sha256": "6d43afd19dd3ca5e115c9468406bd26d03c5bfe041853087ba1f5508aa8e61c1"
+      "bytes": 5149,
+      "sha256": "f216afe2173bb497e26802761c88d215de8fe0c02eeb83caed7ef750dd5b47ff"
     },
     {
       "path": "tsconfig.json",
@@ -1827,8 +1827,8 @@
     },
     {
       "path": "vitest.config.ts",
-      "bytes": 316,
-      "sha256": "f0567d135964b69a680157249edb65fdb744f516721cbe1a8f9e837ce0219111"
+      "bytes": 392,
+      "sha256": "fb928417feca0fec9ae79f9ec885e8da36a16caac419cf3ba04f26c056c4f6ed"
     }
   ],
   "excludes": [

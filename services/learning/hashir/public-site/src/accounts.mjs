@@ -1,3 +1,4 @@
+/* Copyright © 2026 Robé Berry. All rights reserved. See COPYRIGHT.md. */
 // Sites dispatch owns sign-in and supplies these identity headers. They must not
 // be populated from application JSON, URL parameters or local browser storage.
 export async function requestUser(request,checkExpected=true){

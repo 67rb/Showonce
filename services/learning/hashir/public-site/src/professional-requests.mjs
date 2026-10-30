@@ -1,3 +1,4 @@
+/* Copyright © 2026 Robé Berry. All rights reserved. See COPYRIGHT.md. */
 // Account-private learning requests. Saving inputs never purchases AI.
 const proPlanSchema=object({supported:{type:'boolean'},reason:{type:'string',maxLength:1200},title:text,materials:strings,observations:strings,limitations:strings,steps:{type:'array',maxItems:8,items:object({title:text,instructions:text,expected_visual_result:text,assessment_criteria:strings})}});
 function proRequestRecord(row){return {id:row.id,goal:row.goal,trade:row.trade,experience_level:row.experience_level,success_criteria:row.success_criteria,source_url:row.source_url,has_photo:!!row.image_key,status:row.status,error_code:row.error_code,created_at:row.created_at,href:row.session_id?'/professional/lesson/runtime/play/?'+new URLSearchParams({lesson_id:row.lesson_id,session_id:row.session_id}):null};}

@@ -1,3 +1,4 @@
+/* Copyright © 2026 Robé Berry. All rights reserved. See COPYRIGHT.md. */
 import {spawn,spawnSync} from 'node:child_process';
 const cwd=new URL('..',import.meta.url);
 const build=spawnSync('npm',['run','build:professional'],{cwd,stdio:'inherit'});if(build.status)process.exit(build.status);

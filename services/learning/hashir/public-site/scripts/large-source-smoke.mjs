@@ -1,3 +1,4 @@
+/* Copyright © 2026 Robé Berry. All rights reserved. See COPYRIGHT.md. */
 import assert from 'node:assert/strict';
 import {MAX_SOURCE_BYTES,readTutorialHTML} from '../src/core.mjs';
 const encode=new TextEncoder(),prefix=encode.encode('<html><body><script>'),instructions='Draw a circle with a pencil on paper. Shade the lower edge gradually. Leave the upper area light. Blend the shaded edge gently with a finger.',suffix=encode.encode('</script><h1>Drawing practice</h1><p>'+instructions+'</p></body></html>');

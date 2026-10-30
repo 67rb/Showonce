@@ -1,3 +1,4 @@
+/* Copyright © 2026 Robé Berry. All rights reserved. See COPYRIGHT.md. */
 import type { NextConfig } from "next";
 import {PHASE_DEVELOPMENT_SERVER} from "next/constants";
 

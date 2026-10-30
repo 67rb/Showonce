@@ -1,3 +1,4 @@
+-- Copyright © 2026 Robé Berry. All rights reserved. See COPYRIGHT.md.
 CREATE TABLE professional_enrollments (
  id TEXT PRIMARY KEY,
  owner_id TEXT NOT NULL REFERENCES learner_accounts(id),

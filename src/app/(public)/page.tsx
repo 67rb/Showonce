@@ -1,3 +1,4 @@
+/* Copyright © 2026 Muhammad Hashir (https://github.com/mateir0). All rights reserved. See COPYRIGHT.md. */
 import s from "@/lib/strings";
 
 import { Reveal, RevealGroup, SerifAccent } from "@/components/Reveal";

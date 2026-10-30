@@ -1,3 +1,4 @@
+/* Copyright © 2026 Robé Berry. All rights reserved. See COPYRIGHT.md. */
 // Integration example for Master's EXISTING API v1; not used by Hashir's demo.
 // Configure apiBase in Steven's environment. No provider key belongs here.
 export function createShowOnceClient(apiBase) {

@@ -1,3 +1,4 @@
+/* Copyright © 2026 Muhammad Hashir (https://github.com/mateir0). All rights reserved. See COPYRIGHT.md. */
 /* Team form controls reuse the practice studio's existing colors and spacing. */
 #team-main input{display:block;width:100%;min-height:47px;border:1px solid #c7cdbc;border-radius:9px;color:var(--ink);background:var(--surface);padding:12px;font:inherit}
 #team-main pre{white-space:pre-wrap;overflow-wrap:anywhere;font-size:12px;line-height:1.7}

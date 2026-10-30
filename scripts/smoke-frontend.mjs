@@ -1,3 +1,4 @@
+/* Copyright © 2026 Robé Berry. All rights reserved. See COPYRIGHT.md. */
 import assert from 'node:assert/strict';
 import {cp} from 'node:fs/promises';
 import {createServer} from 'node:net';

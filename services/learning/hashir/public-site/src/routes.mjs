@@ -1,3 +1,4 @@
+/* Copyright © 2026 Robé Berry. All rights reserved. See COPYRIGHT.md. */
 async function ingestLesson(env,body,origin,user=null){
     if(body.save_to_account!==undefined&&typeof body.save_to_account!=='boolean')throw new AppError('invalid_account_mode','Choose whether to save to your signed-in account.');
     const owner=body.save_to_account===true?await ensureAccount(env,accountRequired(user)):null;

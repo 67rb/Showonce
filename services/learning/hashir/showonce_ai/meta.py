@@ -1,3 +1,4 @@
+# Copyright © 2026 Robé Berry. All rights reserved. See COPYRIGHT.md.
 """Meta vision: official HTTPS endpoint, exact-input preflight, $5 reservations."""
 import base64
 import http.client

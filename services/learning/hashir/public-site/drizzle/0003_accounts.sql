@@ -1,3 +1,4 @@
+-- Copyright © 2026 Robé Berry. All rights reserved. See COPYRIGHT.md.
 CREATE TABLE learner_accounts (id TEXT PRIMARY KEY NOT NULL, email TEXT NOT NULL, display_name TEXT NOT NULL, created_at INTEGER NOT NULL, updated_at INTEGER NOT NULL);
 --> statement-breakpoint
 ALTER TABLE ai_lessons ADD COLUMN owner_id TEXT REFERENCES learner_accounts(id);

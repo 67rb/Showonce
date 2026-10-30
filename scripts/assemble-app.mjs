@@ -1,3 +1,4 @@
+/* Copyright © 2026 Robé Berry. All rights reserved. See COPYRIGHT.md. */
 import {spawnSync} from 'node:child_process';
 import path from 'node:path';
 const root=path.resolve(import.meta.dirname,'..'),service=path.join(root,'services/learning/hashir/public-site');
