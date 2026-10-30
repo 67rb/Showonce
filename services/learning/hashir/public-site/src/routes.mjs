@@ -27,7 +27,7 @@ const EXAMPLES=JSON.parse(new TextDecoder().decode(Uint8Array.from(atob(ASSETS['
 const lessonResponse=data=>json(data,data.status==='source_processing'?202:201);
 const json=(data,status=200)=>new Response(JSON.stringify(data),{status,headers:{'Content-Type':'application/json','Cache-Control':'no-store','X-Content-Type-Options':'nosniff'}});
 function example(id,origin){const lesson=structuredClone(EXAMPLES.find(l=>l.id===id));if(!lesson)return null;if(lesson.source_url?.startsWith('/'))lesson.source_url=origin+lesson.source_url;for(const s of lesson.steps)if(s.source_reference?.url?.startsWith('/'))s.source_reference.url=origin+s.source_reference.url;return lesson;}
-async function getLesson(env,id,origin){const builtin=example(id,origin);if(builtin)return builtin;const row=await env.DB.prepare('SELECT content FROM ai_lessons WHERE id=?').bind(id).first();if(!row)throw new AppError('lesson_not_found','That lesson is unavailable. Create it again.',404);const lesson=JSON.parse(row.content);if(lesson.source_url?.startsWith('/'))lesson.source_url=origin+lesson.source_url;for(const step of lesson.steps)if(step.source_reference?.url?.startsWith('/'))step.source_reference.url=origin+step.source_reference.url;return lesson;}
+async function getLesson(env,id,origin){const builtin=PRO_CATALOGUE.lessons.find(item=>item.id===id)||example(id,origin);if(builtin)return builtin;const row=await env.DB.prepare('SELECT content FROM ai_lessons WHERE id=?').bind(id).first();if(!row)throw new AppError('lesson_not_found','That lesson is unavailable. Create it again.',404);const lesson=JSON.parse(row.content);if(lesson.source_url?.startsWith('/'))lesson.source_url=origin+lesson.source_url;for(const step of lesson.steps)if(step.source_reference?.url?.startsWith('/'))step.source_reference.url=origin+step.source_reference.url;return lesson;}
 async function bodyJSON(request){
  if(!request.headers.get('content-type')?.startsWith('application/json'))throw new AppError('invalid_body','Use JSON requests.',415);
  if(Number(request.headers.get('content-length'))>7100000)throw new AppError('body_too_large','Request exceeds the 7.1 MB limit.',413);
@@ -38,6 +38,7 @@ async function bodyJSON(request){
 export default {async fetch(request,env){
  const url=new URL(request.url),path=url.pathname;
  try{
+  const professional=await routeProfessional(request,env,url);if(professional)return professional;
   const account=await routeAccounts(request,env,url);if(account)return account;
   if(request.headers.has('x-showonce-account'))await requestUser(request);
   const team=await routeTeam(request,env,url);if(team)return team;
@@ -63,11 +64,14 @@ export default {async fetch(request,env){
    if(path==='/api/live/stop')return json({status:'stopped'});
    throw new AppError('route_not_found','This action is not available.',404);
   }
+  const aliases={'/courses':'/professional/lessons/','/courses/':'/professional/lessons/','/instructor':'/professional/instructor/','/instructor/':'/professional/instructor/'};
+  if(aliases[path]&&['GET','HEAD'].includes(request.method))return Response.redirect(url.origin+aliases[path]+url.search,302);
   const frontendPath='/frontend'+(path==='/'?'/index.html':path),frontendAsset=ASSETS[frontendPath]||ASSETS[frontendPath+(path.endsWith('/')?'':'/')+'index.html'];
   const earlier=path==='/studio'||path==='/studio/';
-  const asset=earlier?ASSETS['/index.html']:frontendAsset||ASSETS[path==='/'?'/index.html':path];if(!asset)throw new AppError('not_found','Page not found.',404);
+  const professionalPage=path==='/professional-legacy/';
+  const asset=professionalPage?ASSETS['/professional.html']:earlier?ASSETS['/index.html']:frontendAsset||ASSETS[path==='/'?'/index.html':path];if(!asset)throw new AppError('not_found','Page not found.',404);
   if(!['GET','HEAD'].includes(request.method))throw new AppError('method_not_allowed','Use GET for app pages.',405);
-  const nextFrontend=!!frontendAsset&&!earlier;
+  const nextFrontend=!!frontendAsset&&!earlier&&!professionalPage;
   const bytes=Uint8Array.from(atob(asset.data),c=>c.charCodeAt(0));return new Response(request.method==='HEAD'?null:bytes,{headers:{'Content-Type':asset.type,'Cache-Control':nextFrontend?(path.startsWith('/_next/static/')?'public, max-age=31536000, immutable':'no-cache'):'public, max-age=60','X-Content-Type-Options':'nosniff','X-Frame-Options':'DENY','Referrer-Policy':'strict-origin-when-cross-origin','Permissions-Policy':'camera=(self), microphone=(), geolocation=()','Content-Security-Policy':nextFrontend?"default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' blob: data:; font-src 'self' data:; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'":"default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' blob:; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'"}});
  }catch(error){const status=error instanceof AppError?error.status:503;return json({error:{code:error instanceof AppError?error.code:'service_unavailable',message:error instanceof AppError?error.message:'The learning service is temporarily unavailable. Try an example or retry shortly.',retryable:status>=500||status===429}},status);}
 }};

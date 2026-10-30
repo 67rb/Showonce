@@ -515,8 +515,8 @@ describe("v2.3 — Aceternity Resizable Navbar as the public header (Tasks A & B
     expect(navSource).toContain("<NavItems");
     expect(navSource).toContain("items={navItems}");
     expect(navSource).toContain("onItemClick={close}");
-    // same Start button in mobile menu
-    expect(navSource).toContain("{s.importStart}");
+    // same face-aware CTA in mobile menu (Hobby: Start; Professional: New training brief)
+    expect(navSource).toContain("{isProfessional ? s.proNavBrief : s.importStart}");
     expect(navSource).toContain("useState(false)");
   });
 

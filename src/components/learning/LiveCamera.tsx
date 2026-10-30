@@ -57,7 +57,7 @@ export function LiveCamera({lesson,step,progress,token,disabled,stopRef,initialL
     const element=(event.target||{}) as {tagName?:string;isContentEditable?:boolean};
     if(element.tagName==='INPUT'||element.tagName==='TEXTAREA'||element.tagName==='SELECT'||element.isContentEditable)return;
     if(event.key==='c'||event.key==='C'){if(checking||inFlight.current)return;event.preventDefault();capture();}
-    else if(event.key==='Escape'&&state==='preview'){stop();}
+    else if(event.key==='Escape'&&(stream.current||opening.current)){stop();}
    };
    window.addEventListener('keydown',keys);
    return()=>window.removeEventListener('keydown',keys);

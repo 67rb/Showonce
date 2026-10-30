@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 import { useFrame, useMediaQuery } from "./SmoothScroll";
 
@@ -18,6 +18,7 @@ import { useFrame, useMediaQuery } from "./SmoothScroll";
 
 const parallaxSpeeds = new Map<HTMLElement, number>();
 const parallaxActive = new Set<HTMLElement>();
+let geometryDirty = true;
 
 export function Parallax() {
   const pathname = usePathname();
@@ -25,6 +26,7 @@ export function Parallax() {
 
   useEffect(() => {
     // Rebuild the registry whenever the route (and thus the DOM) changes.
+    geometryDirty = true;
     parallaxSpeeds.clear();
     parallaxActive.clear();
 
@@ -43,6 +45,7 @@ export function Parallax() {
     if ("IntersectionObserver" in window) {
       io = new IntersectionObserver(
         (entries) => {
+          geometryDirty = true;
           for (const entry of entries) {
             const target = entry.target as HTMLElement;
             if (parallaxSpeeds.has(target)) {
@@ -58,12 +61,20 @@ export function Parallax() {
       items.forEach((it) => parallaxActive.add(it.el));
     }
 
-    return () => io?.disconnect();
+    const dirty = () => { geometryDirty = true; };
+    window.addEventListener('resize',dirty,{passive:true});
+    const resize = typeof ResizeObserver==='undefined'?null:new ResizeObserver(dirty);
+    resize?.observe(document.body);
+    return () => {io?.disconnect();resize?.disconnect();window.removeEventListener('resize',dirty);};
   }, [pathname]);
 
+  const lastScroll = useRef(Number.NaN);
   useFrame(() => {
     // Parallax fully off under reduced motion — no transforms at all.
     if (reduced) return;
+    const y = window.scrollY;
+    if (!geometryDirty && lastScroll.current === y) return;
+    lastScroll.current = y; geometryDirty = false;
     const mid = window.innerHeight / 2;
     for (const el of parallaxSpeeds.keys()) {
       if (!parallaxActive.has(el)) continue;

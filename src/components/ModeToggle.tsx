@@ -2,7 +2,6 @@
 
 import { useCallback, useEffect, useRef } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { IconBlocks, IconBriefcase } from "@tabler/icons-react";
 import s from "@/lib/strings";
 
 // The Hobby face is the default UI at the existing routes; the Professional
@@ -10,7 +9,7 @@ import s from "@/lib/strings";
 // never from a theme/dark class.
 const PROFESSIONAL_PREFIX = "/professional";
 
-export function ModeToggle() {
+export function ModeToggle({showDestination=false}:{showDestination?:boolean}) {
   const pathname = usePathname();
   const router = useRouter();
   const buttonRef = useRef<HTMLButtonElement>(null);
@@ -76,13 +75,14 @@ export function ModeToggle() {
 
     // Perform the navigation inside the View Transition so the incoming page is
     // captured as the "new" view, then spread from the button's centre.
+    const origin = buttonRef.current.getBoundingClientRect();
     const transition = document.startViewTransition(() => {
       navigate();
     });
 
     transition.ready.then(() => {
       const { top, left, width, height } =
-        buttonRef.current!.getBoundingClientRect();
+        origin;
       const x = left + width / 2;
       const y = top + height / 2;
       const maxRadius = Math.hypot(
@@ -102,39 +102,27 @@ export function ModeToggle() {
           pseudoElement: "::view-transition-new(root)",
         },
       );
-    });
+    }).catch(() => {/* Navigation still succeeds if the browser skips the effect. */});
   }, [isProfessional, router]);
 
-  // The label names the CURRENT face; the aria-label names the DESTINATION.
-  const currentLabel = isProfessional ? s.modeProfessional : s.modeHobby;
   const destinationLabel = isProfessional
     ? s.modeSwitchToHobby
     : s.modeSwitchToProfessional;
-  const Icon = isProfessional ? IconBlocks : IconBriefcase;
 
   return (
-    <div className="flex shrink-0 items-center gap-2">
-      <button
-        ref={buttonRef}
-        type="button"
-        onClick={switchFace}
-        aria-label={destinationLabel}
-        title={destinationLabel}
-        className={`grid h-9 w-9 place-items-center rounded-full border border-site-border bg-white text-[#16161A] transition-colors duration-150 hover:bg-black/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${
-          isProfessional
-            ? "focus-visible:ring-[#16A34A]"
-            : "focus-visible:ring-[#F59E0B]"
-        }`}
-      >
-        <Icon
-          className="h-[18px] w-[18px]"
-          strokeWidth={1.75}
-          aria-hidden="true"
-        />
-      </button>
-      <span className="hidden text-[13px] font-semibold text-[#16161A] xl:inline">
-        {currentLabel}
-      </span>
-    </div>
+    <button
+      ref={buttonRef}
+      type="button"
+      role="switch"
+      aria-label="Professional mode"
+      aria-checked={isProfessional}
+      title={destinationLabel}
+      onClick={switchFace}
+      className={`relative isolate inline-flex h-11 shrink-0 items-center rounded-full border border-black/10 p-1 text-[11px] font-semibold shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${showDestination ? "w-28" : "w-44 text-[12px]"} ${isProfessional ? "bg-green-50 focus-visible:ring-green-600" : "bg-amber-50 focus-visible:ring-amber-500"}`}
+    >
+      <span aria-hidden="true" className={`pointer-events-none absolute inset-y-1 left-1 -z-10 w-[calc(50%-4px)] rounded-full shadow-sm transition-[transform,background-color] duration-300 ease-in-out motion-reduce:transition-none ${isProfessional ? "translate-x-full bg-[#16A34A]" : "translate-x-0 bg-[#F59E0B]"}`} />
+      <span aria-hidden="true" className={`flex-1 text-center transition-colors duration-200 ${isProfessional ? "text-[#526357]" : "text-[#16161A]"}`}>{s.modeHobby}</span>
+      <span aria-hidden="true" className={`flex-1 text-center transition-colors duration-200 ${isProfessional ? "text-white" : "text-[#6b604a]"}`}>{showDestination ? "Pro" : s.modeProfessional}</span>
+    </button>
   );
 }

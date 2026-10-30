@@ -128,7 +128,7 @@ export default function ProfessionalPage() {
                 </div>
               </div>
             </Reveal>
-            <HorizontalGallery />
+            <HorizontalGallery professional />
           </RevealGroup>
         </section>
 
@@ -157,11 +157,11 @@ export default function ProfessionalPage() {
             <Reveal>
               <div className="mx-auto grid max-w-4xl gap-8 px-4 lg:grid-cols-2">
                 <h2 className="font-display-ui text-[2.5rem] font-extrabold leading-tight">
-                  <SerifAccent text={s.privacyHeading} />
+                  <SerifAccent text="Private practice. Clear control." />
                 </h2>
                 <div>
                   <p className="max-w-3xl text-body font-body-ui font-medium">
-                    {s.privacyBody}
+                    Your saved learning requests and practice photos stay private to your account. Local camera previews remain on your device; explicit AI checks send the selected image to the provider. Saved input photos can be deleted from your requests.
                   </p>
                   <Link
                     href="/professional/privacy"

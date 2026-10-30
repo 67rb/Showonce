@@ -5,11 +5,6 @@ on:
   pull_request:
     branches: [master]
   workflow_dispatch:
-    inputs:
-      public_smoke:
-        description: Check this build against the currently published Practice Studio (free requests only)
-        type: boolean
-        default: false
 permissions:
   contents: read
 concurrency:
@@ -33,10 +28,6 @@ jobs:
       - run: npm test
       - run: npm run build
       - run: npm run smoke
-      - name: Optional public deployment smoke
-        if: github.event_name == 'workflow_dispatch' && inputs.public_smoke
-        working-directory: services/learning/hashir/public-site
-        run: node scripts/production-smoke.mjs https://showonce-practice-studio.jberry1972.chatgpt.site
       - uses: actions/upload-artifact@v7.0.2
         with:
           name: showonce-combined-${{ github.sha }}

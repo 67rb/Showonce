@@ -91,7 +91,7 @@ export const strings = {
   ],
   audienceProfessionalTitle: "Professional",
   audienceProfessionalLine:
-    "For teaching hands-on work — every trainee's step checked the same way, every time.",
+    "For teaching hands-on work — every trainee works to the same visible target, with saved evidence an instructor can review.",
   audienceProfessionalItems: [
     "Workshop and vocational training",
     "Assembly and packing checks",
@@ -278,13 +278,32 @@ export const strings = {
   modeSwitchToProfessional: "Switch to Professional",
   proStubHeading: "Show Once for professionals",
   proStubLine:
-    "For teaching hands-on work — every trainee's step checked the same way, every time.",
+    "For teaching hands-on work — every trainee works to the same visible target, with saved evidence an instructor can review.",
+  proNavHub: "Training hub",
+  proNavBrief: "New training brief",
+  proNavReview: "Instructor review",
+  proGalleryTitleElectrical: "Electrical foundations",
+  proGalleryLineElectrical:
+    "Circuits, components and safe disconnected layouts, practised step by step against a visible target.",
+  proGalleryExamplesElectrical: "Component identification · Breadboard layouts · Wiring diagrams on paper",
+  proGalleryTitlePlumbing: "Plumbing fits",
+  proGalleryLinePlumbing:
+    "Fittings, valves and dry assembly layouts your instructor can inspect from your saved photos.",
+  proGalleryExamplesPlumbing: "Name the fittings · Dry-fit layouts · Tool identification",
+  proGalleryTitleCarpentry: "Carpentry & assembly",
+  proGalleryLineCarpentry:
+    "Measuring, marking and joinery preparation with clear checkpoints before any cut is judged.",
+  proGalleryExamplesCarpentry: "Marking out · Joint preparation · Assembly order",
+  proGalleryMoreTitle: "Training hub",
+  proGalleryMoreLine:
+    "Your courses, saved training briefs and instructor reviews in one workspace.",
+  proGalleryExamplesMore: "Continue training · Save evidence · Request review",
 
   /* Professional face — landing (4.1) */
   proHeroHeadline: "Show the job once.",
   proHeroHeadlineAccent: "Checked at every step.",
   proHeroSub:
-    "Paste a video of the job — a wiring run, a plumbing fit, a board build. Show Once turns it into steps and checks each one from a photo, the same way for every trainee, every time.",
+    "Paste a video of the job — a wiring run, a plumbing fit, a board build. Show Once turns it into steps with a visible target for each one. Photo feedback describes what it can see and what it cannot; your instructor reviews the saved evidence and makes the final call.",
   proHeroPrimaryCta: "Start a lesson",
   proHeroSecondaryCta: "Your lessons",
   proHowStep1Title: "Bring the job on video",
@@ -295,9 +314,9 @@ export const strings = {
     "Show Once breaks the job into clear steps, each with a picture of what done looks like, so every trainee works to the same target.",
   proHowStep3Title: "Do it, checked",
   proHowStep3Line:
-    "Each trainee does one step and takes one photo. It tells them right, wrong, or can't tell before they move on.",
+    "Each trainee does one step and saves a photo. Feedback describes the visible evidence and its limits — it cannot certify trade-standard correctness or safety, so an instructor reviews the evidence before signing off.",
   proCapabilitiesHeading: "What SHOW ONCE checks.",
-  proCanLine: "Hands-on skills a photo from above can judge, taught to a trade standard.",
+  proCanLine: "Hands-on skills with visible checkpoints a photo can evidence, practised to your instructor's standard.",
   proCanItems: [
     "Electrical work",
     "Plumbing",
@@ -307,11 +326,11 @@ export const strings = {
     "Classroom practicals",
   ],
   proPracticeTitle: "Your trainers",
-  proPracticeLine: "A steady, repeatable check on every trainee's step.",
+  proPracticeLine: "A steady, repeatable record on every trainee's step.",
   proPracticeItems: [
-    "Every step checked the same way across a class",
+    "Every step compared with the same visible target across a class",
     "One clear target to work to each time",
-    "A photo record of each finished step",
+    "Saved photo evidence your instructor can open and review",
     "Reusable for the next intake",
   ],
   proFinalCtaHeadline: "Show it once. Teach it right.",
@@ -321,7 +340,7 @@ export const strings = {
   /* Professional face — create flow (4.2, mirrors the Hobby create flow) */
   proCreateHeading: "Teach the job, checked.",
   proCreateScopeNote:
-    "Bring a job you want to teach — a wiring run, a plumbing fit, a board build. Turn it into steps your trainees check from a photo, the same way every time.",
+    "Bring a job you want to teach — a wiring run, a plumbing fit, a board build. Turn it into steps with visible targets; trainees save photo evidence and an instructor reviews it. AI feedback is guidance, not a qualification.",
   proImportLinkPlaceholder: "Paste a training video link",
   proReviewRemove: "Remove",
 

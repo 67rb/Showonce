@@ -6,7 +6,7 @@ export const metadata: Metadata = {
 };
 
 export function generateStaticParams() {
-  return [{ id: "sample" }];
+  return [{ id: "runtime" }, { id: "sample" }];
 }
 
 export default function ProfessionalCompletePage() {

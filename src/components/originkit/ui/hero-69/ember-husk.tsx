@@ -9,6 +9,7 @@
 import { useEffect, useRef } from "react"
 import type { CSSProperties } from "react"
 import * as THREE from "three"
+import {createVisibleFrameLoop} from "@/lib/visible-frame-loop"
 
 const DEFAULT_BACKGROUND = {
     color: "#1A0402",
@@ -730,17 +731,22 @@ void main() {
     float heat = 1.0 - smoothstep(uInner * 0.96, uInner * 1.55, depth);
     heat *= heat;
 
-    float vein = smoothstep(0.34, 0.78, fbm(vRest * 5.0 + vec3(0.0, uTime * 0.35, 0.0)));
-    float melt = heat * (0.35 + vein * 0.9);
-    col += mix(uLavaColor, uHotColor, vein * 0.8) * melt * uHeat;
+    // Outer rock has exactly zero heat: its hidden lava noise cannot affect a pixel.
+    if (heat > 0.0) {
+        float vein = smoothstep(0.34, 0.78, fbm(vRest * 5.0 + vec3(0.0, uTime * 0.35, 0.0)));
+        float melt = heat * (0.35 + vein * 0.9);
+        col += mix(uLavaColor, uHotColor, vein * 0.8) * melt * uHeat;
+    }
 
     float fis = vnoise(vRest * 1.6 + 3.7);
     float ridge = 1.0 - abs(fis - 0.5) * 22.0;
-    float mask = smoothstep(0.44, 0.74, fbm(vRest * 0.9 + 9.1));
-    float line = smoothstep(0.5, 1.0, ridge) * mask;
-
-    float skirt = smoothstep(-1.6, 1.0, ridge) * mask;
-    col += mix(uLavaColor, uHotColor, line * 0.8) * (line * 2.6 + skirt * skirt * 0.22) * uHeat * 0.35;
+    // Both smoothsteps are exactly zero outside this band; preserve the full vein inside it.
+    if (ridge > -1.6) {
+        float mask = smoothstep(0.44, 0.74, fbm(vRest * 0.9 + 9.1));
+        float line = smoothstep(0.5, 1.0, ridge) * mask;
+        float skirt = smoothstep(-1.6, 1.0, ridge) * mask;
+        col += mix(uLavaColor, uHotColor, line * 0.8) * (line * 2.6 + skirt * skirt * 0.22) * uHeat * 0.35;
+    }
 
     gl_FragColor = vec4(col, 1.0);
 }
@@ -1492,6 +1498,8 @@ function __OriginkitBase_EmberHusk(props: EmberHuskProps) {
             mips = []
         }
 
+        let lastApplied: Params | null = null
+        let animation: ReturnType<typeof createVisibleFrameLoop> | null = null
         const resize = () => {
             const w = Math.max(1, container.clientWidth)
             const h = Math.max(1, container.clientHeight)
@@ -1524,21 +1532,14 @@ function __OriginkitBase_EmberHusk(props: EmberHuskProps) {
                 mh = Math.max(1, mh >> 1)
             }
             dirty = true
+            lastApplied = null
+            animation?.invalidate()
         }
 
         resize()
 
         const ro = new ResizeObserver(resize)
         ro.observe(container)
-
-        let onScreen = true
-        const io = new IntersectionObserver(
-            (entries) => {
-                onScreen = entries.some((e) => e.isIntersecting)
-            },
-            { rootMargin: "200px" }
-        )
-        io.observe(container)
 
         const pointer = new THREE.Vector2(0, 0)
         let over = false
@@ -1742,7 +1743,10 @@ function __OriginkitBase_EmberHusk(props: EmberHuskProps) {
 
         const renderFrame = (t: number, dt: number) => {
             const q = paramsRef.current
-            applyParams()
+            if (lastApplied !== q) {
+                applyParams()
+                lastApplied = q
+            }
 
             const wanted = q.response.strength > 0 && over ? 1 : 0
             hoverAmount += (wanted - hoverAmount) * (1 - Math.exp(-dt * 9))
@@ -1866,48 +1870,31 @@ function __OriginkitBase_EmberHusk(props: EmberHuskProps) {
             entranceClock = 10
         }
 
-        let prefersReduced = false
-        try {
-            prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches
-        } catch {}
-
-        const clock = new THREE.Clock()
-        let last = 0
-
-        const loop = () => {
-            if (prefersReduced) {
-                if (!dirty) return
+        animation = createVisibleFrameLoop(container, ({time,delta,reduced}) => {
+            if (reduced) {
                 dirty = false
                 settle()
                 renderFrame(FROZEN_TIME, 0)
-                return
-            }
-            if (!onScreen) return
-
-            const t = clock.getElapsedTime()
-            const dt = Math.min(0.1, t - last)
-            last = t
-            renderFrame(t, dt)
-        }
-
-        renderer.setAnimationLoop(loop)
+            } else renderFrame(time, delta)
+        })
 
         apiRef.current = {
             invalidate: () => {
                 dirty = true
+                animation?.invalidate()
             },
             rebuild: () => {
                 build()
                 dirty = true
+                animation?.invalidate()
             },
         }
 
         return () => {
-            renderer.setAnimationLoop(null)
+            animation?.dispose()
             apiRef.current = null
 
             ro.disconnect()
-            io.disconnect()
             canvas.removeEventListener("pointermove", onPointerMove)
             canvas.removeEventListener("pointerenter", onPointerMove)
             canvas.removeEventListener("pointerleave", onPointerLeave)

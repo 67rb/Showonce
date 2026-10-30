@@ -1,17 +1,16 @@
 import type { Metadata } from "next";
 import { LessonFlow } from "@/components/professional/LessonFlow";
-import { proBreadboardLesson } from "@/design/fixtures";
 
-// Any /professional/lesson/[id] resolves to the breadboard sample lesson (the
-// same "any id -> the sample" rule the Hobby /lesson/[id] uses).
+
+// Static shell; lesson and session IDs are resolved through the authenticated API.
 export function generateStaticParams() {
-  return [{ id: "sample" }];
+  return [{ id: "runtime" }, { id: "sample" }];
 }
 
 export function generateMetadata(): Metadata {
   return {
-    title: `SHOW ONCE · Professional · ${proBreadboardLesson.title}`,
-    description: proBreadboardLesson.meta,
+    title: "SHOW ONCE · Professional practice",
+    description: "Your saved professional practice",
   };
 }
 

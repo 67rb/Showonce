@@ -1,4 +1,5 @@
-import { MinimalChrome } from "@/components/MinimalChrome";
+import {MinimalChrome} from "@/components/MinimalChrome";
+
 
 // Professional player chrome — mirrors the Hobby `(minimal)/layout.tsx` with the
 // shared, route-aware MinimalChrome. Only the play/camera/live/complete routes
@@ -10,10 +11,10 @@ export default function ProfessionalPlayerLayout({
   return (
     <div className="relative flex min-h-dvh flex-col font-body-ui bg-site-page">
       <div aria-hidden className="minimal-top-glow absolute inset-x-0 top-0 h-40" />
-      <MinimalChrome />
-      <main id="main-content" tabIndex={-1} className="relative z-10 flex-1">
+      <MinimalChrome/>
+      <div className="relative z-10 flex-1">
         {children}
-      </main>
+      </div>
     </div>
   );
 }

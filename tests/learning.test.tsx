@@ -75,7 +75,7 @@ describe('working frontend with the actual learning Worker',()=>{
   const {lesson}=await preparePractice();await savedIllustration(lesson);const revoke=imageURLs();show('play');
   expect((await screen.findByRole('img',{name:'AI illustration: '+lesson.steps[0].expected_visual_result})).getAttribute('src')).toBe('blob:saved-step');
   fireEvent.click(screen.getByRole('button',{name:'I’ve practiced this step · self-review'}));await screen.findByRole('heading',{name:lesson.steps[1].title!});
-  expect(screen.queryByRole('img')).toBeNull();expect(revoke).toHaveBeenCalledWith('blob:saved-step');
+  await waitFor(()=>expect(screen.queryByRole('img')).toBeNull());await waitFor(()=>expect(revoke).toHaveBeenCalledWith('blob:saved-step'));
   fireEvent.change(screen.getByRole('combobox',{name:'Checkpoint'}),{target:{value:'0'}});
   await screen.findByRole('img',{name:'AI illustration: '+lesson.steps[0].expected_visual_result});
   expect(calls.filter(call=>call.path.endsWith('/illustration'))).toHaveLength(0);
@@ -223,4 +223,17 @@ describe('working frontend with the actual learning Worker',()=>{
   expect(window.localStorage.getItem('showonce-last-camera-v1')).toBeNull();expect(window.localStorage.getItem('showonce-camera-res-v1')).toBeNull();
  });
 
+});
+
+it('keeps Professional-only course notices out of the Hobby workspace',async()=>{
+ show('create');await screen.findByRole('button',{name:/Fold a paper cup/});
+ expect(screen.queryByRole('link',{name:'← Professional courses'})).toBeNull();
+ expect(screen.queryByText(/Classroom training only/)).toBeNull();
+});
+it('retains the classroom scope and Professional return link in the actual Professional player',async()=>{
+ const {LessonFlow}=await import('@/components/professional/LessonFlow');window.history.replaceState(null,'','/professional/lesson/runtime/play/');
+ render(<IdentityProvider><LessonFlow screen="play"/></IdentityProvider>);
+ expect(screen.getByRole('link',{name:'← Professional courses'}).getAttribute('href')).toBe('/professional/lessons/');
+ expect(screen.getByText(/Classroom training only/)).toBeTruthy();
+ await waitFor(()=>expect(screen.queryByText('Checking your account…')).toBeNull());
 });

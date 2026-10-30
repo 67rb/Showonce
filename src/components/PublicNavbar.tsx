@@ -29,8 +29,9 @@ const HOBBY_ITEMS = [
   { name: s.navPrivacy, link: "/privacy" },
 ];
 const PROFESSIONAL_ITEMS = [
-  { name: s.navCreate, link: "/professional/create" },
-  { name: s.yourLessonsLink, link: "/professional/lessons" },
+  { name: s.proNavBrief, link: "/professional/create" },
+  { name: s.proNavHub, link: "/professional/lessons" },
+  { name: s.proNavReview, link: "/professional/instructor" },
   { name: s.navPrivacy, link: "/professional/privacy" },
 ];
 
@@ -106,14 +107,14 @@ export function PublicNavbar() {
             href={ctaHref}
             className={ctaClass}
           >
-            {s.importStart}
+            {isProfessional ? s.proNavBrief : s.importStart}
           </NavbarButton>
         </div>
       </NavBody>
       <MobileNav className={LIGHT_BODY}>
         <MobileNavHeader>
           <WordmarkAnchor className="text-xl leading-none" onClick={close} light professional={isProfessional} />
-          <div ref={menuButton}><MobileNavToggle isOpen={open} onClick={toggle} /></div>
+          <div className="flex shrink-0 items-center gap-2"><ModeToggle showDestination /><div ref={menuButton}><MobileNavToggle isOpen={open} onClick={toggle} /></div></div>
         </MobileNavHeader>
         <MobileNavMenu isOpen={open} onClose={close} className={LIGHT_MENU}>
           <NavItems
@@ -121,13 +122,12 @@ export function PublicNavbar() {
             onItemClick={close}
             className={`!relative !inset-auto !flex w-full flex-col !items-stretch !space-x-0 gap-2 [&_a]:rounded-xl [&_a]:px-4 [&_a]:py-3 ${LIGHT_LINKS}`}
           />
-          <ModeToggle />
           <NavbarButton
             href={ctaHref}
             onClick={close}
             className={ctaClass}
           >
-            {s.importStart}
+            {isProfessional ? s.proNavBrief : s.importStart}
           </NavbarButton>
         </MobileNavMenu>
       </MobileNav>

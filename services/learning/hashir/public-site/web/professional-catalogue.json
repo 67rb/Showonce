@@ -1,0 +1,626 @@
+{
+  "courses": [
+    {
+      "id": "plumbing",
+      "title": "Plumbing foundations",
+      "trade": "Plumbing",
+      "level": "Foundation",
+      "content_status": "Starter curriculum \u00b7 instructor validation pending",
+      "description": "Two classroom lessons with practice evidence, saved progress and instructor review.",
+      "lesson_ids": [
+        "pro_plumbing_parts",
+        "pro_plumbing_planning"
+      ],
+      "prerequisites": [
+        "Use the instructor-supplied brief and reference materials.",
+        "Stay within paper or disconnected classroom training."
+      ],
+      "training_only": true
+    },
+    {
+      "id": "electrical",
+      "title": "Electrical foundations",
+      "trade": "Electrical",
+      "level": "Foundation",
+      "content_status": "Starter curriculum \u00b7 instructor validation pending",
+      "description": "Two classroom lessons with practice evidence, saved progress and instructor review.",
+      "lesson_ids": [
+        "pro_electrical_symbols",
+        "pro_electrical_briefing"
+      ],
+      "prerequisites": [
+        "Use the instructor-supplied brief and reference materials.",
+        "Stay within paper or disconnected classroom training."
+      ],
+      "training_only": true
+    },
+    {
+      "id": "carpentry",
+      "title": "Carpentry preparation",
+      "trade": "Carpentry",
+      "level": "Foundation",
+      "content_status": "Starter curriculum \u00b7 instructor validation pending",
+      "description": "Two classroom lessons with practice evidence, saved progress and instructor review.",
+      "lesson_ids": [
+        "pro_carpentry_measure",
+        "pro_carpentry_materials"
+      ],
+      "prerequisites": [
+        "Use the instructor-supplied brief and reference materials.",
+        "Stay within paper or disconnected classroom training."
+      ],
+      "training_only": true
+    },
+    {
+      "id": "maintenance",
+      "title": "Maintenance documentation",
+      "trade": "Maintenance",
+      "level": "Foundation",
+      "content_status": "Starter curriculum \u00b7 instructor validation pending",
+      "description": "Two classroom lessons with practice evidence, saved progress and instructor review.",
+      "lesson_ids": [
+        "pro_maintenance_inspection",
+        "pro_maintenance_jobcard"
+      ],
+      "prerequisites": [
+        "Use the instructor-supplied brief and reference materials.",
+        "Stay within paper or disconnected classroom training."
+      ],
+      "training_only": true
+    }
+  ],
+  "lessons": [
+    {
+      "id": "pro_plumbing_parts",
+      "title": "Identify plumbing components",
+      "category": "Plumbing",
+      "difficulty": "Foundation \u00b7 classroom only",
+      "materials": [
+        "An instructor-supplied parts diagram or disconnected training components"
+      ],
+      "steps": [
+        {
+          "id": "pro_plumbing_parts_step_1",
+          "position": 1,
+          "title": "Inventory the training kit",
+          "instructions": "Use only the supplied diagram or disconnected classroom components. Record each component label and the matching reference in your instructor worksheet.",
+          "expected_visual_result": "A labelled inventory sheet is visible.",
+          "assessment_criteria": [
+            "A labelled inventory sheet is visible."
+          ],
+          "visual_limits": [
+            "Photos cannot verify measurements, hidden properties, safe isolation or occupational competence."
+          ],
+          "photo_assessable": true,
+          "source_reference": {
+            "quote": "Use only the supplied diagram or disconnected classroom components. Record each component label and the matching reference in your instructor worksheet."
+          }
+        },
+        {
+          "id": "pro_plumbing_parts_step_2",
+          "position": 2,
+          "title": "Annotate the layout",
+          "instructions": "On a copy of the instructor-supplied diagram, mark the component labels and questions you need the instructor to answer. Do not operate valves or connect the kit to a water supply.",
+          "expected_visual_result": "The diagram contains readable labels and questions.",
+          "assessment_criteria": [
+            "The diagram contains readable labels and questions."
+          ],
+          "visual_limits": [
+            "Photos cannot verify measurements, hidden properties, safe isolation or occupational competence."
+          ],
+          "photo_assessable": true,
+          "source_reference": {
+            "quote": "On a copy of the instructor-supplied diagram, mark the component labels and questions you need the instructor to answer. Do not operate valves or connect the kit to a water supply."
+          }
+        },
+        {
+          "id": "pro_plumbing_parts_step_3",
+          "position": 3,
+          "title": "Prepare a handover",
+          "instructions": "Photograph your worksheet and write a short handover describing what you identified and what you could not verify.",
+          "expected_visual_result": "A completed worksheet and handover are visible.",
+          "assessment_criteria": [
+            "A completed worksheet and handover are visible."
+          ],
+          "visual_limits": [
+            "Photos cannot verify measurements, hidden properties, safe isolation or occupational competence."
+          ],
+          "photo_assessable": true,
+          "source_reference": {
+            "quote": "Photograph your worksheet and write a short handover describing what you identified and what you could not verify."
+          }
+        }
+      ],
+      "source_text": "Use only the supplied diagram or disconnected classroom components. Record each component label and the matching reference in your instructor worksheet.\nOn a copy of the instructor-supplied diagram, mark the component labels and questions you need the instructor to answer. Do not operate valves or connect the kit to a water supply.\nPhotograph your worksheet and write a short handover describing what you identified and what you could not verify.",
+      "source_attribution": "Show Once Professional starter worksheet. Instructor review required; not a regulated trade qualification.",
+      "content_origin": "professional_starter",
+      "safety_notice": "Classroom and disconnected training only. Instructor approval is separate from AI feedback and is not a licence or safety certification.",
+      "practice_restrictions": [
+        "Do not use these starter tasks for live installations or unsupervised trade work."
+      ]
+    },
+    {
+      "id": "pro_plumbing_planning",
+      "title": "Plan a supervised plumbing practice",
+      "category": "Plumbing",
+      "difficulty": "Foundation \u00b7 classroom only",
+      "materials": [
+        "An instructor-supplied job brief, blank paper and pencil"
+      ],
+      "steps": [
+        {
+          "id": "pro_plumbing_planning_step_1",
+          "position": 1,
+          "title": "Read the brief",
+          "instructions": "Read the classroom job brief. List its intended result, supplied materials and information that is missing.",
+          "expected_visual_result": "The planning sheet lists the result, materials and open questions.",
+          "assessment_criteria": [
+            "The planning sheet lists the result, materials and open questions."
+          ],
+          "visual_limits": [
+            "Photos cannot verify measurements, hidden properties, safe isolation or occupational competence."
+          ],
+          "photo_assessable": true,
+          "source_reference": {
+            "quote": "Read the classroom job brief. List its intended result, supplied materials and information that is missing."
+          }
+        },
+        {
+          "id": "pro_plumbing_planning_step_2",
+          "position": 2,
+          "title": "Prepare questions",
+          "instructions": "Write questions about the approved training setup, supervision and checks your instructor will demonstrate. Do not begin work on an installed system.",
+          "expected_visual_result": "A list of instructor questions is visible.",
+          "assessment_criteria": [
+            "A list of instructor questions is visible."
+          ],
+          "visual_limits": [
+            "Photos cannot verify measurements, hidden properties, safe isolation or occupational competence."
+          ],
+          "photo_assessable": true,
+          "source_reference": {
+            "quote": "Write questions about the approved training setup, supervision and checks your instructor will demonstrate. Do not begin work on an installed system."
+          }
+        },
+        {
+          "id": "pro_plumbing_planning_step_3",
+          "position": 3,
+          "title": "Request review",
+          "instructions": "Arrange your planning sheet and notes for instructor review. Record that no installed plumbing was worked on.",
+          "expected_visual_result": "The review packet is complete and labelled training only.",
+          "assessment_criteria": [
+            "The review packet is complete and labelled training only."
+          ],
+          "visual_limits": [
+            "Photos cannot verify measurements, hidden properties, safe isolation or occupational competence."
+          ],
+          "photo_assessable": true,
+          "source_reference": {
+            "quote": "Arrange your planning sheet and notes for instructor review. Record that no installed plumbing was worked on."
+          }
+        }
+      ],
+      "source_text": "Read the classroom job brief. List its intended result, supplied materials and information that is missing.\nWrite questions about the approved training setup, supervision and checks your instructor will demonstrate. Do not begin work on an installed system.\nArrange your planning sheet and notes for instructor review. Record that no installed plumbing was worked on.",
+      "source_attribution": "Show Once Professional starter worksheet. Instructor review required; not a regulated trade qualification.",
+      "content_origin": "professional_starter",
+      "safety_notice": "Classroom and disconnected training only. Instructor approval is separate from AI feedback and is not a licence or safety certification.",
+      "practice_restrictions": [
+        "Do not use these starter tasks for live installations or unsupervised trade work."
+      ]
+    },
+    {
+      "id": "pro_electrical_symbols",
+      "title": "Read an instructor-supplied circuit diagram",
+      "category": "Electrical",
+      "difficulty": "Foundation \u00b7 classroom only",
+      "materials": [
+        "A printed classroom diagram, pencil and instructor symbol key"
+      ],
+      "steps": [
+        {
+          "id": "pro_electrical_symbols_step_1",
+          "position": 1,
+          "title": "Label the worksheet",
+          "instructions": "Use the instructor symbol key to annotate the printed diagram. Record uncertainties rather than guessing. Do not open equipment or connect anything to power.",
+          "expected_visual_result": "A diagram annotated using the supplied key is visible.",
+          "assessment_criteria": [
+            "A diagram annotated using the supplied key is visible."
+          ],
+          "visual_limits": [
+            "Photos cannot verify measurements, hidden properties, safe isolation or occupational competence."
+          ],
+          "photo_assessable": true,
+          "source_reference": {
+            "quote": "Use the instructor symbol key to annotate the printed diagram. Record uncertainties rather than guessing. Do not open equipment or connect anything to power."
+          }
+        },
+        {
+          "id": "pro_electrical_symbols_step_2",
+          "position": 2,
+          "title": "Trace on paper",
+          "instructions": "Mark the connections on a second paper copy and compare your annotations with the instructor reference. This is a paper task only.",
+          "expected_visual_result": "The paper diagram shows your trace and reference labels.",
+          "assessment_criteria": [
+            "The paper diagram shows your trace and reference labels."
+          ],
+          "visual_limits": [
+            "Photos cannot verify measurements, hidden properties, safe isolation or occupational competence."
+          ],
+          "photo_assessable": true,
+          "source_reference": {
+            "quote": "Mark the connections on a second paper copy and compare your annotations with the instructor reference. This is a paper task only."
+          }
+        },
+        {
+          "id": "pro_electrical_symbols_step_3",
+          "position": 3,
+          "title": "Prepare a review note",
+          "instructions": "List the differences and questions for your instructor. A photograph can show your worksheet, not electrical safety or competence.",
+          "expected_visual_result": "A review note with questions is visible.",
+          "assessment_criteria": [
+            "A review note with questions is visible."
+          ],
+          "visual_limits": [
+            "Photos cannot verify measurements, hidden properties, safe isolation or occupational competence."
+          ],
+          "photo_assessable": true,
+          "source_reference": {
+            "quote": "List the differences and questions for your instructor. A photograph can show your worksheet, not electrical safety or competence."
+          }
+        }
+      ],
+      "source_text": "Use the instructor symbol key to annotate the printed diagram. Record uncertainties rather than guessing. Do not open equipment or connect anything to power.\nMark the connections on a second paper copy and compare your annotations with the instructor reference. This is a paper task only.\nList the differences and questions for your instructor. A photograph can show your worksheet, not electrical safety or competence.",
+      "source_attribution": "Show Once Professional starter worksheet. Instructor review required; not a regulated trade qualification.",
+      "content_origin": "professional_starter",
+      "safety_notice": "Classroom and disconnected training only. Instructor approval is separate from AI feedback and is not a licence or safety certification.",
+      "practice_restrictions": [
+        "Do not use these starter tasks for live installations or unsupervised trade work."
+      ]
+    },
+    {
+      "id": "pro_electrical_briefing",
+      "title": "Prepare for supervised electrical training",
+      "category": "Electrical",
+      "difficulty": "Foundation \u00b7 classroom only",
+      "materials": [
+        "An instructor-issued training brief and a blank worksheet"
+      ],
+      "steps": [
+        {
+          "id": "pro_electrical_briefing_step_1",
+          "position": 1,
+          "title": "Read the scope",
+          "instructions": "Write down the classroom exercise scope and identify the named supervisor from the supplied brief. If no supervisor is named, record that as a blocker.",
+          "expected_visual_result": "A scope and supervision note is visible.",
+          "assessment_criteria": [
+            "A scope and supervision note is visible."
+          ],
+          "visual_limits": [
+            "Photos cannot verify measurements, hidden properties, safe isolation or occupational competence."
+          ],
+          "photo_assessable": true,
+          "source_reference": {
+            "quote": "Write down the classroom exercise scope and identify the named supervisor from the supplied brief. If no supervisor is named, record that as a blocker."
+          }
+        },
+        {
+          "id": "pro_electrical_briefing_step_2",
+          "position": 2,
+          "title": "Record prerequisites",
+          "instructions": "Copy the prerequisites from the instructor brief and mark each as confirmed or unconfirmed. Do not perform isolation, testing or installation based on app instructions.",
+          "expected_visual_result": "A prerequisite checklist is visible.",
+          "assessment_criteria": [
+            "A prerequisite checklist is visible."
+          ],
+          "visual_limits": [
+            "Photos cannot verify measurements, hidden properties, safe isolation or occupational competence."
+          ],
+          "photo_assessable": true,
+          "source_reference": {
+            "quote": "Copy the prerequisites from the instructor brief and mark each as confirmed or unconfirmed. Do not perform isolation, testing or installation based on app instructions."
+          }
+        },
+        {
+          "id": "pro_electrical_briefing_step_3",
+          "position": 3,
+          "title": "Prepare for instructor approval",
+          "instructions": "Write a handover of the unresolved prerequisites. Ask your instructor to review it before any practical work.",
+          "expected_visual_result": "A handover lists unresolved prerequisites.",
+          "assessment_criteria": [
+            "A handover lists unresolved prerequisites."
+          ],
+          "visual_limits": [
+            "Photos cannot verify measurements, hidden properties, safe isolation or occupational competence."
+          ],
+          "photo_assessable": true,
+          "source_reference": {
+            "quote": "Write a handover of the unresolved prerequisites. Ask your instructor to review it before any practical work."
+          }
+        }
+      ],
+      "source_text": "Write down the classroom exercise scope and identify the named supervisor from the supplied brief. If no supervisor is named, record that as a blocker.\nCopy the prerequisites from the instructor brief and mark each as confirmed or unconfirmed. Do not perform isolation, testing or installation based on app instructions.\nWrite a handover of the unresolved prerequisites. Ask your instructor to review it before any practical work.",
+      "source_attribution": "Show Once Professional starter worksheet. Instructor review required; not a regulated trade qualification.",
+      "content_origin": "professional_starter",
+      "safety_notice": "Classroom and disconnected training only. Instructor approval is separate from AI feedback and is not a licence or safety certification.",
+      "practice_restrictions": [
+        "Do not use these starter tasks for live installations or unsupervised trade work."
+      ]
+    },
+    {
+      "id": "pro_carpentry_measure",
+      "title": "Read a dimensioned practice drawing",
+      "category": "Carpentry",
+      "difficulty": "Foundation \u00b7 classroom only",
+      "materials": [
+        "An instructor drawing, ruler, paper and pencil"
+      ],
+      "steps": [
+        {
+          "id": "pro_carpentry_measure_step_1",
+          "position": 1,
+          "title": "Read the drawing",
+          "instructions": "Copy the dimensions and units shown on the instructor practice drawing into a worksheet. Mark unclear dimensions.",
+          "expected_visual_result": "The copied dimensions and units are legible.",
+          "assessment_criteria": [
+            "The copied dimensions and units are legible."
+          ],
+          "visual_limits": [
+            "Photos cannot verify measurements, hidden properties, safe isolation or occupational competence."
+          ],
+          "photo_assessable": true,
+          "source_reference": {
+            "quote": "Copy the dimensions and units shown on the instructor practice drawing into a worksheet. Mark unclear dimensions."
+          }
+        },
+        {
+          "id": "pro_carpentry_measure_step_2",
+          "position": 2,
+          "title": "Mark a paper template",
+          "instructions": "Use a ruler to mark a paper template from the supplied dimensions. Keep this exercise on paper; no cutting or powered tools.",
+          "expected_visual_result": "A paper template with labelled dimensions is visible.",
+          "assessment_criteria": [
+            "A paper template with labelled dimensions is visible."
+          ],
+          "visual_limits": [
+            "Photos cannot verify measurements, hidden properties, safe isolation or occupational competence."
+          ],
+          "photo_assessable": true,
+          "source_reference": {
+            "quote": "Use a ruler to mark a paper template from the supplied dimensions. Keep this exercise on paper; no cutting or powered tools."
+          }
+        },
+        {
+          "id": "pro_carpentry_measure_step_3",
+          "position": 3,
+          "title": "Compare with the reference",
+          "instructions": "Compare the template with the instructor reference and record differences for review.",
+          "expected_visual_result": "A comparison note is visible.",
+          "assessment_criteria": [
+            "A comparison note is visible."
+          ],
+          "visual_limits": [
+            "Photos cannot verify measurements, hidden properties, safe isolation or occupational competence."
+          ],
+          "photo_assessable": true,
+          "source_reference": {
+            "quote": "Compare the template with the instructor reference and record differences for review."
+          }
+        }
+      ],
+      "source_text": "Copy the dimensions and units shown on the instructor practice drawing into a worksheet. Mark unclear dimensions.\nUse a ruler to mark a paper template from the supplied dimensions. Keep this exercise on paper; no cutting or powered tools.\nCompare the template with the instructor reference and record differences for review.",
+      "source_attribution": "Show Once Professional starter worksheet. Instructor review required; not a regulated trade qualification.",
+      "content_origin": "professional_starter",
+      "safety_notice": "Classroom and disconnected training only. Instructor approval is separate from AI feedback and is not a licence or safety certification.",
+      "practice_restrictions": [
+        "Do not use these starter tasks for live installations or unsupervised trade work."
+      ]
+    },
+    {
+      "id": "pro_carpentry_materials",
+      "title": "Prepare a materials worksheet",
+      "category": "Carpentry",
+      "difficulty": "Foundation \u00b7 classroom only",
+      "materials": [
+        "An instructor project brief and blank paper"
+      ],
+      "steps": [
+        {
+          "id": "pro_carpentry_materials_step_1",
+          "position": 1,
+          "title": "List components",
+          "instructions": "List the components specified by the instructor project brief without substituting specifications.",
+          "expected_visual_result": "A component list is visible.",
+          "assessment_criteria": [
+            "A component list is visible."
+          ],
+          "visual_limits": [
+            "Photos cannot verify measurements, hidden properties, safe isolation or occupational competence."
+          ],
+          "photo_assessable": true,
+          "source_reference": {
+            "quote": "List the components specified by the instructor project brief without substituting specifications."
+          }
+        },
+        {
+          "id": "pro_carpentry_materials_step_2",
+          "position": 2,
+          "title": "Draft a materials list",
+          "instructions": "Record the quantities and units in a simple table. Flag missing values for your instructor.",
+          "expected_visual_result": "A quantities table is visible.",
+          "assessment_criteria": [
+            "A quantities table is visible."
+          ],
+          "visual_limits": [
+            "Photos cannot verify measurements, hidden properties, safe isolation or occupational competence."
+          ],
+          "photo_assessable": true,
+          "source_reference": {
+            "quote": "Record the quantities and units in a simple table. Flag missing values for your instructor."
+          }
+        },
+        {
+          "id": "pro_carpentry_materials_step_3",
+          "position": 3,
+          "title": "Prepare the review packet",
+          "instructions": "Put the brief, drawing and materials table together with your unresolved questions.",
+          "expected_visual_result": "A labelled review packet is visible.",
+          "assessment_criteria": [
+            "A labelled review packet is visible."
+          ],
+          "visual_limits": [
+            "Photos cannot verify measurements, hidden properties, safe isolation or occupational competence."
+          ],
+          "photo_assessable": true,
+          "source_reference": {
+            "quote": "Put the brief, drawing and materials table together with your unresolved questions."
+          }
+        }
+      ],
+      "source_text": "List the components specified by the instructor project brief without substituting specifications.\nRecord the quantities and units in a simple table. Flag missing values for your instructor.\nPut the brief, drawing and materials table together with your unresolved questions.",
+      "source_attribution": "Show Once Professional starter worksheet. Instructor review required; not a regulated trade qualification.",
+      "content_origin": "professional_starter",
+      "safety_notice": "Classroom and disconnected training only. Instructor approval is separate from AI feedback and is not a licence or safety certification.",
+      "practice_restrictions": [
+        "Do not use these starter tasks for live installations or unsupervised trade work."
+      ]
+    },
+    {
+      "id": "pro_maintenance_inspection",
+      "title": "Document a mock inspection",
+      "category": "Maintenance",
+      "difficulty": "Foundation \u00b7 classroom only",
+      "materials": [
+        "Instructor-supplied equipment photos and an inspection worksheet"
+      ],
+      "steps": [
+        {
+          "id": "pro_maintenance_inspection_step_1",
+          "position": 1,
+          "title": "Identify the reference",
+          "instructions": "Record the equipment identifier supplied in the classroom photo pack. Do not inspect live or moving equipment.",
+          "expected_visual_result": "A worksheet with the supplied identifier is visible.",
+          "assessment_criteria": [
+            "A worksheet with the supplied identifier is visible."
+          ],
+          "visual_limits": [
+            "Photos cannot verify measurements, hidden properties, safe isolation or occupational competence."
+          ],
+          "photo_assessable": true,
+          "source_reference": {
+            "quote": "Record the equipment identifier supplied in the classroom photo pack. Do not inspect live or moving equipment."
+          }
+        },
+        {
+          "id": "pro_maintenance_inspection_step_2",
+          "position": 2,
+          "title": "Record visible observations",
+          "instructions": "Describe only what is visible in the supplied photos. Separate observations from guesses and mark anything needing an instructor check.",
+          "expected_visual_result": "An observation table separates visible details and unknowns.",
+          "assessment_criteria": [
+            "An observation table separates visible details and unknowns."
+          ],
+          "visual_limits": [
+            "Photos cannot verify measurements, hidden properties, safe isolation or occupational competence."
+          ],
+          "photo_assessable": true,
+          "source_reference": {
+            "quote": "Describe only what is visible in the supplied photos. Separate observations from guesses and mark anything needing an instructor check."
+          }
+        },
+        {
+          "id": "pro_maintenance_inspection_step_3",
+          "position": 3,
+          "title": "Write a handover",
+          "instructions": "Write a short handover from your worksheet without claiming that the equipment is safe to use.",
+          "expected_visual_result": "The handover includes unresolved checks.",
+          "assessment_criteria": [
+            "The handover includes unresolved checks."
+          ],
+          "visual_limits": [
+            "Photos cannot verify measurements, hidden properties, safe isolation or occupational competence."
+          ],
+          "photo_assessable": true,
+          "source_reference": {
+            "quote": "Write a short handover from your worksheet without claiming that the equipment is safe to use."
+          }
+        }
+      ],
+      "source_text": "Record the equipment identifier supplied in the classroom photo pack. Do not inspect live or moving equipment.\nDescribe only what is visible in the supplied photos. Separate observations from guesses and mark anything needing an instructor check.\nWrite a short handover from your worksheet without claiming that the equipment is safe to use.",
+      "source_attribution": "Show Once Professional starter worksheet. Instructor review required; not a regulated trade qualification.",
+      "content_origin": "professional_starter",
+      "safety_notice": "Classroom and disconnected training only. Instructor approval is separate from AI feedback and is not a licence or safety certification.",
+      "practice_restrictions": [
+        "Do not use these starter tasks for live installations or unsupervised trade work."
+      ]
+    },
+    {
+      "id": "pro_maintenance_jobcard",
+      "title": "Create a practice job card",
+      "category": "Maintenance",
+      "difficulty": "Foundation \u00b7 classroom only",
+      "materials": [
+        "An instructor mock work request and blank job card"
+      ],
+      "steps": [
+        {
+          "id": "pro_maintenance_jobcard_step_1",
+          "position": 1,
+          "title": "Summarize the request",
+          "instructions": "Copy the mock request identifier, reported issue and scope into the job card.",
+          "expected_visual_result": "The job card identifies the request and scope.",
+          "assessment_criteria": [
+            "The job card identifies the request and scope."
+          ],
+          "visual_limits": [
+            "Photos cannot verify measurements, hidden properties, safe isolation or occupational competence."
+          ],
+          "photo_assessable": true,
+          "source_reference": {
+            "quote": "Copy the mock request identifier, reported issue and scope into the job card."
+          }
+        },
+        {
+          "id": "pro_maintenance_jobcard_step_2",
+          "position": 2,
+          "title": "Record evidence",
+          "instructions": "List the supplied evidence and missing information. Do not invent completed work or measurements.",
+          "expected_visual_result": "Evidence and missing information are listed.",
+          "assessment_criteria": [
+            "Evidence and missing information are listed."
+          ],
+          "visual_limits": [
+            "Photos cannot verify measurements, hidden properties, safe isolation or occupational competence."
+          ],
+          "photo_assessable": true,
+          "source_reference": {
+            "quote": "List the supplied evidence and missing information. Do not invent completed work or measurements."
+          }
+        },
+        {
+          "id": "pro_maintenance_jobcard_step_3",
+          "position": 3,
+          "title": "Request review",
+          "instructions": "Write the proposed next questions and submit the job card for instructor review.",
+          "expected_visual_result": "The job card is labelled for instructor review.",
+          "assessment_criteria": [
+            "The job card is labelled for instructor review."
+          ],
+          "visual_limits": [
+            "Photos cannot verify measurements, hidden properties, safe isolation or occupational competence."
+          ],
+          "photo_assessable": true,
+          "source_reference": {
+            "quote": "Write the proposed next questions and submit the job card for instructor review."
+          }
+        }
+      ],
+      "source_text": "Copy the mock request identifier, reported issue and scope into the job card.\nList the supplied evidence and missing information. Do not invent completed work or measurements.\nWrite the proposed next questions and submit the job card for instructor review.",
+      "source_attribution": "Show Once Professional starter worksheet. Instructor review required; not a regulated trade qualification.",
+      "content_origin": "professional_starter",
+      "safety_notice": "Classroom and disconnected training only. Instructor approval is separate from AI feedback and is not a licence or safety certification.",
+      "practice_restrictions": [
+        "Do not use these starter tasks for live installations or unsupervised trade work."
+      ]
+    }
+  ]
+}

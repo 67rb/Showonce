@@ -1,50 +1,48 @@
-# SHOW ONCE
+# Show Once — combined Hobby and Professional app
 
-The GitHub landing page and frontend, connected to the complete learning service.
-Create lessons from supported tutorials, public demonstrations or pasted text,
-practice step by step, check visible work with AI, and resume saved progress.
+One source project and one backend, with two learning modes:
 
-Live app: https://showonce-practice-studio.jberry1972.chatgpt.site
+- **Hobby** at `/`: personal projects and creative practice, using the supplied animated frontend.
+- **Professional** at `/professional/`: trade-training briefs, courses, prerequisites, saved work evidence and instructor review. The latest reviewed Meta Wonder UI improvements are integrated.
+
+This is a new combined working copy. The original app, delivered Desktop source and existing public site are unchanged. No deployment, GitHub push, real user data or credentials are included.
 
 ## Run locally
 
-Node.js 24 or newer is required:
+Node 24+ with built-in SQLite is required.
 
 ```sh
 npm ci
-npm run dev
+npm run dev -- --learner-fixture
 ```
 
-Open http://localhost:3000. The dev command starts Next and the isolated learning
-API. Local storage is disposable, there is no live model key, and managed sign-in
-is available on the published Site. Free examples and numbered steps work locally.
+Open `http://127.0.0.1:8035/` for Hobby or `http://127.0.0.1:8035/professional/` for Professional. The mode switch moves between them. The default preview uses a separate port to coexist with earlier copies; `--port 8040` overrides it.
 
-For the complete frontend and Worker build:
+`--learner-fixture` is an explicit synthetic local identity, not real authentication. To test instructor access, stop the preview and run `npm run dev -- --admin-fixture`. Without either flag the preview is anonymous. The preview binds to loopback, strips incoming identity headers and never ships fixture sign-in into the Worker.
+
+Fresh private local state is stored in this copy's `.local/professional/`. Do not use real learner information with developer fixtures. The source archive excludes that directory, previous account records, uploaded photos and budget ledgers.
+
+## APIs and spending
+
+The code includes the Meta and Supadata integrations, but this new local copy has **no provider keys** and paid AI is disabled. Free examples, saved briefs/evidence and course practice work without AI. Keep real keys in separate server runtime secrets. Never add them to source, frontend variables, screenshots or downloads.
+
+The application retains one **$5 total** AI cap, with atomic reservations; the separate **$20 development ceiling** is not an application setting. Supadata remains free-only. No paid calls were needed for this integration.
+
+The original public Hobby site's newer Supadata key and successful YouTube test are separate production configuration. They are not copied here, and this copy has no live hosting project ID. Configure a separate deployment and real hosted identity before production acceptance. Do not reset or overwrite the original site's ledger or bindings.
+
+## Verification
 
 ```sh
 npm test
-npm run build
+node --test services/learning/hashir/public-site/scripts/*test.mjs
+npm run build:professional
 npm run smoke
-npm start
 ```
 
-The combined preview runs at http://127.0.0.1:3000 with disposable storage and no
-AI key. Hosted production uses managed D1/R2, Sites identity and existing secrets.
-Do not expose the local preview as production.
+Build after npm test because test preparation assembles an API-only Worker. `npm run dev` builds automatically before launching the persistent preview. `npm run dev:frontend` alone is frontend development with proxy expectations; use the main dev command for the integrated app.
 
-## Included
+The combined tests include both modes in one private account library, overlapping evidence saves with asynchronous database timing, idempotency conflicts, brief error states and direct brief/plan links. See `COMBINED-VERIFICATION.json` for final counts and `docs/combined-integration.md` for provenance and changes. Earlier reports remain historical records.
 
-- Original landing design and component system.
-- Real lesson creation, free examples and numbered steps.
-- Accounts/recovery entry, cross-device libraries and account isolation.
-- Server-owned progress, self-review, photo and sampled camera feedback.
-- Camera switching and Stop; history and private photo viewing/deletion.
-- Learner reports, internal catalogue publication and report review.
-- Optional target illustrations, visual video learning and source attribution.
-- Original Python backend, AI modules, schemas, fixtures and regression tests.
+## Professional limits
 
-Submitted photos are stored privately until deleted from history. Sampled camera
-frames are not stored. Feedback does not certify competence or safety.
-
-See [INTEGRATION.md](INTEGRATION.md), [RELEASE-CHECKS.md](RELEASE-CHECKS.md), and
-`services/learning/hashir/public-site/` for implementation and acceptance details.
+The four starter trade curricula are classroom/worksheet/disconnected practice foundations awaiting qualified instructor validation. Self-review or AI feedback cannot award a trade qualification or establish safety. Evidence is private until explicitly shared for instructor review. Physical Android/Chrome and iPhone/Safari acceptance and real hosted identity remain pending.

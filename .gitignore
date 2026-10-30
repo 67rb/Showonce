@@ -47,4 +47,11 @@ next-env.d.ts
 # Built frontend and local runtime output
 /out/
 *.tsbuildinfo
-.originkit/
+
+# Professional local accounts, evidence and database
+.local/
+*.sqlite
+*.sqlite-*
+.dev.vars*
+services/learning/hashir/public-site/dist/
+services/learning/hashir/public-site/worker/

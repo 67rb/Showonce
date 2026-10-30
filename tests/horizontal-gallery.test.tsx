@@ -52,6 +52,28 @@ describe("Task A — card text is ink; Task C — cards are text only", () => {
   });
 });
 
+describe("Professional face — trade gallery (differentiation)", () => {
+  it("renders trade-training cards, not Hobby capability cards", () => {
+    const html = renderToStaticMarkup(<HorizontalGallery professional />);
+    const text = html.replace(/&amp;/g, "&");
+    for (const title of [s.proGalleryTitleElectrical, s.proGalleryTitlePlumbing, s.proGalleryTitleCarpentry, s.proGalleryMoreTitle]) {
+      expect(text).toContain(title);
+    }
+    expect(text).not.toContain(s.galleryTitleTower);
+    expect(text).not.toContain(s.galleryTitleMosaic);
+    expect(text).not.toContain(s.galleryTitleWall);
+    expect(text).toContain("/professional/create/");
+    expect(text).toContain("/professional/lessons/");
+  });
+
+  it("professional claims describe evidence and instructor review, not AI certification", () => {
+    expect(s.proHowStep3Line).toMatch(/instructor reviews/);
+    expect(s.proHowStep3Line).toMatch(/cannot certify/);
+    expect(s.proCanLine).not.toMatch(/trade standard/);
+    expect(s.proHeroSub).toMatch(/final call/);
+  });
+});
+
 describe("Task A/B/C — source assertions", () => {
   const source = fs.readFileSync(
     path.resolve(process.cwd(), "src/components/HorizontalGallery.tsx"),

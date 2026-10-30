@@ -70,11 +70,43 @@ const MORE = {
   href: "/lessons",
 };
 
+const PRO_CAPABILITIES = [
+  {
+    id: "electrical",
+    title: s.proGalleryTitleElectrical,
+    line: s.proGalleryLineElectrical,
+    examples: s.proGalleryExamplesElectrical,
+    href: "/professional/create/",
+  },
+  {
+    id: "plumbing",
+    title: s.proGalleryTitlePlumbing,
+    line: s.proGalleryLinePlumbing,
+    examples: s.proGalleryExamplesPlumbing,
+    href: "/professional/create/",
+  },
+  {
+    id: "carpentry",
+    title: s.proGalleryTitleCarpentry,
+    line: s.proGalleryLineCarpentry,
+    examples: s.proGalleryExamplesCarpentry,
+    href: "/professional/create/",
+  },
+];
+
+const PRO_MORE = {
+  id: "more",
+  title: s.proGalleryMoreTitle,
+  line: s.proGalleryMoreLine,
+  examples: s.proGalleryExamplesMore,
+  href: "/professional/lessons/",
+};
+
 const CARD_LINK_CLASS =
   "group relative block w-[min(80vw,480px)] shrink-0 snap-start rounded-3xl px-4 " +
   "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#F59E0B]";
 
-export function HorizontalGallery() {
+export function HorizontalGallery({professional=false}:{professional?:boolean}={}) {
   const reduced = useMediaQuery("(prefers-reduced-motion: reduce)");
 
   const capabilityCard = (c: {
@@ -84,14 +116,14 @@ export function HorizontalGallery() {
     examples: string;
     href: string;
   }) => (
-    <Link key={c.id} href={c.href} className={CARD_LINK_CLASS}>
+    <Link key={c.id} href={professional?(c.id==='more'?'/professional/lessons/':'/professional/create/'):c.href} className={CARD_LINK_CLASS}>
       {/* opaque backing behind the translucent glass card (Task C) */}
       <div aria-hidden className="absolute inset-0 rounded-3xl bg-white" />
       <LiquidGlassCard
         variant="glass"
         glow
         hoverEffect
-        className="relative min-h-[260px] md:h-[320px]"
+        className="relative min-h-[260px] md:h-[320px] backdrop-blur-none"
       >
         <LiquidGlassCardHeader className="p-8 pb-2">
           <LiquidGlassCardTitle className="!text-[#16161A] font-display-ui whitespace-normal">
@@ -108,7 +140,12 @@ export function HorizontalGallery() {
     </Link>
   );
 
-  const cards = (
+  const cards = professional ? (
+    <>
+      {PRO_CAPABILITIES.map(capabilityCard)}
+      {capabilityCard(PRO_MORE)}
+    </>
+  ) : (
     <>
       {CAPABILITIES.map(capabilityCard)}
       {capabilityCard(MORE)}

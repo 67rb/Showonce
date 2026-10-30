@@ -146,6 +146,7 @@ export async function routeMaster(request,env,url){
   // Compile a bounded read against every new runtime table, even when empty.
   // A process being alive must not conceal missing migrations or a database outage.
   await env.DB.prepare('SELECT (SELECT paused FROM ai_budget WHERE id=1) AS paused,(SELECT id FROM ai_reservations LIMIT 1) AS reservation,(SELECT session_id FROM practice_live_leases LIMIT 1) AS lease,(SELECT id FROM learner_accounts LIMIT 1) AS account,(SELECT owner_id FROM ai_lessons LIMIT 1) AS lesson_owner,(SELECT total_steps FROM practice_sessions LIMIT 1) AS steps,(SELECT draft_lesson_id FROM catalogue_entries LIMIT 1) AS catalogue,(SELECT lesson_id FROM catalogue_revisions LIMIT 1) AS revision,(SELECT context FROM learner_reports LIMIT 1) AS report,(SELECT id FROM practice_questions LIMIT 1) AS question,(SELECT observations FROM practice_acknowledgements LIMIT 1) AS ack_observations,(SELECT request_hash FROM practice_acknowledgements LIMIT 1) AS ack_request_hash').first();
+  await env.DB.prepare('SELECT (SELECT id FROM professional_enrollments LIMIT 1) AS enrollment,(SELECT id FROM professional_reviews LIMIT 1) AS review,(SELECT id FROM professional_requests LIMIT 1) AS learning_request,(SELECT id FROM professional_evidence LIMIT 1) AS evidence').first();
   if(socialExtractionEnabled(env))await env.DB.prepare('SELECT id,job_kind,metadata_json FROM source_extractions LIMIT 1').first();
   return json({status:'ok',api_version:'v1',runtime:'worker-d1',mock_mode:false,storage:'ready'});
  }

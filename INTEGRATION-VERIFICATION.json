@@ -1,0 +1,45 @@
+{
+  "date": "2026-10-30",
+  "project": "Show Once \u2014 integrated OpenCode working project",
+  "frontend_tests": 311,
+  "worker_tests": 258,
+  "build": "passed",
+  "credential_scan": {
+    "files": 407,
+    "violations": 0
+  },
+  "smoke": {
+    "routes": 16,
+    "api_checks": 31,
+    "paid_calls": 0,
+    "passed": true
+  },
+  "includes": [
+    "OpenCode trade gallery/navigation/copy",
+    "Course descriptions and training brief summary",
+    "Curriculum, security and acceptance documentation",
+    "Hobby/Professional sliding switch",
+    "Concurrent evidence-save fix",
+    "Failed-brief status and direct links with delayed-card navigation",
+    "Professional-only classroom banner",
+    "Both modes share one private account library and $5 cap"
+  ],
+  "preview": "http://127.0.0.1:8033/professional/",
+  "api_keys_configured": false,
+  "runtime_cap_usd": 5,
+  "production_changed": false,
+  "backup": "/Users/robeberry/Documents/ChatGPT/Showonce meta hackathon/exports/opencode-before-assignment-integration-20261030",
+  "pending": [
+    "Physical phone acceptance",
+    "Qualified instructor curriculum validation",
+    "Hosted identity and server-secret configuration for this copy"
+  ],
+  "assignment_delivery_sha256": "5e0661c05c7069b7026aee37dad6b70b8f8adfde2e0c427d2785e9025140158f",
+  "assignment_fixes_independently_verified": [
+    "preparation revalidated after checks removed",
+    "approval and decision rolled back together on injected SQL trigger failure",
+    "retry after rollback succeeds",
+    "criterion evidence rendered with private photo controls"
+  ],
+  "migration_added": "0015_professional_assignments.sql"
+}
