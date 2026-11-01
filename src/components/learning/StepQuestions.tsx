@@ -2,6 +2,7 @@
 "use client";
 import {useCallback,useEffect,useRef,useState} from 'react';
 import {aiChecksAvailable,type Step} from '@/lib/learning';
+import s from '@/lib/strings';
 import {useIdentity} from './Identity';
 
 type Answer={answer:string;basis:'step_instructions'|'general_explanation'|'not_enough_context';source_quote:string;limitations:string[]};
@@ -48,7 +49,7 @@ export function StepQuestions({sessionID,step,token,disabled=false}:Props){
    {retrying&&!busy&&<button type="button" className="min-h-11 text-small underline" onClick={()=>{pending.current=null;setRetrying(false);setQuestion('');}}>Start a new question</button>}
    {!available&&<p className="text-small text-site-muted">AI answers are currently unavailable. You can still read the step and any saved answers.</p>}
   </form>
-  {error&&<p role="alert" className="rounded-xl border border-danger/30 bg-danger/10 p-3 text-small">{error}</p>}
+  {error&&<div role="alert" className="rounded-xl border border-danger/30 bg-danger/10 p-3 text-small">{error}{!busy&&!loading&&<button type="button" className="mt-2 min-h-11 text-site-ink underline" disabled={!question.trim()} onClick={()=>void ask()}>{s.retry}</button>}</div>}
   {loading&&<p role="status" className="text-small text-site-muted">Loading saved answers…</p>}
   <div aria-live="polite" aria-relevant="additions text" className="space-y-4">{records.map(item=><article key={item.id} className="rounded-2xl border border-site-border bg-site-page p-4">
    <p className="whitespace-pre-wrap text-small font-semibold">{item.question}</p>

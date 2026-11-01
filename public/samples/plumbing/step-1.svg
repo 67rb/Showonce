@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="420" height="320" viewBox="0 0 420 320" role="img" aria-labelledby="t">
+  <title id="t">Drain pipe from a fixture running downward</title>
+  <rect width="420" height="320" fill="#F7F7F8"/>
+  <rect x="150" y="40" width="120" height="26" rx="8" fill="#fff" stroke="#16161A" stroke-width="3"/>
+  <line x1="210" y1="66" x2="210" y2="280" stroke="#16161A" stroke-width="10"/>
+  <line x1="210" y1="66" x2="210" y2="280" stroke="#22C55E" stroke-width="3" stroke-dasharray="8 6"/>
+  <circle cx="210" cy="286" r="8" fill="#F7F7F8" stroke="#16161A" stroke-width="3"/>
+</svg>
