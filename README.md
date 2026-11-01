@@ -67,8 +67,9 @@ durably in the same database. Local verification of this path (no Turso needed,
 uses a temp file database):
 
 ```sh
-node scripts/vercel-migrations.mjs   # regenerate api/lib/migrations.mjs after schema changes
+node scripts/vercel-migrations.mjs   # regenerate server/vercel-migrations.mjs after schema changes
 node scripts/vercel-smoke.mjs        # end-to-end: config, health, lesson, session, bucket
+node scripts/vercel-handler-test.mjs # actual Node handler, parsed bodies, photo bytes, identity boundary
 ```
 
 ## Professional limits

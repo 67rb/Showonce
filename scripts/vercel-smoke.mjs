@@ -46,7 +46,7 @@ const BUCKET = {
 };
 
 await client.execute({ sql: 'CREATE TABLE IF NOT EXISTS vercel_blobs (key TEXT PRIMARY KEY, data BLOB, mime_type TEXT)', args: [] });
-const { MIGRATIONS } = await import('../api/lib/migrations.mjs');
+const { MIGRATIONS } = await import('../server/vercel-migrations.mjs');
 await client.execute({ sql: 'CREATE TABLE IF NOT EXISTS vercel_migrations (name TEXT PRIMARY KEY)', args: [] });
 for (const m of MIGRATIONS) {
   const ex = await client.execute({ sql: 'SELECT name FROM vercel_migrations WHERE name=?', args: [m.name] });

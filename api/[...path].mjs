@@ -3,7 +3,7 @@
 // the same Worker code runs on Vercel without changing its SQL.
 /* Copyright © 2026 Show Once. All rights reserved. */
 import { createClient } from '@libsql/client';
-import { MIGRATIONS } from './lib/migrations.mjs';
+import { MIGRATIONS } from '../server/vercel-migrations.mjs';
 import worker from '../services/learning/hashir/public-site/worker/index.js';
 
 const env = process.env;
@@ -53,7 +53,7 @@ async function ensureBlobTable(client) {
     args: [],
   });
 }
-function makeBucket(client) {
+export function makeBucket(client) {
   return {
     async put(key, data, opts = {}) {
       const mime = opts?.httpMetadata?.contentType ?? 'application/octet-stream';
@@ -66,7 +66,7 @@ function makeBucket(client) {
       const r = await client.execute({ sql: 'SELECT data, mime_type FROM vercel_blobs WHERE key=?', args: [String(key)] });
       const row = r.rows && r.rows[0];
       if (!row) return null;
-      const bytes = row.data instanceof Uint8Array ? row.data : Uint8Array.from(row.data);
+      const bytes = row.data instanceof ArrayBuffer ? new Uint8Array(row.data) : Uint8Array.from(row.data);
       return { body: bytes, mimeType: row.mime_type };
     },
     async delete(key) {
@@ -79,12 +79,15 @@ function makeBucket(client) {
 async function runMigrations(client) {
   await client.execute({ sql: 'CREATE TABLE IF NOT EXISTS vercel_migrations (name TEXT PRIMARY KEY)', args: [] });
   for (const m of MIGRATIONS) {
-    const existing = await client.execute({ sql: 'SELECT name FROM vercel_migrations WHERE name=?', args: [m.name] });
-    if (existing.rows && existing.rows.length) continue;
-    for (const stmt of m.statements) {
-      await client.execute({ sql: stmt, args: [] });
-    }
-    await client.execute({ sql: 'INSERT INTO vercel_migrations (name) VALUES (?)', args: [m.name] });
+    const tx = await client.transaction('write');
+    try {
+      const existing = await tx.execute({ sql: 'SELECT name FROM vercel_migrations WHERE name=?', args: [m.name] });
+      if (!existing.rows.length) {
+        for (const stmt of m.statements) await tx.execute({ sql: stmt, args: [] });
+        await tx.execute({ sql: 'INSERT INTO vercel_migrations (name) VALUES (?)', args: [m.name] });
+      }
+      await tx.commit();
+    } finally { tx.close(); }
   }
 }
 
@@ -109,7 +112,7 @@ async function getEnv() {
         SUPADATA_ENABLED: env.SUPADATA_ENABLED,
         ADMIN_EMAILS: env.ADMIN_EMAILS,
       };
-    })();
+    })().catch(error => { runtimePromise = null; throw error; });
   }
   return runtimePromise;
 }
@@ -118,6 +121,9 @@ function webRequest(req, bodyBuffer) {
   const headers = new Headers();
   for (const [k, v] of Object.entries(req.headers)) {
     if (v === undefined) continue;
+    // Vercel does not authenticate ChatGPT identity headers. Never trust a
+    // caller claiming to be a learner or administrator through these headers.
+    if (k.toLowerCase().startsWith('oai-authenticated-user-')) continue;
     headers.set(k, Array.isArray(v) ? v.join(', ') : String(v));
   }
   const body =
@@ -140,6 +146,11 @@ function webRequest(req, bodyBuffer) {
 }
 
 async function readBody(req) {
+  // Vercel may parse the body before invoking the Node handler.
+  if (req.body !== undefined && req.body !== null) {
+    if (Buffer.isBuffer(req.body)) return req.body;
+    return Buffer.from(typeof req.body === 'string' ? req.body : JSON.stringify(req.body));
+  }
   const chunks = [];
   for await (const chunk of req) chunks.push(chunk);
   if (chunks.length === 0) return null;
@@ -153,18 +164,16 @@ export default async function main(req, res) {
     const appEnv = await getEnv();
     const response = await worker.fetch(new Request(r.url, { method: r.method, headers: r.headers, body: r.body, cache: 'no-store' }), appEnv);
     res.statusCode = response.status;
-    const h = {};
-    response.headers.forEach((v, k) => { h[k] = v; });
-    res.setHeaders(h);
-    const payload = Uint8Array.from(await response.arrayBuffer());
+    response.headers.forEach((v, k) => res.setHeader(k, v));
+    const payload = new Uint8Array(await response.arrayBuffer());
     if (response.status === 204 || req.method === 'HEAD') return res.end();
     res.end(payload);
   } catch (error) {
-    console.error('showonce-backend-error', error);
+    console.error('showonce-backend-error', { name: error?.name, code: error?.code });
     if (!res.headersSent) {
       res.statusCode = 503;
       res.setHeader('Content-Type', 'application/json');
-      res.end(JSON.stringify({ error: { code: 'service_unavailable', message: error && error.message ? error.message : 'Backend unavailable.', retryable: true } }));
+      res.end(JSON.stringify({ error: { code: 'service_unavailable', message: 'Backend unavailable. Please try again shortly.', retryable: true } }));
     } else {
       res.end();
     }
