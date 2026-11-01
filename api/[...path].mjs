@@ -78,7 +78,9 @@ export function makeBucket(client) {
 // ---- Migration runner (idempotent, runs on cold start) ----
 async function runMigrations(client) {
   await client.execute({ sql: 'CREATE TABLE IF NOT EXISTS vercel_migrations (name TEXT PRIMARY KEY)', args: [] });
+  const applied = new Set((await client.execute('SELECT name FROM vercel_migrations')).rows.map(row => row.name));
   for (const m of MIGRATIONS) {
+    if (applied.has(m.name)) continue;
     const tx = await client.transaction('write');
     try {
       const existing = await tx.execute({ sql: 'SELECT name FROM vercel_migrations WHERE name=?', args: [m.name] });
@@ -158,18 +160,26 @@ async function readBody(req) {
 }
 
 export default async function main(req, res) {
+  let stage = 'request';
   try {
     const bodyBuffer = await readBody(req);
     const r = webRequest(req, bodyBuffer);
+    stage = 'storage';
     const appEnv = await getEnv();
+    stage = 'worker';
     const response = await worker.fetch(new Request(r.url, { method: r.method, headers: r.headers, body: r.body, cache: 'no-store' }), appEnv);
+    stage = 'response';
     res.statusCode = response.status;
     response.headers.forEach((v, k) => res.setHeader(k, v));
     const payload = new Uint8Array(await response.arrayBuffer());
     if (response.status === 204 || req.method === 'HEAD') return res.end();
     res.end(payload);
   } catch (error) {
-    console.error('showonce-backend-error', { name: error?.name, code: error?.code });
+    let diagnostic = String(error?.stack || error?.message || error);
+    for (const key of ['TURSO_URL', 'TURSO_AUTH_TOKEN', 'MODEL_API_KEY', 'SUPADATA_API_KEY']) {
+      if (env[key]) diagnostic = diagnostic.split(env[key]).join('[REDACTED]');
+    }
+    console.error('showonce-backend-error', { stage, name: error?.name, code: error?.code, diagnostic: diagnostic.slice(0, 1200) });
     if (!res.headersSent) {
       res.statusCode = 503;
       res.setHeader('Content-Type', 'application/json');
