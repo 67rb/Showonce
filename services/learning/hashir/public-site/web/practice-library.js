@@ -57,7 +57,7 @@
   }
   return {records:[...records.values()],opaque,blocked:false,error:opaque.length?unreadable:null};
  }
- function load(storage){const r=raw(storage);return {entries:sorted(group(r.records)),opaque:r.opaque,blocked:r.blocked,error:r.error};}
+ function load(storage){const r=raw(storage);return {entries:sorted(r.records),opaque:r.opaque,blocked:r.blocked,error:r.error};}
  function read(storage){const result=load(storage);return {entries:result.entries,error:result.error,persisted:!result.blocked};}
  function remember(storage,value,fallbackEntries=[]){
   // Re-read on every write so a stale tab's in-memory list does not overwrite
@@ -69,17 +69,17 @@
   // stale fallback copy of the same session.
   if(Array.isArray(fallbackEntries))for(const item of fallbackEntries){const fallback=normalize(item);if(fallback&&!known.has(fallback.id))known.set(fallback.id,fallback);}
   const base=sorted([...known.values()]);
-  const view=()=>sorted(group(base));
+  const view=list=>sorted(list||base);
   if(!entry)return {entries:view(),error:'This practice record is incomplete. Existing saved access was kept.',persisted:false};
   const existing=base.find(item=>item.id===entry.id);
   if(existing&&existing.token!==entry.token)return {entries:view(),error:'This practice already has different saved access. Its existing access was kept.',persisted:false};
   const latest=existing&&Date.parse(existing.updated_at)>Date.parse(entry.updated_at)?existing:entry;
   const record=existing?{...latest,created_at:existing.created_at}:entry;
   const entries=sorted([...base.filter(item=>item.id!==entry.id),record]);
-  if(current.blocked)return {entries:view(),error:current.error,persisted:false};
+  if(current.blocked)return {entries:view(entries),error:current.error,persisted:false};
   try{storage.setItem(KEY,JSON.stringify({version:1,entries:[...entries,...current.opaque]}));}
-  catch{return {entries:view(),error:unsaved,persisted:false};}
-  return {entries:view(),error:current.error,persisted:true};
+  catch{return {entries:view(entries),error:unsaved,persisted:false};}
+  return {entries:view(entries),error:current.error,persisted:true};
  }
  // 5.1b (B6) — delete a lesson and every browser-saved session under it.
  function remove(storage,lessonID){
@@ -87,9 +87,9 @@
   const kept=current.records.filter(item=>item.lesson_id!==lessonID);
   if(!current.blocked){
    try{storage.setItem(KEY,JSON.stringify({version:1,entries:[...kept,...current.opaque]}));}
-   catch{return {entries:sorted(group(kept)),error:unsaved,persisted:false};}
+   catch{return {entries:sorted(kept),error:unsaved,persisted:false};}
   }
-  return {entries:sorted(group(kept)),error:current.error,persisted:!current.blocked};
+  return {entries:sorted(kept),error:current.error,persisted:!current.blocked};
  }
  function migrate(storage,legacy){
   const current=read(storage);
