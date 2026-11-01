@@ -4,7 +4,7 @@
 /* Copyright © 2026 Show Once. All rights reserved. */
 import { createClient } from '@libsql/client';
 import { MIGRATIONS } from '../server/vercel-migrations.mjs';
-import worker from '../services/learning/hashir/public-site/worker/index.js';
+import worker from '../server/vercel-worker.mjs';
 
 const env = process.env;
 

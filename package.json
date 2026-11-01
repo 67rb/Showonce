@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "build:vercel": "node scripts/vercel-build.mjs",
     "dev": "node scripts/professional-dev.mjs",
     "build": "next build && node scripts/assemble-app.mjs && npm run check:secrets",
     "start": "node services/learning/hashir/public-site/scripts/preview.mjs --port 3000",
