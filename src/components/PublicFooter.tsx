@@ -16,13 +16,7 @@ export function PublicFooter() {
       </div>
       <div className="mx-auto flex w-full max-w-6xl flex-wrap items-center justify-between gap-3 px-4 py-8">
         <p className="font-body-ui text-small text-white/70">{s.footerLine}</p>
-        <div className="flex items-center gap-5"><Link href="/privacy" className="font-body-ui text-small text-white/70 hover:text-white">{s.navPrivacy}</Link>
-        <Link
-          href="/design"
-          className="font-body-ui text-small font-medium text-white/70 transition-colors duration-[150ms] hover:text-white"
-        >
-          {s.designLink}
-        </Link></div>
+        <div className="flex items-center gap-5"><Link href="/privacy" className="font-body-ui text-small text-white/70 hover:text-white">{s.navPrivacy}</Link></div>
       </div>
     </footer>
   );

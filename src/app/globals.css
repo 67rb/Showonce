@@ -108,29 +108,24 @@ body {
   font-weight: 400;
 }
 
-/* --- Surfaces (Amber Grain Cinema) --- */
+/* --- Surfaces (5.4: interior surfaces are light; only camera/live stages stay dark) --- */
 
-/* Standard panel: vertical gradient, 1px border, top inner highlight. */
+/* Standard panel: solid white card, 1px border, no gradient, no glow. */
 .panel {
   position: relative;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--color-site-border);
   border-radius: var(--radius-md);
-  background-image: linear-gradient(180deg, #242429 0%, #1b1b1f 100%);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  background: var(--color-site-surface);
 }
 
-/* Interactive panels: hover border + warm glow. */
+/* Interactive panels: hover border only. */
 .panel-hover {
   transition:
-    border-color var(--motion-fast) var(--ease-out),
-    box-shadow var(--motion-fast) var(--ease-out);
+    border-color var(--motion-fast) var(--ease-out);
 }
 @media (hover: hover) and (prefers-reduced-motion: no-preference) {
   .panel-hover:hover {
     border-color: rgba(245, 158, 11, 0.4);
-    box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.05),
-      0 0 36px rgba(245, 158, 11, 0.12);
   }
 }
 
@@ -141,15 +136,15 @@ body {
     180deg,
     rgba(245, 158, 11, 0.14) 0%,
     rgba(245, 158, 11, 0.05) 45%,
-    #1b1b1f 100%
+    var(--color-site-surface) 100%
   );
 }
 
 /* Dashed placeholder panel (empty states). */
 .panel-dashed {
-  border: 1px dashed rgba(255, 255, 255, 0.12);
+  border: 1px dashed var(--color-site-border);
   border-radius: var(--radius-md);
-  background-image: linear-gradient(180deg, #242429 0%, #1b1b1f 100%);
+  background: var(--color-site-surface);
 }
 
 /* Eyebrow label above section headings — accent-deep (Site language v3). */
@@ -184,15 +179,6 @@ body {
   pointer-events: none;
 }
 
-.minimal-top-glow {
-  background: radial-gradient(
-    80% 60% at 50% 0%,
-    rgba(245, 158, 11, 0.08) 0%,
-    transparent 100%
-  );
-  pointer-events: none;
-}
-
 /* --- Ghost numbers (how it works) --- */
 .ghost-number {
   font-family: var(--font-display);
@@ -211,6 +197,17 @@ body {
   line-height: 1.05;
   letter-spacing: -0.01em;
   color: var(--color-site-ink);
+}
+
+/* 5.12.7(c) — the sticky navbar pill overlays the top of landing sections when
+   a section is scrolled to; scroll-margin keeps heading content clear. Pure
+   scroll positioning: no visual change at rest. */
+#main-content section :is(h1, h2) {
+  scroll-margin-top: 7rem;
+}
+/* Landing sections targeted by in-page anchors keep the same clearance. */
+section[id] {
+  scroll-margin-top: 7rem;
 }
 
 /* Site language card (v3, Adorn): white surface, 24px radius, hairline

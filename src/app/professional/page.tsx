@@ -30,9 +30,9 @@ export default function ProfessionalPage() {
   const scopeCards = [
     { title: s.canHeading, line: s.proCanLine, items: s.proCanItems },
     {
-      title: s.audienceProfessionalTitle,
-      line: s.audienceProfessionalLine,
-      items: s.audienceProfessionalItems,
+      title: s["proScope.trainersTitle"],
+      line: s["proScope.trainersLine"],
+      items: s["proScope.trainersItems"],
     },
     {
       title: s.proPracticeTitle,
@@ -117,11 +117,11 @@ export default function ProfessionalPage() {
                 <div className="mt-4 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                   <h2 className="section-title max-w-[17ch]">
                     {headingLead}
-                    <br />
+                    <br />{" "}
                     <span className="font-serif-accent">{headingAccent}</span>
                   </h2>
                   <Link
-                    href="/professional/lessons"
+                    href="/professional#scope"
                     className="btn-shine shrink-0 whitespace-nowrap rounded-full bg-[#16161A] px-5 py-2.5 text-small font-semibold text-white transition-colors duration-[150ms] hover:bg-[#16A34A]"
                   >
                     {s.seeAll}
@@ -134,7 +134,7 @@ export default function ProfessionalPage() {
         </section>
 
         {/* SCOPE — three hover cards */}
-        <section className="bg-site-page pt-14 pb-20 lg:pt-[72px] md:pb-28">
+        <section id="scope" className="bg-site-page pt-14 pb-20 lg:pt-[72px] md:pb-28">
           <RevealGroup>
             <Reveal>
               <div className="mx-auto max-w-2xl text-center">
@@ -143,7 +143,7 @@ export default function ProfessionalPage() {
             </Reveal>
             <Reveal>
               <div className="mx-auto mt-14 max-w-4xl">
-                <SeasonalHoverCards cards={scopeCards} />
+                <SeasonalHoverCards cards={scopeCards} itemMarkerClass="bg-[#16A34A]" />
               </div>
               <p className="relative mx-auto mt-14 max-w-3xl px-4 text-center text-[1.25rem] font-semibold leading-snug text-site-ink">
                 <span className="relative">{s.canCantClosing}</span>
@@ -211,12 +211,6 @@ export default function ProfessionalPage() {
               className="font-body-ui text-small text-white/70 hover:text-white"
             >
               {s.navPrivacy}
-            </Link>
-            <Link
-              href="/design"
-              className="font-body-ui text-small font-medium text-white/70 transition-colors duration-[150ms] hover:text-white"
-            >
-              {s.designLink}
             </Link>
           </div>
         </div>

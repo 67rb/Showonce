@@ -11,7 +11,10 @@ export const strings = {
   /* Brand */
   wordmarkShow: "SHOW",
   wordmarkOnce: "ONCE",
-  privacyClaim: "checks photos, keeps nothing.",
+  // 5.3 — one corrected sentence, stored once and reused everywhere. The old
+  // broken copy claimed nothing is kept; submitted check photos ARE saved
+  // privately and deletable from history.
+  privacyClaim: "Show Once checks your photos and keeps your saved practice private.",
 
   /* Shared chrome */
   yourLessonsLink: "Your lessons",
@@ -100,7 +103,7 @@ export const strings = {
     "Hands-on team onboarding",
   ],
 
-  privacyHeading: "checks photos, keeps nothing.",
+  privacyHeading: "Show Once checks your photos and keeps your saved practice private.",
   privacyBody:
     "Photo checks run through Meta. Submitted photos are saved privately with your practice and can be deleted from history. Live camera frames are not saved.",
   privacyLink: "Read the privacy page",
@@ -357,6 +360,105 @@ export const strings = {
   proLessonsEmptyLine: "No lessons yet. Start a lesson to make your first one.",
   proDifferenceWrong:
     "The green jumper is in the top rail. In the step it runs between the rails.",
+
+  /* 5.1 — sign-in is not available in this deployment. The OAuth identity
+     headers are stripped by the hosting layer, so there is no working
+     self-service sign-in route. Gated actions render this inline notice in
+     place of dead sign-in / recovery links. */
+  signInUnavailableTitle: "Sign-in is not available here",
+  signInUnavailableBody:
+    "This preview has no sign-in flow, so saving to an account and instructor review are unavailable. Your browser practice still works and stays private to this device.",
+  signInWorkspaceLine:
+    "Practice works without signing in and stays private to this browser.",
+
+  /* 5.2 — account-check loading and timeout */
+  checkingAccount: "Checking your account…",
+  accountCheckTimedOut:
+    "The account check timed out. Showing the signed-out experience on this visit.",
+  retry: "Retry",
+
+  /* 5.3 — /create invalid-link inline error (reuses importErrorInvalid under
+     the field) and empty-mode guidance already live in importErrorInvalid. */
+  importErrorInvalidEmpty: "Add a YouTube or Instagram link, or your own instructions, to get started.",
+
+  /* 5.7 — Professional create gate + disabled reasons */
+  "proCreate.signInGateNotice":
+    "Saving a training brief needs a signed-in account, and sign-in is not available in this preview. You can still explore the Training hub.",
+  "proCreate.trainingHubLink": "Open the Training hub",
+  "proCreate.saveForReviewLabel": "Save learning request · free",
+  "proCreate.classroomHelp":
+    "Confirming this attests that you only practise classroom or disconnected training here — no live trade work.",
+  "proCreate.disabledNoSignIn": "Sign-in is required to save a training brief. It is not available in this preview.",
+  "proCreate.disabledConfirmClassroom": "Confirm the classroom or disconnected training statement to enable saving.",
+
+  /* 5.8 — Training hub simplification */
+  "hub.sharedNotice":
+    "Courses are practised under classroom or disconnected training only. A saved brief stays in your account and an instructor reviews saved evidence before any classroom sign-off — it is not a trade qualification or safety certification.",
+  "hub.enrollDisabledSignIn": "Sign-in is required to enrol. It is not available in this preview.",
+  "hub.enrollDisabledConfirm": "Confirm the classroom or disconnected training statement to enable enrolment.",
+
+  /* 5.9 — instructor empty state + processing/review empty states */
+  "proInstructor.EmptyTitle": "Instructor review",
+  "proInstructor.EmptyLine": "Only authorised instructors can review saved practice evidence and decide a classroom outcome.",
+  "proInstructor.EmptyAction": "Back to the Training hub",
+  "proRequest.EmptyTitle": "No saved request yet",
+  "proRequest.EmptyLine": "Nothing has been saved for you to review on this screen.",
+  "proRequest.EmptyAction": "Create a training brief",
+  "hobbyRequest.EmptyLine": "Nothing has been processed for you to review on this screen.",
+  "hobbyRequest.EmptyAction": "Back to Create",
+
+  /* 5.5/5.2 — loading skeletons (aria labels; also used by the timeout notice) */
+  loadingLibrary: "Loading your lessons",
+  loadingCreate: "Loading the create workspace",
+  loadingPractice: "Loading practice",
+
+  /* 5.3 — /create inline validation. importErrorInvalid covers the invalid
+     link; importErrorInvalidEmpty covers empty submits in all three modes. */
+
+  /* 5.8 — hub-level classroom confirmation (one checkbox, one label) */
+  "hub.confirmLabel": "I confirm classroom or disconnected training only.",
+
+  /* 5.10 — combined allowance + workspace footnote block */
+  footnoteBlocks: "Allowance and account",
+
+  /* 5.6 — /create step indicator (right rail) */
+  createStepStripTitle: "How it goes",
+  createStepStrip: "1. Add a source · 2. Review · 3. Practice",
+
+  /* 5.12.8 — the Hobby landing sample lesson button */
+  trySampleLesson: "Try a sample lesson",
+  sampleOpening: "Opening sample…",
+  sampleUnavailable: "The sample is not available right now. Try again shortly.",
+  sampleFreeNote: "Free to try · no account needed",
+  continuePractice: "Continue practice:",
+  nextPrefix: "Next:",
+  continueArrow: "Continue →",
+  chooseExample: "Choose an example",
+  allowanceBlockTitle: "Shared AI allowance",
+  allowanceRemainingLabel: "remaining",
+  allowanceCaption: "This allowance is shared across the site. Free practice remains available.",
+  workspaceSignInLine:
+    "Practice works without signing in and stays private to this browser.",
+
+  /* 5.12.2 — Professional Scope middle card (trainers), distinct from Hobby */
+  "proScope.trainersTitle": "Professional",
+  "proScope.trainersLine":
+    "For trainers running a class — one visible target every trainee works to, saved evidence an instructor can review, and a steady record across the group.",
+  "proScope.trainersItems": [
+    "One shared target for a full class",
+    "Saved photo evidence per trainee, ready for review",
+    "A steady record across the group",
+    "Reusable for the next intake",
+  ],
+
+  /* 5.12.4 — real 4th Professional capability (Assembly & packing) */
+  "proGallery.assemblyTitle": "Assembly & packing",
+  "proGallery.assemblyLine":
+    "Packed kits, boxes and simple assemblies checked against the step so every trainee finishes the same ready result.",
+  "proGallery.assemblyExamples": "Kit packing · Box builds · Simple assembly",
+
+  /* share an accessible label describing the marquee clone (5.12.3) */
+  marqueeCloneLabel: "duplicate",
 } as const;
 
 export type Strings = typeof strings;

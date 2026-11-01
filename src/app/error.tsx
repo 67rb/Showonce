@@ -12,17 +12,9 @@ export default function Error({
 }) {
   return (
     <main className="relative flex min-h-dvh flex-col items-center justify-center gap-4 overflow-hidden px-6 py-10 text-center">
-      <div
-        aria-hidden
-        className="pointer-events-none absolute left-1/2 top-0 h-[300px] w-[480px] -translate-x-1/2 rounded-full opacity-60 blur-3xl"
-        style={{
-          background:
-            "radial-gradient(closest-side, rgba(245,158,11,0.22), transparent 70%)",
-        }}
-      />
       <p
         aria-hidden
-        className="font-display-ui bg-gradient-to-b from-site-ink/25 to-site-ink/5 bg-clip-text text-[6rem] font-extrabold leading-none text-transparent"
+        className="font-display-ui text-[6rem] font-extrabold leading-none text-site-ink/20"
       >
         !
       </p>

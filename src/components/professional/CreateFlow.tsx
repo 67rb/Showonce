@@ -1,7 +1,10 @@
 /* Copyright © 2026 Muhammad Hashir (https://github.com/mateir0). All rights reserved. See COPYRIGHT.md. */
-"use client";
+// Supplied visual language. The review screen renders the real saved-request
+// status from the studio loader (5.9); processing redirects to the create
+// screen, where saving reports its status inline.
 import {ProfessionalStudio} from './ProfessionalStudio';
-// Supplied visual language, backed by private requests rather than demo timers.
 export function CreateFlow({screen}:{screen:'create'|'processing'|'review'}){
- return <><ProfessionalStudio view="create"/>{screen!=='create'&&<p className="mx-auto max-w-lg px-4 pb-8 text-center text-small text-site-muted">Read your saved request status above. No processing stage or review result is simulated.</p>}</>;
+ // processing is unreachable: its route redirects to /professional/create.
+ if(screen==='processing')return null;
+ return <ProfessionalStudio view="create"/>;
 }

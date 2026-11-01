@@ -97,14 +97,14 @@ const PRO_CAPABILITIES = [
 
 const PRO_MORE = {
   id: "more",
-  title: s.proGalleryMoreTitle,
-  line: s.proGalleryMoreLine,
-  examples: s.proGalleryExamplesMore,
+  title: s["proGallery.assemblyTitle"],
+  line: s["proGallery.assemblyLine"],
+  examples: s["proGallery.assemblyExamples"],
   href: "/professional/lessons/",
 };
 
 const CARD_LINK_CLASS =
-  "group relative block w-[min(80vw,480px)] shrink-0 snap-start rounded-3xl px-4 " +
+  "group relative block w-[min(80vw,480px)] shrink-0 snap-start whitespace-normal rounded-3xl px-4 " +
   "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#F59E0B]";
 
 export function HorizontalGallery({professional=false}:{professional?:boolean}={}) {

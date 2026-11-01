@@ -18,7 +18,7 @@ export function SavedLessonCover({entry,lesson:provided,token,large=false}:{entr
   }catch{/* The source lesson and its written checkpoints remain available. */}})();
   return()=>{controller.abort();if(objectURL)URL.revokeObjectURL(objectURL);};
  },[id,provided,entry?.completed_steps,access,identity.request]);
- return <div className={large?'relative aspect-[4/3] w-full overflow-hidden rounded-[16px] border border-site-border bg-[#16161a]':'relative h-20 w-20 shrink-0 overflow-hidden rounded-xl border border-white/40 bg-[#16161a] shadow-[0_10px_24px_-12px_rgba(0,0,0,0.6)]'}>
-  {image?<img src={image} alt={alt} className="h-full w-full object-contain"/>:<div aria-hidden="true" className="flex h-full items-center justify-center bg-[radial-gradient(ellipse_at_top_right,#75501e_0%,#16161a_75%)] text-[#F59E0B]"><svg width={large?72:34} height={large?72:34} viewBox="0 0 48 48" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M7 10c7-2 12-1 17 3 5-4 10-5 17-3v28c-7-2-12-1-17 3-5-4-10-5-17-3V10Z"/><path d="M24 13v28M12 17l7 2M12 24l7 2M29 19l7-2M29 26l7-2"/></svg></div>}
+ return <div className={large?'relative aspect-[4/3] w-full overflow-hidden rounded-[16px] border border-site-border bg-site-page':'relative h-20 w-20 shrink-0 overflow-hidden rounded-xl border border-site-border bg-site-page'}>
+  {image?<img src={image} alt={alt} className="h-full w-full object-contain"/>:<div aria-hidden="true" className="flex h-full items-center justify-center bg-site-page text-accent-deep"><svg width={large?72:34} height={large?72:34} viewBox="0 0 48 48" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M7 10c7-2 12-1 17 3 5-4 10-5 17-3v28c-7-2-12-1-17 3-5-4-10-5-17-3V10Z"/><path d="M24 13v28M12 17l7 2M12 24l7 2M29 19l7-2M29 26l7-2"/></svg></div>}
  </div>;
 }

@@ -4,14 +4,16 @@ import { SerifAccent } from "@/components/Reveal";
 
 export default function PrivacyPage() {
   return (
-    <div className="mx-auto w-full max-w-2xl px-4 py-16">
-      <header className="text-center">
+    // 5.6 — text pages: readable single column, max-w-[720px], 16px sides on
+    // mobile, centred on desktop, left-aligned text.
+    <div className="mx-auto w-full max-w-[720px] px-4 py-16">
+      <header>
         <h1 className="font-display-ui text-[2.5rem] font-extrabold leading-tight tracking-tight text-site-ink">
           <SerifAccent text={s.privacyPageHeading} />
         </h1>
         <div
           aria-hidden
-          className="mx-auto mt-3 h-1 w-14 rounded-full bg-accent"
+          className="mt-3 h-1 w-14 rounded-full bg-accent"
         />
       </header>
 

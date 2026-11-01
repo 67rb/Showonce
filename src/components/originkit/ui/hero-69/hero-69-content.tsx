@@ -51,7 +51,7 @@ export default function App() {
       <section className="intro">
         <h1>
           {s.proHeroHeadline}
-          <br />
+          <br />{" "}
           {s.proHeroHeadlineAccent}
         </h1>
         <p className="desc">{s.proHeroSub}</p>

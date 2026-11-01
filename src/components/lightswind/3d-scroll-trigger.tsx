@@ -131,6 +131,7 @@ export function ThreeDScrollTriggerRow({
   const smoothVelocityRef = useRef(0);
   const smoothTiltRef = useRef(0);
   const isInViewRef = useRef(false);
+  const pausedRef = useRef(false);
   const rafIdRef = useRef<number | null>(null);
   const startAnimationRef = useRef<(() => void) | null>(null);
 
@@ -185,6 +186,14 @@ export function ThreeDScrollTriggerRow({
     const animate = (now: number) => {
       if (!isInViewRef.current) {
         // Completely halt rAF scheduling when not in view
+        return;
+      }
+
+      // Pause on hover/focus/touch: freeze the track in place (no movement, no
+      // tilt drift) while still scheduling frames so playback resumes cleanly.
+      if (pausedRef.current) {
+        lastTime = now;
+        rafIdRef.current = requestAnimationFrame(animate);
         return;
       }
 
@@ -266,6 +275,24 @@ export function ThreeDScrollTriggerRow({
         "w-full overflow-hidden whitespace-nowrap [perspective:1200px]",
         className
       )}
+      onMouseEnter={() => {
+        pausedRef.current = true;
+      }}
+      onMouseLeave={() => {
+        pausedRef.current = false;
+      }}
+      onFocus={() => {
+        pausedRef.current = true;
+      }}
+      onBlur={() => {
+        pausedRef.current = false;
+      }}
+      onTouchStart={() => {
+        pausedRef.current = true;
+      }}
+      onTouchEnd={() => {
+        pausedRef.current = false;
+      }}
       {...props}
     >
       <div

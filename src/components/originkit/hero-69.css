@@ -269,3 +269,15 @@
     font-size: 11px;
   }
 }
+
+/* Narrow phones: keep the hero paragraph text readable by stacking the intro
+   above the rock and pushing the husk further down so it can't overlap copy. */
+@media (max-width: 768px) {
+  .hero-69 .intro {
+    z-index: 4;
+  }
+  .hero-69 .husk {
+    z-index: 1;
+    inset: 36% 0 6%;
+  }
+}

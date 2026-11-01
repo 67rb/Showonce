@@ -2,6 +2,7 @@
 import type { Metadata } from "next";
 import s from "@/lib/strings";
 import { SerifAccent } from "@/components/Reveal";
+import { PublicFooter } from "@/components/PublicFooter";
 
 export const metadata: Metadata = {
   title: `SHOW ONCE · Professional · ${s.privacyPageHeading}`,
@@ -10,18 +11,21 @@ export const metadata: Metadata = {
 
 export default function ProfessionalPrivacyPage() {
   return (
-    <div className="mx-auto w-full max-w-2xl px-4 py-16">
-      <header className="text-center">
+    // 5.6 — text pages: readable single column, max-w-[720px], 16px sides on
+    // mobile, centred on desktop, left-aligned text.
+    <>
+      <div className="mx-auto w-full max-w-[720px] px-4 py-16">
+      <header>
         <h1 className="font-display-ui text-[2.5rem] font-extrabold leading-tight tracking-tight text-site-ink">
           <SerifAccent text={s.privacyPageHeading} />
         </h1>
         <div
           aria-hidden
-          className="mx-auto mt-3 h-1 w-14 rounded-full bg-[#16A34A]"
+          className="mt-3 h-1 w-14 rounded-full bg-[#16A34A]"
         />
       </header>
 
-      {/* the claim — the restored "checks photos, keeps nothing." in a green band */}
+      {/* the claim — privacy statement in a green band */}
       <div className="mt-8 rounded-[20px] border border-[#16A34A]/30 bg-[#16A34A]/[0.10] px-6 py-6 text-center">
         <p className="font-display-ui text-[1.5rem] font-bold leading-snug text-[#15803D]">
           <span className="font-serif-accent">Private practice. Clear control.</span>
@@ -50,5 +54,7 @@ export default function ProfessionalPrivacyPage() {
         ))}
       </div>
     </div>
+    <PublicFooter />
+    </>
   );
 }

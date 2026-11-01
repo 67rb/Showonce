@@ -30,7 +30,8 @@ const HOBBY_ITEMS = [
   { name: s.navPrivacy, link: "/privacy" },
 ];
 const PROFESSIONAL_ITEMS = [
-  { name: s.proNavBrief, link: "/professional/create" },
+  // 5.12.7(a): "New training brief" is the CTA pill (below) — the inline nav
+  // duplicate is removed so the word is not said twice in the navbar.
   { name: s.proNavHub, link: "/professional/lessons" },
   { name: s.proNavReview, link: "/professional/instructor" },
   { name: s.navPrivacy, link: "/professional/privacy" },
@@ -100,14 +101,24 @@ export function PublicNavbar() {
         <WordmarkAnchor className="text-xl leading-none" light professional={isProfessional} />
         <NavItems
           items={navItems}
-          className={`!relative !inset-auto min-w-0 whitespace-nowrap ${LIGHT_LINKS}`}
+          className={
+            (isProfessional
+              ? // 5.12.7(b): in the shrunken/scrolled state the Professional
+                // pill is 40% wide (min 800px); tight bracket padding keeps the
+                // wordmark, links and toggle clear of each other.
+                "!relative !inset-auto min-w-0 whitespace-nowrap [&_a]:!px-[10px] [&_a]:whitespace-nowrap "
+              : "!relative !inset-auto min-w-0 whitespace-nowrap ") + LIGHT_LINKS
+          }
         />
-        <div className="flex shrink-0 items-center gap-3">
+        <div
+          className={
+            isProfessional
+              ? "flex shrink-0 items-center gap-[10px]"
+              : "flex shrink-0 items-center gap-3"
+          }
+        >
           <ModeToggle />
-          <NavbarButton
-            href={ctaHref}
-            className={ctaClass}
-          >
+          <NavbarButton href={ctaHref} className={ctaClass + " whitespace-nowrap"}>
             {isProfessional ? s.proNavBrief : s.importStart}
           </NavbarButton>
         </div>

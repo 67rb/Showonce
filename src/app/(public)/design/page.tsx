@@ -16,7 +16,6 @@ import { KeyframeVisual } from "@/components/KeyframeVisual";
 const routes: { path: string; label: string }[] = [
   { path: "/", label: "Landing" },
   { path: "/create", label: "Create — import" },
-  { path: "/create/processing", label: "Create — processing" },
   { path: "/create/review", label: "Create — review" },
   { path: "/lessons", label: "Your lessons" },
   { path: "/lesson/sample", label: "Lesson overview" },
@@ -25,16 +24,15 @@ const routes: { path: string; label: string }[] = [
   { path: "/lesson/sample/live", label: "Live mode" },
   { path: "/lesson/sample/complete", label: "Completion" },
   { path: "/privacy", label: "Privacy" },
-  { path: "/professional", label: "Professional face (stub)" },
   { path: "/design", label: "Design index" },
 ];
 
-// Professional face routes — the /design index is shared by BOTH faces, and
-// later Professional routes join this group as they are built.
+// Professional face routes — the /design index is shared by BOTH faces. Each
+// entry maps to an existing (public)/professional route; literal "[id]" ironed
+// out to the sample lesson, mirroring the Hobby list above.
 const proRoutes: { path: string; label: string }[] = [
   { path: "/professional", label: "Professional landing" },
   { path: "/professional/create", label: "Create — import" },
-  { path: "/professional/create/processing", label: "Create — processing" },
   { path: "/professional/create/review", label: "Create — review" },
   { path: "/professional/lessons", label: "Your lessons" },
   { path: "/professional/lesson/sample", label: "Lesson overview" },
@@ -43,6 +41,7 @@ const proRoutes: { path: string; label: string }[] = [
   { path: "/professional/lesson/sample/live", label: "Live mode" },
   { path: "/professional/lesson/sample/complete", label: "Completion" },
   { path: "/professional/privacy", label: "Privacy" },
+  { path: "/professional/instructor", label: "Instructor" },
 ];
 
 const variants: { path: string; label: string }[] = [
@@ -60,14 +59,21 @@ const variants: { path: string; label: string }[] = [
 ];
 
 const tokens: { name: string; var: string; hex: string }[] = [
-  { name: "bg", var: "--bg", hex: "#16161A" },
-  { name: "surface", var: "--surface", hex: "#1B1B1F" },
-  { name: "fg", var: "--fg", hex: "#FFFFFF" },
-  { name: "muted", var: "--muted", hex: "#A1A1AA" },
-  { name: "accent", var: "--accent", hex: "#F59E0B" },
-  { name: "accent-strong", var: "--accent-strong", hex: "#D97706" },
-  { name: "wrong", var: "--wrong", hex: "#E5484D" },
-  { name: "line", var: "--line", hex: "#2E2E33" },
+  // Hobby face — light + amber
+  { name: "Hobby page ground", var: "--hobby-bg", hex: "#F7F7F8" },
+  { name: "Hobby card", var: "--hobby-card", hex: "#FFFFFF" },
+  { name: "Hobby border", var: "--hobby-border", hex: "#E5E5E5" },
+  { name: "Hobby ink", var: "--hobby-ink", hex: "#16161A" },
+  { name: "Hobby muted", var: "--hobby-muted", hex: "#71717A" },
+  { name: "Hobby accent", var: "--hobby-accent", hex: "#F59E0B" },
+  { name: "Hobby accent-strong", var: "--hobby-accent-strong", hex: "#D97706" },
+  // Professional face — light + green
+  { name: "Professional accent", var: "--pro-accent", hex: "#16A34A" },
+  { name: "Professional accent-strong", var: "--pro-accent-strong", hex: "#15803D" },
+  // Verdicts
+  { name: "success", var: "--success", hex: "#00C758" },
+  { name: "danger", var: "--danger", hex: "#E5484D" },
+  { name: "can't-tell", var: "--canttell", hex: "#F59E0B" },
 ];
 
 const typeScale: { name: string; cls: string }[] = [
@@ -99,15 +105,7 @@ function SectionCard({
 
 export default function DesignPage() {
   return (
-    <div className="relative min-h-dvh overflow-hidden bg-site-page">
-      <div
-        aria-hidden
-        className="pointer-events-none absolute left-1/2 top-0 h-[320px] w-[560px] -translate-x-1/2 rounded-full opacity-50 blur-3xl"
-        style={{
-          background:
-            "radial-gradient(closest-side, rgba(245,158,11,0.2), transparent)",
-        }}
-      />
+    <div className="relative min-h-dvh bg-site-page">
       <div className="relative z-10 mx-auto w-full max-w-4xl px-4 py-10">
         <header>
           <h1 className="section-title text-site-ink">Design index</h1>

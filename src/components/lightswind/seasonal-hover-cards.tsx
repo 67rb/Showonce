@@ -20,6 +20,8 @@ export interface SeasonCardProps {
 interface SeasonalHoverCardsProps {
   cards: SeasonCardProps[];
   className?: string;
+  /** Marker dot colour for the item bullets. Defaults to the amber accent. */
+  itemMarkerClass?: string;
 }
 
 // Accent the LAST word of the title in the serif-italic display span, matching
@@ -37,7 +39,13 @@ function accentLastWord(title: string) {
   );
 }
 
-const SeasonCard = ({ title, line, items, className }: SeasonCardProps) => {
+const SeasonCard = ({
+  title,
+  line,
+  items,
+  className,
+  itemMarkerClass = "bg-accent-deep",
+}: SeasonCardProps & { itemMarkerClass?: string }) => {
   return (
     <div
       className={cn(
@@ -54,7 +62,10 @@ const SeasonCard = ({ title, line, items, className }: SeasonCardProps) => {
       <ul className="mt-5 space-y-2.5">
         {items.map((item) => (
           <li key={item} className="flex items-start gap-3">
-            <span aria-hidden className="mt-1.5 h-2.5 w-2.5 shrink-0 rounded-full bg-accent-deep" />
+            <span
+              aria-hidden
+              className={cn("mt-1.5 h-2.5 w-2.5 shrink-0 rounded-full", itemMarkerClass)}
+            />
             <span className="font-body-ui text-[1.0625rem] leading-snug text-site-ink">
               {item}
             </span>
@@ -68,6 +79,7 @@ const SeasonCard = ({ title, line, items, className }: SeasonCardProps) => {
 export function SeasonalHoverCards({
   cards,
   className,
+  itemMarkerClass = "bg-accent-deep",
 }: SeasonalHoverCardsProps) {
   return (
     // Row mechanics: flex-wrap below md -> cards stack full-width on touch/mobile
@@ -81,6 +93,7 @@ export function SeasonalHoverCards({
           title={card.title}
           line={card.line}
           items={card.items}
+          itemMarkerClass={itemMarkerClass}
         />
       ))}
     </div>

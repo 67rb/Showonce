@@ -144,7 +144,7 @@ export default function LandingPage(_props?: {searchParams:Promise<{state?:strin
                 <div className="mt-4 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                   <h2 className="section-title max-w-[17ch]">
                     {headingLead}
-                    <br />
+                    <br />{" "}
                     <span className="font-serif-accent">{headingAccent}</span>
                   </h2>
                   <Link

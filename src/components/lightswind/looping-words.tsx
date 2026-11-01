@@ -14,6 +14,11 @@ export function LoopingWords({ words, className }: LoopingWordsProps) {
   const controls = useAnimationControls();
   const wordsRef = useRef<(HTMLLIElement | null)[]>([]);
   const [selectorWidth, setSelectorWidth] = useState(0);
+  // 5.12.5 — ghost fix. Steps are measured in exact pixels (the same one-line
+  // height for every word), so the strip never rests on a fractional-pixel
+  // offset — sub-pixel residue of the exiting word (faint ghost traces at
+  // narrow widths) cannot occur. Rotation words, timing and design are unchanged.
+  const stepPx = useRef<number>(0);
 
   // Duplicate the words array to create a seamless infinite loop
   const duplicatedWords = [...words, ...words];
@@ -32,7 +37,7 @@ export function LoopingWords({ words, className }: LoopingWordsProps) {
       updateWidth(index);
 
       await controls.start({
-        y: `-${(index * 100) / duplicatedWords.length}%`,
+        y: `-${index * stepPx.current}px`,
         transition: { duration: 1.2, ease: [0.175, 0.885, 0.32, 1.15] },
       });
     }, 2200);
@@ -45,6 +50,11 @@ export function LoopingWords({ words, className }: LoopingWordsProps) {
     if (el) {
       setSelectorWidth(el.offsetWidth);
     }
+    const first = wordsRef.current[0];
+    const next = wordsRef.current[1];
+    if (first && next) {
+      stepPx.current = next.offsetTop - first.offsetTop;
+    }
   };
 
   return (
@@ -53,7 +63,7 @@ export function LoopingWords({ words, className }: LoopingWordsProps) {
         
         {/* List of words */}
         <motion.ul
-          className="flex flex-col items-center m-0 p-0 list-none"
+          className="flex flex-col items-center m-0 p-0 list-none will-change-transform"
           animate={controls}
           initial={{ y: "0%" }}
         >
