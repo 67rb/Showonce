@@ -432,6 +432,19 @@ export const strings = {
   sampleFreeNote: "Free to try · no account needed",
   continuePractice: "Continue practice:",
   nextPrefix: "Next:",
+  /* 5.1b (B6) — lesson delete confirmation */
+  lessonsDelete: "Delete",
+  "lessonsDelete.confirmTitle": "Delete this lesson?",
+  "lessonsDelete.confirmBody": "Delete “{title}” and every saved practice and progress for it from this browser? This cannot be undone.",
+  "lessonsDelete.confirmAction": "Delete lesson",
+  "lessonsDelete.cancel": "Keep lesson",
+  "lessonsContinue": "Continue",
+  /* 5.1b (B4) — Free numbered steps: practice name becomes the lesson title */
+  "freeSteps.nameLabel": "Lesson name",
+  "freeSteps.nameHint": "Leave blank to use a default name for this practice.",
+  "freeSteps.localCompareTitle": "Compare your work on your device",
+  "freeSteps.localCompareBody": "Choose a picture of your work to preview it beside the step text. It stays on this device — no AI call, no check, no verdict.",
+  "freeSteps.choosePhoto": "Choose a picture",
   /* 5.1.3 — runtime player step navigation (Next reuses the existing nextStep string) */
   prevStep: "Previous step",
   /* 5.1.4/5.1.5 — free Origami sample overview ("Fold a paper cup", 7 steps) */

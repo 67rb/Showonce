@@ -2,7 +2,7 @@
 "use client";
 import {createContext,useCallback,useContext,useEffect,useRef,useState,type ReactNode} from 'react';
 import s from '@/lib/strings';
-import {LearningError,accountActionHref,browserEntries,rememberBrowser,entryFrom,type Account,type Config,type Entry,type Lesson,type Progress} from '@/lib/learning';
+import {LearningError,accountActionHref,browserEntries,rememberBrowser,removeBrowser,entryFrom,type Account,type Config,type Entry,type Lesson,type Progress} from '@/lib/learning';
 type Options={method?:string;token?:string|null;key?:string;signal?:AbortSignal;image?:boolean};
 type SourceDraft={mode:string;url:string;text:string;reference:string;stepsText:string;stepsReference:string;linkTranscript:string;linkTranscriptURL:string;goal:string;learningMode:string};
 const initialDraft=():SourceDraft=>({mode:'link',url:'',text:'',reference:'',stepsText:'',stepsReference:'',linkTranscript:'',linkTranscriptURL:'',goal:'',learningMode:'visual'});
@@ -10,7 +10,7 @@ const initialDraft=():SourceDraft=>({mode:'link',url:'',text:'',reference:'',ste
 // on timeout the page renders the signed-out version plus one inline notice
 // with a Retry button.
 const ACCOUNT_CHECK_TIMEOUT_MS=8000;
-type Identity={practice:{current:number;total:number}|null;ready:boolean;timedOut:boolean;account:Account|null;config:Config|null;error:string|null;notice:string|null;epoch:()=>number;request:<T>(path:string,body?:unknown,options?:Options)=>Promise<T>;refresh:()=>Promise<void>;guestEntries:()=>Entry[];remember:(lesson:Lesson,progress:Progress,token?:string|null)=>void;draft:SourceDraft;setDraft:(value:SourceDraft)=>void};
+type Identity={practice:{current:number;total:number}|null;ready:boolean;timedOut:boolean;account:Account|null;config:Config|null;error:string|null;notice:string|null;epoch:()=>number;request:<T>(path:string,body?:unknown,options?:Options)=>Promise<T>;refresh:()=>Promise<void>;guestEntries:()=>Entry[];remember:(lesson:Lesson,progress:Progress,token?:string|null)=>void;forget:(lessonID:string)=>{entries:Entry[];error?:string|null;persisted?:boolean};draft:SourceDraft;setDraft:(value:SourceDraft)=>void};
 const Context=createContext<Identity|null>(null);
 export function IdentityProvider({children}:{children:ReactNode}){
  const [ready,setReady]=useState(false),[timedOut,setTimedOut]=useState(false),[account,setAccount]=useState<Account|null>(null),[config,setConfig]=useState<Config|null>(null),[error,setError]=useState<string|null>(null),[notice,setNotice]=useState<string|null>(null),[draft,setDraft]=useState(initialDraft);
@@ -43,7 +43,11 @@ export function IdentityProvider({children}:{children:ReactNode}){
  useEffect(()=>{void refresh();const changed=()=>{version.current++;available.current=false;setReady(false);void refresh();};const storage=(event:StorageEvent)=>{if(event.key==='showonce-active-account-v1'&&event.newValue!==(actor.current||'anonymous'))changed();};window.addEventListener('showonce-account-changed',changed);window.addEventListener('storage',storage);return()=>{refreshID.current++;if(timeoutID.current)clearTimeout(timeoutID.current);window.removeEventListener('showonce-account-changed',changed);window.removeEventListener('storage',storage);};},[refresh]);
  const guestEntries=useCallback(()=>{const saved=browserEntries();if(saved.error)setNotice(saved.error);guests.current=[...new Map([...saved.entries,...guests.current].map(entry=>[entry.id,entry])).values()];return guests.current;},[]);
  const remember=useCallback((lesson:Lesson,progress:Progress,token?:string|null)=>{const total=progress.total_steps,current=Math.min(total,progress.completed_step_ids.length+1);setPractice(previous=>previous?.total===total&&previous?.current===current?previous:{current,total});if(progress.account_owned||actor.current)return;const saved=rememberBrowser(entryFrom(lesson,progress,token),guests.current);guests.current=saved.entries;if(saved.error)setNotice(saved.error);},[]);
- return <Context.Provider value={{practice,ready,timedOut,account,config,error,notice,epoch:()=>version.current,request,refresh,guestEntries,remember,draft,setDraft}}>{children}</Context.Provider>;
+  // 5.1b (B6) — delete a lesson and ALL its browser-saved sessions/progress:
+  // remove from storage AND drop it from the in-memory guest list so the list,
+  // counts and any continue card stop referencing it immediately.
+  const forget=useCallback((lessonID:string)=>{const result=removeBrowser(lessonID);guests.current=guests.current.filter(entry=>entry.lesson_id!==lessonID);if(result.error)setNotice(result.error);return result;},[]);
+ return <Context.Provider value={{practice,ready,timedOut,account,config,error,notice,epoch:()=>version.current,request,refresh,guestEntries,remember,forget,draft,setDraft}}>{children}</Context.Provider>;
 }
 export function useIdentity(){const value=useContext(Context);if(!value)throw new Error('Learning identity provider is missing.');return value;}
 export function AccountBar(){
