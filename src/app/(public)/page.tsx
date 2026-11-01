@@ -82,9 +82,9 @@ export default function LandingPage(_props?: {searchParams:Promise<{state?:strin
             {/* privacy line */}
             <p className="mt-3.5 text-caption text-[#27272A]">{s.privacyClaim}</p>
           </Reveal>
-          <HomePractice />
         </div>
       </section>
+      <div className="flex justify-center pb-8"><HomePractice /></div>
       <div className="mx-auto w-full max-w-6xl px-4">
         {/* HOW IT WORKS — numbered list rows on a white ground, hairline dividers */}
         <section className="bg-site-page pt-20 pb-0 md:pt-28 md:pb-0">

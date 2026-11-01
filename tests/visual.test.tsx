@@ -7,6 +7,7 @@ import { libraryLessons, sampleLesson } from "@/design/fixtures";
 import { KeyframeVisual } from "@/components/KeyframeVisual";
 import { PublicFooter } from "@/components/PublicFooter";
 import LandingPage from "@/app/(public)/page";
+import { IdentityProvider } from "@/components/learning/Identity";
 import CreatePage from "@/app/(public)/create/page";
 import LessonsPage from "@/app/(public)/lessons/page";
 import PrivacyPage from "@/app/(public)/privacy/page";
@@ -14,7 +15,7 @@ import DesignPage from "@/app/(public)/design/page";
 import PlayPage from "@/app/(minimal)/lesson/[id]/play/page";
 import CameraPage from "@/app/(minimal)/lesson/[id]/play/camera/page";
 
-const markup = (node: React.ReactElement) => renderToStaticMarkup(node);
+const markup = (node: React.ReactElement) => renderToStaticMarkup(<IdentityProvider>{node}</IdentityProvider>);
 
 const decode = (h: string) =>
   h.replace(/&#x27;|&#39;/g, "'").replace(/&quot;/g, '"').replace(/&amp;/g, "&");

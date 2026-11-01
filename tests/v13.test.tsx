@@ -8,6 +8,7 @@ import { render } from "@testing-library/react";
 import { SkyGate } from "@/components/SkyGate";
 import { HeroParticleHeadline } from "@/components/HeroParticleHeadline";
 import LandingPage from "@/app/(public)/page";
+import { IdentityProvider } from "@/components/learning/Identity";
 import s from "@/lib/strings";
 
 // v1.3 new assertions:
@@ -88,7 +89,7 @@ const heroParticleSource = fs.readFileSync(
 );
 
 const landing = async () =>
-  renderToStaticMarkup(await LandingPage({ searchParams: Promise.resolve({}) }));
+  renderToStaticMarkup(<IdentityProvider>{await LandingPage({ searchParams: Promise.resolve({}) })}</IdentityProvider>);
 
 describe("v1.3 — sky lives in the landing hero only (v2.12)", () => {
   it("the root layout references no grain, satin or sky component at all", () => {
