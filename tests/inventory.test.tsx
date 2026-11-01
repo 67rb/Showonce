@@ -22,6 +22,7 @@ import { KeyframeVisual } from "@/components/KeyframeVisual";
 import { MinimalChrome } from "@/components/MinimalChrome";
 
 import LandingPage from "@/app/(public)/page";
+import { IdentityProvider } from "@/components/learning/Identity";
 import CreatePage from "@/app/(public)/create/page";
 import ProcessingPage from "@/app/(public)/create/processing/page";
 import ReviewPage from "@/app/(public)/create/review/page";
@@ -60,7 +61,7 @@ const decode = (h: string) =>
 
 const ssr = async (
   fn: () => React.ReactElement | Promise<React.ReactElement>,
-) => markup(await fn());
+) => markup(<IdentityProvider>{await fn()}</IdentityProvider>);
 
 // Task D wraps a heading's final word in a .font-serif-accent span, so the
 // rendered string is no longer contiguous in the raw HTML. Text assertions on
