@@ -43,6 +43,34 @@ Build after npm test because test preparation assembles an API-only Worker. `npm
 
 The combined tests include both modes in one private account library, overlapping evidence saves with asynchronous database timing, idempotency conflicts, brief error states and direct brief/plan links. See `COMBINED-VERIFICATION.json` for final counts and `docs/combined-integration.md` for provenance and changes. Earlier reports remain historical records.
 
+## Deploy on Vercel
+
+The same Worker that powers local development runs on Vercel through a serverless
+catch-all (`api/[...path].mjs`). It keeps the Worker's SQL unchanged and replaces
+the Cloudflare D1/R2 bindings with a durable LibSQL (SQLite) database and a blob
+table. `vercel.json` serves the static Next export (`out/`) and rewrites `/v1/*`,
+`/health` and `/examples/*` to the function.
+
+Required project environment variables:
+
+- `TURSO_URL` – a LibSQL/Turso database URL (e.g. `libsql://<db>-<org>.turso.io`).
+  Create a free database at https://turso.tech, then copy its URL here.
+- `TURSO_AUTH_TOKEN` – the Turso auth token for that database.
+- `MODEL_API_KEY` – optional; enables AI lesson generation, photo checks and
+  questions. Without it the app runs in free mode (examples + self-guided steps).
+- `SUPADATA_API_KEY` / `SUPADATA_ENABLED` – optional; enables social/source
+  transcription. Leave `SUPADATA_ENABLED=free-only` for free plans.
+- `ADMIN_EMAILS` – optional JSON array of admin emails for the catalogue/team area.
+
+The schema is applied automatically on the first request; photo uploads are stored
+durably in the same database. Local verification of this path (no Turso needed,
+uses a temp file database):
+
+```sh
+node scripts/vercel-migrations.mjs   # regenerate api/lib/migrations.mjs after schema changes
+node scripts/vercel-smoke.mjs        # end-to-end: config, health, lesson, session, bucket
+```
+
 ## Professional limits
 
 The four starter trade curricula are classroom/worksheet/disconnected practice foundations awaiting qualified instructor validation. Self-review or AI feedback cannot award a trade qualification or establish safety. Evidence is private until explicitly shared for instructor review. Physical Android/Chrome and iPhone/Safari acceptance and real hosted identity remain pending.

@@ -1,0 +1,10 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "outputDirectory": "out",
+  "buildCommand": "next build",
+  "rewrites": [
+    { "source": "/v1/:path*", "destination": "/api/v1/:path*" },
+    { "source": "/health", "destination": "/api/health" },
+    { "source": "/examples/:path*", "destination": "/api/examples/:path*" }
+  ]
+}
