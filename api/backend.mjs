@@ -1,4 +1,4 @@
-// Vercel serverless catch-all that runs the Show Once Worker unchanged.
+// Vercel Node function that runs the Show Once Worker.
 // Replaces Cloudflare D1/R2 bindings with a durable LibSQL (SQLite) backend so
 // the same Worker code runs on Vercel without changing its SQL.
 /* Copyright © 2026 Show Once. All rights reserved. */
@@ -138,11 +138,14 @@ function webRequest(req, bodyBuffer) {
   const [rawPath, rawQuery = ''] = String(req.url || '/').split('?');
   // vercel.json rewrites map /v1/*, /health and /examples/* to /api/... so the
   // Worker still sees its own route prefixes. Reconstruct the original path.
-  let path = rawPath;
+  const parameters = new URLSearchParams(rawQuery);
+  const originalRoute = parameters.get('__route');
+  parameters.delete('__route');
+  let path = originalRoute && /^\/(?:api\/|v1\/|examples\/|health$)/.test(originalRoute) ? originalRoute : rawPath;
   if (path.startsWith('/api/v1/')) path = '/v1' + path.slice('/api/v1'.length);
   else if (path === '/api/health') path = '/health';
   else if (path.startsWith('/api/examples/')) path = '/examples' + path.slice('/api/examples'.length);
-  const query = rawQuery ? '?' + rawQuery : '';
+  const query = parameters.size ? '?' + parameters.toString() : '';
   const url = `${proto}://${host}${path}${query}`;
   return { url, headers, body, method: req.method };
 }

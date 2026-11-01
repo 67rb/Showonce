@@ -4,8 +4,21 @@
   "outputDirectory": "out",
   "buildCommand": "npm run build:vercel",
   "rewrites": [
-    { "source": "/v1/:path*", "destination": "/api/v1/:path*" },
-    { "source": "/health", "destination": "/api/health" },
-    { "source": "/examples/:path*", "destination": "/api/examples/:path*" }
+    {
+      "source": "/api/:path*",
+      "destination": "/api/backend?__route=/api/:path*"
+    },
+    {
+      "source": "/v1/:path*",
+      "destination": "/api/backend?__route=/v1/:path*"
+    },
+    {
+      "source": "/health",
+      "destination": "/api/backend?__route=/health"
+    },
+    {
+      "source": "/examples/:path*",
+      "destination": "/api/backend?__route=/examples/:path*"
+    }
   ]
 }

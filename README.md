@@ -46,7 +46,7 @@ The combined tests include both modes in one private account library, overlappin
 ## Deploy on Vercel
 
 The same Worker that powers local development runs on Vercel through a serverless
-catch-all (`api/[...path].mjs`). It keeps the Worker's SQL unchanged and replaces
+function (`api/backend.mjs`). It keeps the Worker's SQL unchanged and replaces
 the Cloudflare D1/R2 bindings with a durable LibSQL (SQLite) database and a blob
 table. `vercel.json` serves the static Next export (`out/`) and rewrites `/v1/*`,
 `/health` and `/examples/*` to the function.

@@ -11,7 +11,7 @@ delete process.env.TURSO_AUTH_TOKEN;
 delete process.env.MODEL_API_KEY;
 delete process.env.SUPADATA_API_KEY;
 process.env.ADMIN_EMAILS = '["admin@example.test"]';
-const { default: handler, makeBucket } = await import('../api/[...path].mjs');
+const { default: handler, makeBucket } = await import('../api/backend.mjs');
 const { createClient } = await import('@libsql/client');
 const server = createServer(async (req, res) => {
   if (req.method === 'POST') {
@@ -24,7 +24,7 @@ const server = createServer(async (req, res) => {
 await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
 const base = 'http://127.0.0.1:' + server.address().port;
 const call = async (path, body, headers = {}) => {
-  const response = await fetch(base + path, {
+  const response = await fetch(base + '/api/backend?__route=' + encodeURIComponent(path), {
     method: body ? 'POST' : 'GET',
     headers: { 'Content-Type': 'application/json', ...headers },
     ...(body ? { body: JSON.stringify(body) } : {}),
