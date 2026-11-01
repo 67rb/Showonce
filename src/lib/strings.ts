@@ -432,6 +432,23 @@ export const strings = {
   sampleFreeNote: "Free to try · no account needed",
   continuePractice: "Continue practice:",
   nextPrefix: "Next:",
+  /* 5.1.3 — runtime player step navigation (Next reuses the existing nextStep string) */
+  prevStep: "Previous step",
+  /* 5.1.4/5.1.5 — free Origami sample overview ("Fold a paper cup", 7 steps) */
+  "sample.origamiEyebrow": "Free example · Origami",
+  "sample.origamiTitle": "Fold a paper cup",
+  "sample.origamiSubtitle":
+    "Seven steps, each with a saved reference visual. Free to try, no account or AI allowance needed.",
+  "sample.start": "Start practicing · free",
+  "sample.readOnly":
+    "Tap any step to read its target and criterion. Starting opens the practice player.",
+  "sample.materialsLabel": "What you need",
+  "sample.stepLabel": "Step",
+  "sample.stepsHeading": "The cup, step by step",
+  "sample.targetLabel": "Target",
+  "sample.criterionLabel": "How to tell it is right",
+  "sample.livePlayerNote":
+    "This example respects the same practice rules as your real lessons — head into the player to work through each fold.",
   continueArrow: "Continue →",
   chooseExample: "Choose an example",
   allowanceBlockTitle: "Shared AI allowance",

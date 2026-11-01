@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="420" height="320" viewBox="0 0 420 320" role="img" aria-labelledby="t">
+  <title id="t">Both top flaps folded down, tips meeting at the centre</title>
+  <rect width="420" height="320" fill="#F7F7F8"/>
+  <polygon points="210,30 360,290 60,290" fill="#ffffff" stroke="#16161A" stroke-width="3"/>
+  <line x1="210" y1="30" x2="210" y2="290" stroke="#16161A" stroke-width="2" stroke-dasharray="6 5" opacity="0.4"/>
+  <polygon points="210,30 210,160 80,290" fill="#ffffff" stroke="#16161A" stroke-width="3"/>
+  <polygon points="210,30 210,160 340,290" fill="#ffffff" stroke="#F59E0B" stroke-width="4"/>
+</svg>

@@ -14,11 +14,11 @@ export default function Error({
     <main className="relative flex min-h-dvh flex-col items-center justify-center gap-4 overflow-hidden px-6 py-10 text-center">
       <p
         aria-hidden
-        className="font-display-ui text-[6rem] font-extrabold leading-none text-site-ink/20"
+        className="font-body-ui text-[6rem] font-extrabold leading-none text-site-ink/20"
       >
         !
       </p>
-      <h1 className="max-w-[430px] font-display-ui text-3xl font-extrabold leading-[1.05] text-site-ink">
+      <h1 className="max-w-[430px] font-body-ui text-3xl font-extrabold leading-[1.05] text-site-ink">
         {s.errorHeading}
       </h1>
       <p className="max-w-[430px] font-body-ui text-body text-site-muted">

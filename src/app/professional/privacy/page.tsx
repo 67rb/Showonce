@@ -1,7 +1,6 @@
 /* Copyright © 2026 Muhammad Hashir (https://github.com/mateir0). All rights reserved. See COPYRIGHT.md. */
 import type { Metadata } from "next";
 import s from "@/lib/strings";
-import { SerifAccent } from "@/components/Reveal";
 import { PublicFooter } from "@/components/PublicFooter";
 
 export const metadata: Metadata = {
@@ -16,8 +15,8 @@ export default function ProfessionalPrivacyPage() {
     <>
       <div className="mx-auto w-full max-w-[720px] px-4 py-16">
       <header>
-        <h1 className="font-display-ui text-[2.5rem] font-extrabold leading-tight tracking-tight text-site-ink">
-          <SerifAccent text={s.privacyPageHeading} />
+        <h1 className="font-body-ui text-[2.5rem] font-bold tracking-[-0.02em] text-site-ink">
+          {s.privacyPageHeading}
         </h1>
         <div
           aria-hidden
@@ -27,8 +26,8 @@ export default function ProfessionalPrivacyPage() {
 
       {/* the claim — privacy statement in a green band */}
       <div className="mt-8 rounded-[20px] border border-[#16A34A]/30 bg-[#16A34A]/[0.10] px-6 py-6 text-center">
-        <p className="font-display-ui text-[1.5rem] font-bold leading-snug text-[#15803D]">
-          <span className="font-serif-accent">Private practice. Clear control.</span>
+        <p className="font-body-ui text-[1.5rem] font-bold tracking-[-0.01em] text-[#15803D]">
+          Private practice. Clear control.
         </p>
       </div>
 
@@ -44,7 +43,7 @@ export default function ProfessionalPrivacyPage() {
             key={sec.heading}
             className={i > 0 ? "mt-8 border-t border-site-border pt-8" : ""}
           >
-            <h2 className="font-display-ui text-[1.5rem] font-bold leading-heading text-site-ink">
+            <h2 className="font-body-ui text-[1.5rem] font-bold tracking-[-0.01em] text-site-ink">
               {sec.heading}
             </h2>
             <p className="font-body-ui mt-2 text-body leading-relaxed text-site-muted">

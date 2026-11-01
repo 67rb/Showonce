@@ -1,6 +1,5 @@
 /* Copyright © 2026 Muhammad Hashir (https://github.com/mateir0). All rights reserved. See COPYRIGHT.md. */
 import s from "@/lib/strings";
-import { SerifAccent } from "@/components/Reveal";
 
 export default function PrivacyPage() {
   return (
@@ -8,8 +7,8 @@ export default function PrivacyPage() {
     // mobile, centred on desktop, left-aligned text.
     <div className="mx-auto w-full max-w-[720px] px-4 py-16">
       <header>
-        <h1 className="font-display-ui text-[2.5rem] font-extrabold leading-tight tracking-tight text-site-ink">
-          <SerifAccent text={s.privacyPageHeading} />
+        <h1 className="font-body-ui text-[2.5rem] font-bold tracking-[-0.02em] text-site-ink">
+          {s.privacyPageHeading}
         </h1>
         <div
           aria-hidden
@@ -19,8 +18,8 @@ export default function PrivacyPage() {
 
       {/* the claim — a soft amber statement */}
       <div className="mt-8 rounded-[20px] border border-[#F59E0B]/30 bg-[#F59E0B]/[0.10] px-6 py-6 text-center">
-        <p className="font-display-ui text-[1.5rem] font-bold leading-snug text-accent-deep">
-          <span className="font-serif-accent">{s.privacyClaim}</span>
+        <p className="font-body-ui text-[1.5rem] font-bold tracking-[-0.01em] text-accent-deep">
+          {s.privacyClaim}
         </p>
       </div>
 
@@ -31,7 +30,7 @@ export default function PrivacyPage() {
             key={sec.heading}
             className={i > 0 ? "mt-8 border-t border-site-border pt-8" : ""}
           >
-            <h2 className="font-display-ui text-[1.5rem] font-bold leading-heading text-site-ink">
+            <h2 className="font-body-ui text-[1.5rem] font-bold tracking-[-0.01em] text-site-ink">
               {sec.heading}
             </h2>
             <p className="font-body-ui mt-2 text-body leading-relaxed text-site-muted">
