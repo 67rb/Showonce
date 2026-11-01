@@ -1,14 +1,14 @@
 /* Copyright © 2026 Robé Berry. All rights reserved. See COPYRIGHT.md. */
 // @vitest-environment jsdom
 import {afterEach,beforeEach,expect,it,vi} from 'vitest';
-import {cleanup,fireEvent,render,screen,waitFor} from '@testing-library/react';
+import {cleanup,fireEvent,render,screen,waitFor,within} from '@testing-library/react';
 import {ProfessionalStudio} from '@/components/professional/ProfessionalStudio';
 const {request,identity}=vi.hoisted(()=>{const request=vi.fn();return {request,identity:{ready:true,account:{authenticated:true,user:{id:'learner'},is_admin:false},config:{ai_available:true,budget:{limit_usd:5,remaining_usd:4.5,paused:false}},request}};});
 vi.mock('@/components/learning/Identity',()=>({useIdentity:()=>identity,AccountBar:()=> <p>Account controls</p>}));
 vi.mock('@/components/Reveal',()=>({SerifAccent:({text}:{text:string})=><>{text}</>}));
 vi.mock('@/components/lightswind/border-beam',()=>({BorderBeam:()=>null}));
 const course={id:'plumbing',title:'Plumbing foundations',trade:'Plumbing',level:'Foundation',content_status:'Starter curriculum',description:'Identify common fittings and plan supervised, disconnected practice.',prerequisites:['Classroom only.'],lessons:[{id:'first',title:'Identify components',steps:3},{id:'second',title:'Plan supervised work',steps:3}]};
-beforeEach(()=>{request.mockReset();identity.config.ai_available=true;identity.account.authenticated=true;vi.stubGlobal('URL',class extends URL{static createObjectURL=vi.fn(()=> 'blob:work-photo');static revokeObjectURL=vi.fn();});request.mockImplementation(async(path:string,body?:unknown)=>{if(path==='/v1/professional/courses')return {courses:[course]};if(path==='/v1/professional/enrollments')return {enrollments:[]};if(path==='/v1/professional/requests')return body?{id:'request',status:'draft'}:{requests:[]};if(path==='/v1/library')return {entries:[]};throw Error('Unexpected request '+path);});});
+beforeEach(()=>{request.mockReset();identity.config.ai_available=true;identity.account.authenticated=true;vi.stubGlobal('URL',class extends URL{static createObjectURL=vi.fn(()=> 'blob:work-photo');static revokeObjectURL=vi.fn();});request.mockImplementation(async(path:string,body?:unknown)=>{if(path==='/v1/professional/courses')return {courses:[course]};if(path==='/v1/professional/enrollments')return {enrollments:[]};if(path==='/v1/professional/assignments')return {assignments:[]};if(path==='/v1/professional/requests')return body?{id:'request',status:'draft'}:{requests:[]};if(path==='/v1/library')return {entries:[]};throw Error('Unexpected request '+path);});});
 afterEach(()=>{cleanup();vi.unstubAllGlobals();});
 it('saves a goal, photo and tutorial link with one free idempotent request and never starts AI',async()=>{
  render(<ProfessionalStudio/>);await screen.findByText('No learning requests saved yet.');
@@ -79,7 +79,7 @@ function assignmentMocks(assignment:unknown){
 }
 it('learner completes preparation in the assignment workspace without seeing Passed',async()=>{
  assignmentMocks(assignmentFixture());render(<ProfessionalStudio view="library"/>);
- expect(await screen.findByText('Mock rig brief')).toBeTruthy();
+ expect(await screen.findByRole('heading',{name:'Mock rig brief'})).toBeTruthy();
  expect(screen.getByText(/Next: complete every preparation check/)).toBeTruthy();
  expect(screen.queryByText(/Passed/)).toBeNull();
  fireEvent.click(screen.getByRole('checkbox',{name:'Disconnected rig confirmed'}));
@@ -126,4 +126,12 @@ it('changes-requested assignments show instructor feedback and a resubmit action
  expect(await screen.findByText('Label the stop valve too.')).toBeTruthy();
  expect(screen.getByRole('button',{name:'Resubmit for assessment'})).toBeTruthy();
  expect(screen.queryByText(/Passed/)).toBeNull();
+});
+it('summarizes assignments requiring changes and links to their enrollment',async()=>{
+ assignmentMocks(assignmentFixture({status:'changes_requested',criteria:[{id:'fittings',label:'Fittings',required:true,latest_decision:{decision:'changes_requested',notes:'Add a label.'}}]}));render(<ProfessionalStudio view="library"/>);
+ const overview=await screen.findByRole('region',{name:'Assignments and feedback'});const link=within(overview).getByRole('link',{name:/Mock rig brief/});expect(link.getAttribute('href')).toBe('#enrollment-enrollment');expect(link.textContent).toContain('1 criterion needs changes');expect(document.getElementById('enrollment-enrollment')).toBeTruthy();
+});
+it('reports assignment loading errors and recovers on refresh',async()=>{
+ let fail=true;const base=request.getMockImplementation()!;request.mockImplementation(async(path,body,options)=>{if(path==='/v1/professional/assignments'&&fail)throw Error('Unavailable');return base(path,body,options);});render(<ProfessionalStudio view="library"/>);
+ expect((await screen.findByRole('alert')).textContent).toContain('Assignments and instructor feedback could not be loaded');expect(screen.queryByText('No assignments yet. Your instructor can add one to an enrollment.')).toBeNull();fail=false;fireEvent.click(screen.getByRole('button',{name:'Refresh saved data · free'}));await screen.findByText('No assignments yet. Your instructor can add one to an enrollment.');expect(screen.queryByRole('alert')).toBeNull();
 });
