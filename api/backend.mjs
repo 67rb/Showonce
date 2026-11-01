@@ -5,6 +5,7 @@
 import { createClient } from '@libsql/client';
 import { MIGRATIONS } from '../server/vercel-migrations.mjs';
 import worker from '../server/vercel-worker.mjs';
+import { handleAuth, authenticatedIdentity, accountLoginMetadata } from '../server/auth.mjs';
 
 const env = process.env;
 
@@ -141,7 +142,7 @@ function webRequest(req, bodyBuffer) {
   const parameters = new URLSearchParams(rawQuery);
   const originalRoute = parameters.get('__route');
   parameters.delete('__route');
-  let path = originalRoute && /^\/(?:api\/|v1\/|examples\/|health$)/.test(originalRoute) ? originalRoute : rawPath;
+  let path = originalRoute && /^\/(?:api\/|v1\/|examples\/|health$|signin-with-chatgpt$|signout-with-chatgpt$|studio$|team\.(?:html|js|css)$|styles\.css$|app\.js$|public-api\.js$)/.test(originalRoute) ? originalRoute : rawPath;
   if (path.startsWith('/api/v1/')) path = '/v1' + path.slice('/api/v1'.length);
   else if (path === '/api/health') path = '/health';
   else if (path.startsWith('/api/examples/')) path = '/examples' + path.slice('/api/examples'.length);
@@ -154,6 +155,7 @@ async function readBody(req) {
   // Vercel may parse the body before invoking the Node handler.
   if (req.body !== undefined && req.body !== null) {
     if (Buffer.isBuffer(req.body)) return req.body;
+    if (typeof req.body === 'object' && String(req.headers['content-type']).includes('application/x-www-form-urlencoded')) return Buffer.from(new URLSearchParams(req.body).toString());
     return Buffer.from(typeof req.body === 'string' ? req.body : JSON.stringify(req.body));
   }
   const chunks = [];
@@ -167,19 +169,40 @@ export default async function main(req, res) {
   try {
     const bodyBuffer = await readBody(req);
     const r = webRequest(req, bodyBuffer);
-    stage = 'storage';
-    const appEnv = await getEnv();
-    stage = 'worker';
-    const response = await worker.fetch(new Request(r.url, { method: r.method, headers: r.headers, body: r.body, cache: 'no-store' }), appEnv);
+    const request = new Request(r.url, { method: r.method, headers: r.headers, body: r.body, cache: 'no-store' });
+    stage = 'auth';
+    let response = await handleAuth(request, env);
+    if (!response) {
+      stage = 'storage';
+      const appEnv = await getEnv();
+      const identity = await authenticatedIdentity(request, env);
+      const headers = new Headers(request.headers);
+      if (identity.user) {
+        headers.set('oai-authenticated-user-id', identity.user.subject);
+        headers.set('oai-authenticated-user-email', identity.user.email);
+        headers.set('oai-authenticated-user-full-name', encodeURIComponent(identity.user.name));
+        headers.set('oai-authenticated-user-full-name-encoding', 'percent-encoded-utf-8');
+      }
+      stage = 'worker';
+      response = await worker.fetch(new Request(request, { headers }), appEnv);
+      if (new URL(request.url).pathname === '/api/account' && response.ok) {
+        response = Response.json({ ...await response.json(), ...accountLoginMetadata(request, env) }, { headers: response.headers });
+      }
+      const responseHeaders = new Headers(response.headers);
+      for (const cookie of identity.cookies) responseHeaders.append('set-cookie', cookie);
+      response = new Response(response.body, { status: response.status, headers: responseHeaders });
+    }
     stage = 'response';
     res.statusCode = response.status;
-    response.headers.forEach((v, k) => res.setHeader(k, v));
+    response.headers.forEach((v, k) => { if (k !== 'set-cookie') res.setHeader(k, v); });
+    const cookies = response.headers.getSetCookie();
+    if (cookies.length) res.setHeader('set-cookie', cookies);
     const payload = new Uint8Array(await response.arrayBuffer());
     if (response.status === 204 || req.method === 'HEAD') return res.end();
     res.end(payload);
   } catch (error) {
     let diagnostic = String(error?.stack || error?.message || error);
-    for (const key of ['TURSO_URL', 'TURSO_AUTH_TOKEN', 'MODEL_API_KEY', 'SUPADATA_API_KEY']) {
+    for (const key of ['TURSO_URL', 'TURSO_AUTH_TOKEN', 'MODEL_API_KEY', 'SUPADATA_API_KEY', 'AUTH_SECRET', 'AUTH_GITHUB_SECRET']) {
       if (env[key]) diagnostic = diagnostic.split(env[key]).join('[REDACTED]');
     }
     console.error('showonce-backend-error', { stage, name: error?.name, code: error?.code, diagnostic: diagnostic.slice(0, 1200) });

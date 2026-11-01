@@ -52,8 +52,8 @@ describe('working frontend with the actual learning Worker',()=>{
  it('uses edited review instructions when starting a practice',async()=>{
   show();fireEvent.click(await screen.findByRole('button',{name:'Free numbered steps'}));fireEvent.change(screen.getByRole('textbox',{name:'2–18 numbered instructions'}),{target:{value:'1. Draw a circle on paper.\n2. Shade its lower edge.'}});fireEvent.click(screen.getByRole('button',{name:'Create free practice'}));const first=await screen.findByRole('textbox',{name:'Step 1'});fireEvent.change(first,{target:{value:'Draw a square on paper.'}});fireEvent.click(screen.getByRole('button',{name:'3 · Start practicing'}));await waitFor(()=>expect(push).toHaveBeenCalled());const creates=calls.filter(call=>call.path==='/v1/lessons');expect(creates).toHaveLength(2);expect(creates[1].body?.source_text).toContain('1. Draw a square on paper.');expect(creates[1].body?.processing_mode).toBe('structured_text');
  });
- it('starts a sample directly from the home page without an account',async()=>{
-  const {HomePractice}=await import('@/components/learning/HomePractice');render(<IdentityProvider><HomePractice/></IdentityProvider>);const button=screen.getByRole('button',{name:'Try a sample lesson'});await waitFor(()=>expect((button as HTMLButtonElement).disabled).toBe(false));fireEvent.click(button);await waitFor(()=>expect(push).toHaveBeenCalled());expect(push.mock.calls[0][0]).toMatch(/^\/lesson\/runtime\/play\/\?lesson_id=/);expect(calls.find(call=>call.path==='/v1/sessions')?.body?.save_to_account).toBe(false);
+ it('opens the public sample overview immediately from the home page',async()=>{
+  const {HomePractice}=await import('@/components/learning/HomePractice');render(<IdentityProvider><HomePractice/></IdentityProvider>);const button=screen.getByRole('button',{name:'Try a sample lesson'});await waitFor(()=>expect((button as HTMLButtonElement).disabled).toBe(false));fireEvent.click(button);await waitFor(()=>expect(push).toHaveBeenCalled());expect(push.mock.calls[0][0]).toBe('/lesson/sample');expect(calls.find(call=>call.path==='/v1/sessions')).toBeUndefined();
  });
  it('shows the next checkpoint for an existing browser practice',async()=>{
   const {lesson,progress}=await preparePractice();window.ShowOnceLibrary!.remember(window.localStorage,entryFrom(lesson,progress,progress.access_token),[]);const {HomePractice}=await import('@/components/learning/HomePractice');render(<IdentityProvider><HomePractice/></IdentityProvider>);const link=await screen.findByRole('link',{name:/Continue practice:/});expect(link.getAttribute('href')).toContain('session_id='+progress.session_id);expect(link.textContent).toContain('Next:');
@@ -246,4 +246,31 @@ it('retains the classroom scope and Professional return link in the actual Profe
  expect(screen.getByRole('link',{name:'← Professional courses'}).getAttribute('href')).toBe('/professional/lessons/');
  expect(screen.getByText(/Classroom training only/)).toBeTruthy();
  await waitFor(()=>expect(screen.queryByText('Checking your account…')).toBeNull());
+});
+
+it('shows only the return action when reading ahead to a self-review checkpoint',async()=>{
+ const response=await fetch('/v1/lessons',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({source_text:'1. Draw a circle on paper.\n2. Shade its lower edge.',processing_mode:'structured_text'})});
+ const lesson=await response.json();await preparePractice(lesson.id);show('play');
+ await screen.findByRole('combobox',{name:'Checkpoint'});
+ fireEvent.change(screen.getByRole('combobox',{name:'Checkpoint'}),{target:{value:'1'}});
+ await screen.findByRole('heading',{name:'Review this checkpoint.'});
+ expect(screen.queryByRole('button',{name:'I’ve practiced this step · self-review'})).toBeNull();
+ fireEvent.click(screen.getByRole('button',{name:'Return to current checkpoint'}));
+ expect(screen.getAllByRole('button',{name:'I’ve practiced this step · self-review'}).length).toBeGreaterThan(0);
+});
+
+it('starts the illustrated sample as real free practice and keeps its reference visual',async()=>{
+ const {SampleStart}=await import('@/components/learning/SampleStart');
+ render(<IdentityProvider><SampleStart className="sample-test"/></IdentityProvider>);
+ const start=await screen.findByRole('button',{name:'Start practicing · free'});
+ fireEvent.click(start);await waitFor(()=>expect(push).toHaveBeenCalled());
+ const url=new URL(push.mock.calls[0][0],'https://test.example');
+ expect(url.pathname).toBe('/lesson/runtime/play/');
+ expect(url.searchParams.get('lesson_id')).not.toBe('origami-cup');
+ expect(calls.find(call=>call.path==='/v1/lessons')?.body?.processing_mode).toBe('structured_text');
+ expect(calls.find(call=>call.path==='/v1/sessions')?.body?.save_to_account).toBe(false);
+ cleanup();window.history.replaceState(null,'',url.pathname+url.search);show('play');
+ expect((await screen.findByAltText('A square sheet angled like a diamond, one corner facing down toward you.')).getAttribute('src')).toBe('/samples/origami/step-1.svg');
+ expect(calls.some(call=>call.path.includes('/illustration'))).toBe(false);
+ expect((await(await worker.fetch(new Request('https://test.example/api/config'),env)).json()).budget.charged_or_reserved_usd).toBe(0);
 });

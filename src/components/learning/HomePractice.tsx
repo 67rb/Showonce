@@ -24,6 +24,7 @@ export function HomePractice(){
   <button type="button" onClick={requestSample} aria-busy={working} className="min-h-11 rounded-full border border-[#16161A] bg-white/90 px-6 py-2 font-semibold disabled:opacity-60" disabled={working}>{working?s.sampleOpening:s.trySampleLesson}</button>
   <p className="text-sm">{s.sampleFreeNote}</p>
   {recent&&<a className="w-full rounded-2xl border border-[#16161A]/20 bg-white/90 p-4 text-left" href={lessonHref(recent.lesson_id,recent.id,'play')}><strong>{s.continuePractice} {recent.title}</strong><span className="mt-1 block text-sm">{recent.completed_steps} of {recent.total_steps} checkpoints completed</span>{nextStep&&<span className="mt-1 block text-sm">{s.nextPrefix} {nextStep}</span>}<span className="mt-2 block text-sm font-semibold">{s.continueArrow}</span></a>}
+  {identity.timedOut&&<button type="button" className="min-h-11 rounded-full bg-white px-5 py-2 font-semibold underline" onClick={()=>void identity.refresh()}>{s.retry}</button>}
   {error&&<p role="alert" className="rounded-xl bg-white p-3 text-sm">{error} <a className="underline" href="/create/#examples">{s.chooseExample}</a></p>}
  </div>;
 }

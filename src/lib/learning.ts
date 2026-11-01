@@ -4,7 +4,7 @@ export type Lesson = {id:string;title:string;category:string;materials:string[];
 export type Progress = {session_id:string;lesson_id:string;access_token?:string;account_owned?:boolean;status:string;current_step_id:string|null;completed_step_ids:string[];completed_checkpoints:{step_id:string;kind:string;observations?:string[]}[];total_steps:number;updated_at:string};
 export type Assessment = {result:'pass'|'retry'|'uncertain';feedback:string;corrections:string[];requested_evidence:string[];criteria:{criterion:string;status:string;evidence:string}[];feedback_id?:string;provider?:string;model?:string};
 export type Submission = {id:string;step_id:string;status:string;created_at:string;assessment:Assessment|null;image_available:boolean};
-export type Account = {authenticated:boolean;user:{id:string;email:string;display_name:string}|null;is_admin:boolean};
+export type Account = {authenticated:boolean;user:{id:string;email:string;display_name:string}|null;is_admin:boolean;identity_provider?:string;sign_in_url?:string|null;sign_out_url?:string|null};
 export type Entry = {id:string;lesson_id:string;token?:string|null;title:string;category:string;total_steps:number;completed_steps:number;status:string;created_at:string;updated_at:string;account_owned?:boolean};
 export type Config = {examples:{id:string;title:string;category:string;steps:number}[];ai_available:boolean;source_processing?:{enabled:boolean};budget?:{remaining_usd:number;paused:boolean;limit_usd?:number}};
 export class LearningError extends Error {code:string;status?:number;constructor(message:string,code='request_interrupted',status?:number){super(message);this.code=code;this.status=status;}}
@@ -26,3 +26,10 @@ export function abortableDelay(ms:number,signal:AbortSignal):Promise<void>{retur
 });}
 
 export function workspaceHref(screen:'library'|'create'){const professional=typeof window!=='undefined'&&window.location.pathname.startsWith('/professional');return professional?(screen==='library'?'/professional/lessons/':'/professional/create/'):(screen==='library'?'/lessons/':'/create/');}
+
+export function accountActionHref(href:string){
+ if(typeof window==='undefined')return href;
+ const url=new URL(href,window.location.origin);
+ url.searchParams.set('callbackUrl',url.origin+window.location.pathname+window.location.search);
+ return url.href;
+}

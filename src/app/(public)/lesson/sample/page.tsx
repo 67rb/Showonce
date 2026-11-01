@@ -5,6 +5,7 @@
  * immediately for a signed-out visitor — never gated behind the account check.
  * The Start action opens the real runtime player with the sample lesson_id.
  */
+import { SampleStart } from "@/components/learning/SampleStart";
 import type { Metadata } from "next";
 import s from "@/lib/strings";
 import { origamiSample } from "@/lib/sample";
@@ -18,8 +19,6 @@ const primary =
   "inline-flex min-h-11 items-center justify-center text-center rounded-full bg-accent px-6 py-3 font-semibold text-[#16161A] transition hover:brightness-105";
 
 export default function SampleLessonPage() {
-  const lessonId = encodeURIComponent(origamiSample.id);
-  const playHref = `/lesson/runtime/play?lesson_id=${lessonId}`;
   return (
     <div className="mx-auto w-full max-w-[720px] px-4 pb-24 md:px-6 lg:max-w-[1120px] lg:px-8">
       <header className="lg:flex lg:items-start lg:justify-between lg:gap-8">
@@ -35,9 +34,7 @@ export default function SampleLessonPage() {
           </p>
         </div>
         <div className="mt-5 flex flex-col gap-3 lg:mt-0 lg:items-end">
-          <a href={playHref} className={primary}>
-            {s["sample.start"]}
-          </a>
+          <SampleStart className={primary}/>
           <p className="text-small font-body-ui text-site-muted">
             {s.sampleFreeNote}
           </p>
@@ -109,9 +106,7 @@ export default function SampleLessonPage() {
         <p className="font-body-ui text-small text-site-ink">
           {s["sample.livePlayerNote"]}
         </p>
-        <a href={playHref} className={`${primary} mt-3`}>
-          {s["sample.start"]}
-        </a>
+        <SampleStart className={`${primary} mt-3`}/>
       </section>
     </div>
   );

@@ -45,7 +45,7 @@ vi.mock("next/navigation", () => ({
     forward: () => {},
     prefetch: () => {},
   }),
-  usePathname: () => "/lesson/sample/play",
+  usePathname: () => "/lesson/runtime/play/?lesson_id=example_draw-shading",
   useSearchParams: () => new URLSearchParams(),
   useParams: () => ({}),
 }));
@@ -180,15 +180,16 @@ describe("privacy, error pages, design index", () => {
       "/create/processing",
       "/create/review",
       "/lessons",
-      "/lesson/sample",
-      "/lesson/sample/play",
-      "/lesson/sample/play/camera",
-      "/lesson/sample/live",
-      "/lesson/sample/complete",
+      "/lesson/runtime/?lesson_id=example_draw-shading",
+      "/lesson/runtime/play/?lesson_id=example_draw-shading",
+      "/lesson/runtime/play/camera/?lesson_id=example_draw-shading",
+      "/lesson/runtime/live/?lesson_id=example_draw-shading",
+      "/lesson/runtime/complete/?lesson_id=example_draw-shading",
       "/privacy",
       "/professional",
       "/design",
     ];
-    for (const r of routes) expect(html).toContain(r);
+    const hrefs=[...decode(html).matchAll(/href="([^"]+)"/g)].map(match=>match[1]);
+    for (const r of routes) expect(hrefs).toContain(r);
   });
 });

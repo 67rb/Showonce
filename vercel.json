@@ -19,6 +19,64 @@
     {
       "source": "/examples/:path*",
       "destination": "/api/backend?__route=/examples/:path*"
+    },
+    {
+      "source": "/signin-with-chatgpt",
+      "destination": "/api/backend?__route=/signin-with-chatgpt"
+    },
+    {
+      "source": "/signout-with-chatgpt",
+      "destination": "/api/backend?__route=/signout-with-chatgpt"
+    },
+    {
+      "source": "/studio",
+      "destination": "/api/backend?__route=/studio"
+    },
+    {
+      "source": "/team.html",
+      "destination": "/api/backend?__route=/team.html"
+    },
+    {
+      "source": "/team.js",
+      "destination": "/api/backend?__route=/team.js"
+    },
+    {
+      "source": "/team.css",
+      "destination": "/api/backend?__route=/team.css"
+    },
+    {
+      "source": "/styles.css",
+      "destination": "/api/backend?__route=/styles.css"
+    },
+    {
+      "source": "/app.js",
+      "destination": "/api/backend?__route=/app.js"
+    },
+    {
+      "source": "/public-api.js",
+      "destination": "/api/backend?__route=/public-api.js"
+    }
+  ],
+  "redirects": [
+    {
+      "source": "/lesson/sample/play",
+      "destination": "/lesson/runtime/play/?lesson_id=example_draw-shading",
+      "permanent": false
+    },
+    {
+      "source": "/lesson/sample/play/camera",
+      "destination": "/lesson/runtime/play/camera/?lesson_id=example_draw-shading",
+      "permanent": false
+    },
+    {
+      "source": "/lesson/sample/live",
+      "destination": "/lesson/runtime/live/?lesson_id=example_draw-shading",
+      "permanent": false
+    },
+    {
+      "source": "/lesson/sample/complete",
+      "destination": "/lesson/runtime/complete/?lesson_id=example_draw-shading",
+      "permanent": false
     }
   ]
 }

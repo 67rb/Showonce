@@ -2,7 +2,7 @@
 "use client";
 import {createContext,useCallback,useContext,useEffect,useRef,useState,type ReactNode} from 'react';
 import s from '@/lib/strings';
-import {LearningError,browserEntries,rememberBrowser,entryFrom,type Account,type Config,type Entry,type Lesson,type Progress} from '@/lib/learning';
+import {LearningError,accountActionHref,browserEntries,rememberBrowser,entryFrom,type Account,type Config,type Entry,type Lesson,type Progress} from '@/lib/learning';
 type Options={method?:string;token?:string|null;key?:string;signal?:AbortSignal;image?:boolean};
 type SourceDraft={mode:string;url:string;text:string;reference:string;stepsText:string;stepsReference:string;linkTranscript:string;linkTranscriptURL:string;goal:string;learningMode:string};
 const initialDraft=():SourceDraft=>({mode:'link',url:'',text:'',reference:'',stepsText:'',stepsReference:'',linkTranscript:'',linkTranscriptURL:'',goal:'',learningMode:'visual'});
@@ -40,7 +40,7 @@ export function IdentityProvider({children}:{children:ReactNode}){
    if(id!==refreshID.current)return;setConfig(settings);setReady(true);setTimedOut(false);if(timeoutID.current)clearTimeout(timeoutID.current);
   }catch(e){if(id===refreshID.current){available.current=false;setReady(false);setError(e instanceof Error?e.message:'Account check failed.');/* 5.2 — the timeout is NOT cleared on failure: the 8s timer still renders the signed-out page with the retry notice, so the check can never spin forever. */}}
  },[request]);
- useEffect(()=>{void refresh();const changed=()=>{version.current++;available.current=false;setReady(false);void refresh();};const storage=(event:StorageEvent)=>{if(event.key==='showonce-active-account-v1'&&event.newValue!==(actor.current||'anonymous'))changed();};window.addEventListener('showonce-account-changed',changed);window.addEventListener('storage',storage);return()=>{window.removeEventListener('showonce-account-changed',changed);window.removeEventListener('storage',storage);};},[refresh]);
+ useEffect(()=>{void refresh();const changed=()=>{version.current++;available.current=false;setReady(false);void refresh();};const storage=(event:StorageEvent)=>{if(event.key==='showonce-active-account-v1'&&event.newValue!==(actor.current||'anonymous'))changed();};window.addEventListener('showonce-account-changed',changed);window.addEventListener('storage',storage);return()=>{refreshID.current++;if(timeoutID.current)clearTimeout(timeoutID.current);window.removeEventListener('showonce-account-changed',changed);window.removeEventListener('storage',storage);};},[refresh]);
  const guestEntries=useCallback(()=>{const saved=browserEntries();if(saved.error)setNotice(saved.error);guests.current=[...new Map([...saved.entries,...guests.current].map(entry=>[entry.id,entry])).values()];return guests.current;},[]);
  const remember=useCallback((lesson:Lesson,progress:Progress,token?:string|null)=>{const total=progress.total_steps,current=Math.min(total,progress.completed_step_ids.length+1);setPractice(previous=>previous?.total===total&&previous?.current===current?previous:{current,total});if(progress.account_owned||actor.current)return;const saved=rememberBrowser(entryFrom(lesson,progress,token),guests.current);guests.current=saved.entries;if(saved.error)setNotice(saved.error);},[]);
  return <Context.Provider value={{practice,ready,timedOut,account,config,error,notice,epoch:()=>version.current,request,refresh,guestEntries,remember,draft,setDraft}}>{children}</Context.Provider>;
@@ -48,12 +48,11 @@ export function IdentityProvider({children}:{children:ReactNode}){
 export function useIdentity(){const value=useContext(Context);if(!value)throw new Error('Learning identity provider is missing.');return value;}
 export function AccountBar(){
  const identity=useIdentity();
- if(!identity.ready){
-  // 5.2 — a real loading state (skeleton blocks), not a lone pill sentence.
-  if(identity.timedOut){
+ if(identity.timedOut){
    return <div className="rounded-2xl border border-site-border bg-white p-5 text-small"><p className="font-semibold text-site-ink">{s["signInUnavailableTitle"]}</p><p className="mt-1 text-site-muted">{s["accountCheckTimedOut"]}</p><p role="status" className="mt-2 text-site-muted">{s["signInWorkspaceLine"]}</p><button onClick={()=>void identity.refresh()} className="mt-3 min-h-11 rounded-full border border-site-border bg-white px-4 font-semibold text-site-ink">{s["retry"]}</button></div>;
-  }
+ }
+ if(!identity.ready){
   return <div className="space-y-3 rounded-2xl border border-site-border bg-white p-5" role="status" aria-label={s["checkingAccount"]}><p className="h-3 w-1/3 rounded bg-site-border"/><div className="h-4 w-full rounded bg-site-border"/><div className="h-4 w-2/3 rounded bg-site-border"/></div>;
  }
- return <div className="site-card flex flex-wrap items-center justify-between gap-3 p-5"><div><strong>{identity.account?.user?.display_name||'Your practice workspace'}</strong><p className="text-small text-site-muted">{identity.account?.user?'Saved across devices with your account.':s["signInWorkspaceLine"]}</p></div><div className="flex flex-wrap gap-3 text-small">{identity.account?.is_admin&&<a href="/team.html" className="underline">Manage catalogue & reports</a>}{!identity.account?.user&&<p className="text-site-muted">{s["signInUnavailableBody"]}</p>}</div>{identity.notice&&<p className="w-full text-small" role="status">{identity.notice}</p>}</div>;
+ return <div className="site-card flex flex-wrap items-center justify-between gap-3 p-5"><div><strong>{identity.account?.user?.display_name||'Your practice workspace'}</strong><p className="text-small text-site-muted">{identity.account?.user?'Saved across devices with your account.':s["signInWorkspaceLine"]}</p></div><div className="flex flex-wrap gap-3 text-small">{identity.account?.is_admin&&<a href="/team.html" className="underline">Manage catalogue & reports</a>}{identity.account?.user&&identity.account.sign_out_url&&<a className="min-h-11 py-3 underline" href={accountActionHref(identity.account.sign_out_url)}>Sign out</a>}{!identity.account?.user&&(identity.account?.sign_in_url?<a className="min-h-11 py-3 font-semibold underline" href={accountActionHref(identity.account.sign_in_url)}>{identity.account.identity_provider==='github'?'Sign in with GitHub':'Sign in'}</a>:<p className="text-site-muted">{s["signInUnavailableBody"]}</p>)}</div>{identity.notice&&<p className="w-full text-small" role="status">{identity.notice}</p>}</div>;
 }

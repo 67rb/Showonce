@@ -36,17 +36,10 @@ export function LearningWorkspace({screen,professional=false}:{screen:'create'|'
  return <div className={'learning-workspace relative min-h-[100svh] '+(professional?'bg-white':'bg-site-page')}>
   <div className={'relative z-10 mx-auto w-full font-body-ui '+(player?'max-w-[430px] px-4 pt-6 pb-24 lg:max-w-[1120px] lg:px-8 lg:pt-10':screen==='library'?'max-w-[640px] px-4 pt-6 pb-24 md:px-6 lg:max-w-[1120px] lg:px-8 lg:pt-10':'max-w-[640px] px-4 pt-6 pb-24 md:px-6 lg:max-w-[1120px] lg:px-8 lg:pt-10')}>
    {professional&&<div className="mb-4 rounded-[16px] border border-site-border bg-white p-3 text-sm text-site-ink"><a className="underline" href="/professional/lessons/">← Professional courses</a><p>Classroom training only · Self-review and AI feedback do not grant instructor approval or trade certification.</p></div>}{screen==='create'&&!professional&&<CreateHeading/>}
-   {identity.ready?<div key={identity.account?.user?.id||'anonymous'}>{body}{identity.timedOut&&<TimeoutNotice/>}</div>:<LoadingPanel screen={screen}/>}
+   {identity.ready?<div key={identity.account?.user?.id||'anonymous'}>{body}</div>:<LoadingPanel screen={screen}/>}
    {identity.ready&&<div className="mt-8 lg:mt-12"><FootnoteBlocks/></div>}
   </div>
  </div>;
-}
-/* 5.2 — the account check never spins forever: on timeout the signed-out page
-   renders with one inline notice and a Retry button. */
-function TimeoutNotice(){
- const identity=useIdentity();
- if(!identity.timedOut)return null;
- return <div className="mt-6 rounded-[16px] border border-site-border bg-white p-4"><p className="text-small font-semibold text-site-ink">{s.accountCheckTimedOut}</p><button type="button" className={secondary+' mt-3'} onClick={()=>void identity.refresh()}>{s.retry}</button></div>;
 }
 /* 5.2 — every surface shows a real loading state: skeleton blocks matching the
    page's own layout, not a lone pill sentence. */
@@ -234,7 +227,7 @@ function LessonPanel({screen}:{screen:string}){
   {!completed&&historyBlock}
   {!completed&&reportBlock}
   <p className="text-small text-site-muted">{lesson.safety_notice||'Visual feedback cannot certify physical safety.'}</p>
-  {!completed&&screen!=='overview'&&progress&&<div className={stickyBar+' lg:hidden'}>{step.photo_assessable===false?<button disabled={busy} className={primary+' w-full'} onClick={()=>void acknowledge()}>I’ve practiced this step · self-review</button>:<button className={primary+' w-full'} disabled={!photo||busy||!aiReady} onClick={()=>void checkPhoto()}>{busy?'Working…':'Check my work'}</button>}</div>}
+  {!completed&&screen!=='overview'&&progress&&current&&<div className={stickyBar+' lg:hidden'}>{step.photo_assessable===false?<button disabled={busy} className={primary+' w-full'} onClick={()=>void acknowledge()}>I’ve practiced this step · self-review</button>:<button className={primary+' w-full'} disabled={!photo||busy||!aiReady} onClick={()=>void checkPhoto()}>{busy?'Working…':'Check my work'}</button>}</div>}
  </div>;
 }
 

@@ -19,11 +19,11 @@ const routes: { path: string; label: string }[] = [
   { path: "/create/processing", label: "Create — processing redirect" },
   { path: "/create/review", label: "Create — review" },
   { path: "/lessons", label: "Your lessons" },
-  { path: "/lesson/sample", label: "Lesson overview" },
-  { path: "/lesson/sample/play", label: "Player" },
-  { path: "/lesson/sample/play/camera", label: "Camera" },
-  { path: "/lesson/sample/live", label: "Live mode" },
-  { path: "/lesson/sample/complete", label: "Completion" },
+  { path: "/lesson/runtime/?lesson_id=example_draw-shading", label: "Lesson overview" },
+  { path: "/lesson/runtime/play/?lesson_id=example_draw-shading", label: "Player" },
+  { path: "/lesson/runtime/play/camera/?lesson_id=example_draw-shading", label: "Camera" },
+  { path: "/lesson/runtime/live/?lesson_id=example_draw-shading", label: "Live mode" },
+  { path: "/lesson/runtime/complete/?lesson_id=example_draw-shading", label: "Completion" },
   { path: "/privacy", label: "Privacy" },
   { path: "/design", label: "Design index" },
 ];
@@ -52,12 +52,12 @@ const variants: { path: string; label: string }[] = [
   { path: "/create?state=failed", label: "Import · fetch failed" },
   { path: "/create?state=not-configured", label: "Import · not configured" },
   { path: "/lessons?state=empty", label: "Lessons · empty" },
-  { path: "/lesson/sample/play?state=checking", label: "Player · checking" },
-  { path: "/lesson/sample/play?state=right", label: "Player · right" },
-  { path: "/lesson/sample/play?state=wrong", label: "Player · wrong" },
-  { path: "/lesson/sample/play?state=canttell", label: "Player · can't tell" },
-  { path: "/lesson/sample/live?state=check", label: "Live · check" },
-  { path: "/lesson/sample/live?state=wrong", label: "Live · wrong" },
+  { path: "/lesson/runtime/play/?lesson_id=example_draw-shading&state=checking", label: "Player · checking" },
+  { path: "/lesson/runtime/play/?lesson_id=example_draw-shading&state=right", label: "Player · right" },
+  { path: "/lesson/runtime/play/?lesson_id=example_draw-shading&state=wrong", label: "Player · wrong" },
+  { path: "/lesson/runtime/play/?lesson_id=example_draw-shading&state=canttell", label: "Player · can't tell" },
+  { path: "/lesson/runtime/live/?lesson_id=example_draw-shading&state=check", label: "Live · check" },
+  { path: "/lesson/runtime/live/?lesson_id=example_draw-shading&state=wrong", label: "Live · wrong" },
 ];
 
 const tokens: { name: string; var: string; hex: string }[] = [
@@ -254,7 +254,7 @@ export default function DesignPage() {
                     meta: "4 steps · source: YouTube link",
                     date: "Today",
                   }}
-                  href="/lesson/sample"
+                  href="/lesson/runtime/?lesson_id=example_draw-shading"
                 />
               </div>
             </div>

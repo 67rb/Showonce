@@ -3,11 +3,13 @@
 import {useCallback,useEffect,useRef,useState} from 'react';
 import {LearningError,aiChecksAvailable,type Step} from '@/lib/learning';
 import {illustrationKey,writeIllustration} from '@/lib/illustration-cache';
+import {origamiSample} from '@/lib/sample';
 import {useIdentity} from './Identity';
 
 /** Reading a saved image never starts a billable generation request. */
 export function StepIllustration({lessonID,step,token,disabled=false,onPrepare}:{lessonID:string;step:Step;token:string|null;disabled?:boolean;onPrepare:()=>void}){
  const identity=useIdentity();
+ const savedSample=origamiSample.steps.find(item=>item.instructions===step.instructions);
  const [image,setImage]=useState<string|null>(null),[state,setState]=useState<'loading'|'missing'|'generating'|'ready'|'error'>('loading'),[error,setError]=useState<string|null>(null);
  const lifetime=useRef<AbortController|null>(null),objectURL=useRef<string|null>(null),inFlight=useRef(false);
  const path='/v1/lessons/'+encodeURIComponent(lessonID)+'/steps/'+encodeURIComponent(step.id)+'/illustration';
@@ -20,10 +22,11 @@ export function StepIllustration({lessonID,step,token,disabled=false,onPrepare}:
   }catch(e){if(signal.aborted)return false;if(e instanceof LearningError&&e.status===404){writeIllustration(key,{status:'missing'});setState('missing');return false;}throw e;}
  },[identity.request,path,token,lessonID,step.id]);
  useEffect(()=>{
+  if(savedSample)return;
   const controller=new AbortController();lifetime.current=controller;
   void load(controller.signal).catch(e=>{if(!controller.signal.aborted){setState('error');setError(e instanceof Error?e.message:'The saved image could not be loaded.');}});
   return()=>{controller.abort();if(objectURL.current)URL.revokeObjectURL(objectURL.current);};
- },[load]);
+ },[load,savedSample]);
  async function generate(){
   const controller=lifetime.current;if(!controller||controller.signal.aborted||inFlight.current||disabled)return;
   inFlight.current=true;setState('generating');setError(null);onPrepare();
@@ -38,6 +41,7 @@ export function StepIllustration({lessonID,step,token,disabled=false,onPrepare}:
   }catch(e){if(!controller.signal.aborted){setState('error');setError(e instanceof Error?e.message:'Illustration unavailable. Follow the written target.');}}
   finally{inFlight.current=false;}
  }
+ if(savedSample)return <figure className="mt-4"><img className="max-h-96 w-full rounded-xl bg-white object-contain" src={savedSample.visual} alt={savedSample.target} width={420} height={320}/><figcaption className="mt-2 text-small text-site-muted">Saved sample reference illustration</figcaption></figure>;
  if(image)return <figure className="mt-4"><img className="max-h-96 w-full rounded-xl bg-white object-contain" src={image} alt={'AI illustration: '+step.expected_visual_result}/><figcaption className="mt-2 text-small text-site-muted">AI illustration · may contain visual inaccuracies</figcaption></figure>;
  const canGenerate=aiChecksAvailable(identity.config);
  return <div className="mt-4 rounded-xl border border-site-border bg-white p-4">
