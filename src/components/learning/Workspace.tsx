@@ -812,7 +812,7 @@ function CreatePanel() {
           {s.privacyClaim}
         </p>
       </div>
-      <aside className="mt-10 space-y-5 lg:mt-0 lg:sticky lg:top-[112px] lg:w-[320px]">
+      <aside className="mt-8 space-y-5 lg:mt-0 lg:sticky lg:top-[112px] lg:w-[320px]">
         <Card>
           <p className="text-small font-semibold uppercase text-site-muted">
             {s.createStepStripTitle}
@@ -1018,7 +1018,7 @@ function LibraryPanel() {
         .includes(search.trim().toLowerCase()),
   );
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 lg:space-y-8">
       <header>
         <h1 className="font-body-ui text-[2.5rem] font-bold tracking-[-0.02em] text-site-ink lg:text-[3rem]">
           {s.lessonsHeading}
@@ -1756,7 +1756,7 @@ function LessonPanel({ screen }: { screen: string }) {
     </Card>
   );
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 lg:space-y-8">
       <div className="flex flex-wrap items-center justify-between gap-4">
         <a
           href={workspaceHref("library")}
