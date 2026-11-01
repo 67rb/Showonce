@@ -12,6 +12,7 @@ import { BorderBeam } from "@/components/lightswind/border-beam";
 import { ScrollProgress } from "@/components/ScrollProgress";
 import { SeasonalHoverCards } from "@/components/lightswind/seasonal-hover-cards";
 import Link from "next/link";
+import { HomePractice } from "@/components/learning/HomePractice";
 
 export default function LandingPage(_props?: {searchParams:Promise<{state?:string}>}) {
 
@@ -81,6 +82,7 @@ export default function LandingPage(_props?: {searchParams:Promise<{state?:strin
             {/* privacy line */}
             <p className="mt-3.5 text-caption text-[#27272A]">{s.privacyClaim}</p>
           </Reveal>
+          <HomePractice />
         </div>
       </section>
       <div className="mx-auto w-full max-w-6xl px-4">
