@@ -40,7 +40,7 @@ function imageURLs(){const NativeURL=URL;const revoke=vi.fn();vi.stubGlobal('URL
 describe('working frontend with the actual learning Worker',()=>{
  it('server-renders the public create heading before account and configuration requests finish',()=>{
   const html=renderToString(<IdentityProvider><LearningWorkspace screen="create"/></IdentityProvider>);
-  expect(html).toContain('Learn something');expect(html).toContain('Bring a skill you want to practice.');expect(html).toContain('Checking your account');expect(html).not.toContain('aria-label="Tutorial link"');expect(calls).toHaveLength(0);
+  expect(html).toContain('Learn something');expect(html).toContain('Bring a skill you want to practice.');expect(html).toContain('aria-label="Loading the create workspace"');expect(html).not.toContain('aria-label="Tutorial link"');expect(calls).toHaveLength(0);
  });
  it('creates a free lesson from entered instructions and saves a real resumable practice',async()=>{
   show();await screen.findByRole('button',{name:'Free numbered steps'});expect(screen.queryByRole('textbox',{name:/Paste this tutorial/})).toBeNull();fireEvent.click(screen.getByRole('button',{name:'Free numbered steps'}));fireEvent.change(screen.getByRole('textbox',{name:'2–18 numbered instructions'}),{target:{value:'1. Draw a circle on paper.\n2. Shade its lower edge.'}});fireEvent.click(screen.getByRole('button',{name:'Create free practice'}));fireEvent.click(await screen.findByRole('button',{name:'3 · Start practicing'}));await waitFor(()=>expect(push).toHaveBeenCalled());
@@ -79,12 +79,12 @@ describe('working frontend with the actual learning Worker',()=>{
  it('lesson URLs contain identifiers and never a private access token',()=>{const url=lessonHref('lesson_a','session_b','play');expect(url).toBe('/lesson/runtime/play/?lesson_id=lesson_a&session_id=session_b');expect(url).not.toContain('token');});
  it('unsupported and oversized photos fail locally before any network check',async()=>{await expect(photoData(new File(['text'],'work.txt',{type:'text/plain'}))).rejects.toThrow(/PNG/);await expect(photoData(new File([new Uint8Array(5242881)],'work.png',{type:'image/png'}))).rejects.toThrow(/5 MiB/);expect(calls).toHaveLength(0);});
  it('a lost acknowledgement reply retries the same key and advances only once',async()=>{
-  const {lesson,progress}=await preparePractice();const original=globalThis.fetch;let lose=true;vi.stubGlobal('fetch',async(...args:Parameters<typeof fetch>)=>{const response=await original(...args);if(String(args[0]).endsWith('/acknowledgements')&&lose){lose=false;throw new Error('Reply lost after commit.');}return response;});show('play');const button=await screen.findByRole('button',{name:'I’ve practiced this step · self-review'});fireEvent.click(button);await screen.findByRole('alert');expect((await env.DB.prepare('SELECT current_index FROM practice_sessions WHERE id=?').bind(progress.session_id).first())?.current_index).toBe(1);fireEvent.click(screen.getByRole('button',{name:'I’ve practiced this step · self-review'}));await screen.findByRole('heading',{name:lesson.steps[1].title||'Try this step'});const retries=calls.filter(call=>call.path.endsWith('/acknowledgements'));expect(retries).toHaveLength(2);expect(retries[0].headers['Idempotency-Key']).toBe(retries[1].headers['Idempotency-Key']);expect((await env.DB.prepare('SELECT current_index FROM practice_sessions WHERE id=?').bind(progress.session_id).first())?.current_index).toBe(1);
+  const {lesson,progress}=await preparePractice();const original=globalThis.fetch;let lose=true;vi.stubGlobal('fetch',async(...args:Parameters<typeof fetch>)=>{const response=await original(...args);if(String(args[0]).endsWith('/acknowledgements')&&lose){lose=false;throw new Error('Reply lost after commit.');}return response;});show('play');const button=await screen.findByRole('button',{name:'I’ve practiced this step · self-review'});fireEvent.click(button);await screen.findByRole('alert');expect((await env.DB.prepare('SELECT current_index FROM practice_sessions WHERE id=?').bind(progress.session_id).first())?.current_index).toBe(1);fireEvent.click(screen.getAllByRole('button',{name:'I’ve practiced this step · self-review'})[0]);await screen.findByRole('heading',{name:lesson.steps[1].title||'Try this step'});const retries=calls.filter(call=>call.path.endsWith('/acknowledgements'));expect(retries).toHaveLength(2);expect(retries[0].headers['Idempotency-Key']).toBe(retries[1].headers['Idempotency-Key']);expect((await env.DB.prepare('SELECT current_index FROM practice_sessions WHERE id=?').bind(progress.session_id).first())?.current_index).toBe(1);
  });
  it('automatically reloads a saved step image without generation and clears it when the checkpoint changes',async()=>{
   const {lesson}=await preparePractice();await savedIllustration(lesson);const revoke=imageURLs();show('play');
   expect((await screen.findByRole('img',{name:'AI illustration: '+lesson.steps[0].expected_visual_result})).getAttribute('src')).toBe('blob:saved-step');
-  fireEvent.click(screen.getByRole('button',{name:'I’ve practiced this step · self-review'}));await screen.findByRole('heading',{name:lesson.steps[1].title!});
+  fireEvent.click(screen.getAllByRole('button',{name:'I’ve practiced this step · self-review'})[0]);await screen.findByRole('heading',{name:lesson.steps[1].title!});
   await waitFor(()=>expect(screen.queryByRole('img')).toBeNull());await waitFor(()=>expect(revoke).toHaveBeenCalledWith('blob:saved-step'));
   fireEvent.change(screen.getByRole('combobox',{name:'Checkpoint'}),{target:{value:'0'}});
   await screen.findByRole('img',{name:'AI illustration: '+lesson.steps[0].expected_visual_result});
@@ -108,14 +108,14 @@ describe('working frontend with the actual learning Worker',()=>{
   const {lesson}=await preparePractice();render(<IdentityProvider><MinimalChrome/><LearningWorkspace screen="play"/></IdentityProvider>);
   await screen.findByRole('heading',{name:lesson.steps[0].title!});
   expect(screen.getByRole('progressbar').getAttribute('aria-valuenow')).toBe('1');
-  fireEvent.click(screen.getByRole('button',{name:'I’ve practiced this step · self-review'}));await screen.findByRole('heading',{name:lesson.steps[1].title!});
+  fireEvent.click(screen.getAllByRole('button',{name:'I’ve practiced this step · self-review'})[0]);await screen.findByRole('heading',{name:lesson.steps[1].title!});
   expect(screen.getByRole('progressbar').getAttribute('aria-valuenow')).toBe('2');expect(screen.getByRole('progressbar').getAttribute('aria-valuemax')).toBe('4');
  });
  it('free numbered practices expose local camera tools and still save progress without AI',async()=>{
   const lesson=await(await worker.fetch(new Request('https://test.example/v1/lessons',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({source_type:'text',source_text:'1. Draw a circle on paper.\n2. Shade its lower edge.',processing_mode:'structured_text'})}),env)).json() as Lesson;
   await preparePractice(lesson.id);show('play');fireEvent.click(await screen.findByRole('button',{name:'Practice with live camera · free'}));
   expect(screen.getByRole('button',{name:'Open camera'})).toBeTruthy();expect(screen.queryByText('Optional AI check · uses existing allowance')).toBeNull();
-  fireEvent.click(screen.getByRole('button',{name:'I’ve practiced this step · self-review'}));await screen.findByRole('heading',{name:lesson.steps[1].title||'Try this step'});
+  fireEvent.click(screen.getAllByRole('button',{name:'I’ve practiced this step · self-review'})[0]);await screen.findByRole('heading',{name:lesson.steps[1].title||'Try this step'});
   expect(screen.queryByRole('button',{name:'Open camera'})).toBeNull();expect(calls.filter(call=>call.path==='/api/assess')).toHaveLength(0);expect((await env.DB.prepare('SELECT calls FROM ai_budget WHERE id=1').first())?.calls).toBe(0);
  });
  it('an exhausted allowance explains the blocked action and still creates free practice',async()=>{
@@ -133,7 +133,7 @@ describe('working frontend with the actual learning Worker',()=>{
   const {lesson,progress}=await preparePractice();show('play');
   fireEvent.click(await screen.findByRole('button',{name:'Practice with live camera · free'}));
   fireEvent.click(screen.getByRole('checkbox',{name:lesson.steps[0].assessment_criteria[0]}));
-  fireEvent.click(screen.getByRole('button',{name:'I’ve practiced this step · self-review'}));
+  fireEvent.click(screen.getAllByRole('button',{name:'I’ve practiced this step · self-review'})[0]);
   await screen.findByRole('heading',{name:lesson.steps[1].title!});
   expect(calls.find(call=>call.path.endsWith('/acknowledgements'))?.body?.observations).toEqual([lesson.steps[0].assessment_criteria[0]]);
   const row=await env.DB.prepare('SELECT observations FROM practice_acknowledgements WHERE session_id=?').bind(progress.session_id).first();
@@ -145,7 +145,7 @@ describe('working frontend with the actual learning Worker',()=>{
    const {lesson}=await preparePractice();show('play');
    fireEvent.click(await screen.findByRole('button',{name:'Practice with live camera · free'}));
    fireEvent.click(screen.getByRole('checkbox',{name:lesson.steps[0].assessment_criteria[0]}));
-   fireEvent.click(screen.getByRole('button',{name:'I’ve practiced this step · self-review'}));
+   fireEvent.click(screen.getAllByRole('button',{name:'I’ve practiced this step · self-review'})[0]);
    await screen.findByRole('heading',{name:lesson.steps[1].title!});
    const confirmed='Step 1 · self-reviewed — you confirmed: '+lesson.steps[0].assessment_criteria[0];
    expect(screen.queryByText(confirmed)).toBeNull();
@@ -153,7 +153,7 @@ describe('working frontend with the actual learning Worker',()=>{
    expect(await screen.findByText(confirmed)).toBeTruthy();
    fireEvent.click(screen.getByRole('button',{name:'Return to current checkpoint'}));
    await screen.findByRole('heading',{name:lesson.steps[1].title!});
-   for(let i=1;i<lesson.steps.length;i++){fireEvent.click(screen.getByRole('button',{name:'I’ve practiced this step · self-review'}));if(i+1<lesson.steps.length)await screen.findByRole('heading',{name:lesson.steps[i+1].title!});}
+   for(let i=1;i<lesson.steps.length;i++){fireEvent.click(screen.getAllByRole('button',{name:'I’ve practiced this step · self-review'})[0]);if(i+1<lesson.steps.length)await screen.findByRole('heading',{name:lesson.steps[i+1].title!});}
    await screen.findByRole('heading',{name:'A step further along.'});
    expect(screen.getByText(confirmed)).toBeTruthy();
   });
@@ -192,11 +192,11 @@ describe('working frontend with the actual learning Worker',()=>{
   const box=screen.getByRole('checkbox',{name:lesson.steps[0].assessment_criteria[0]});fireEvent.click(box);expect((box as HTMLInputElement).checked).toBe(true);
   const original=globalThis.fetch,ackKeys:string[]=[];let fail=true;
   vi.stubGlobal('fetch',async(...args:Parameters<typeof fetch>)=>{if(String(args[0]).endsWith('/acknowledgements')){ackKeys.push(((args[1]?.headers||{}) as Record<string,string>)['Idempotency-Key']);if(fail){fail=false;throw new Error('Offline while saving');}}return original(...args);});
-  fireEvent.click(screen.getByRole('button',{name:'I’ve practiced this step · self-review'}));
+  fireEvent.click(screen.getAllByRole('button',{name:'I’ve practiced this step · self-review'})[0]);
   await screen.findByRole('alert');
   expect((screen.getByRole('checkbox',{name:lesson.steps[0].assessment_criteria[0]}) as HTMLInputElement).checked).toBe(true);
   expect((await env.DB.prepare('SELECT current_index FROM practice_sessions WHERE id=?').bind(progress.session_id).first())?.current_index).toBe(0);
-  fireEvent.click(screen.getByRole('button',{name:'I’ve practiced this step · self-review'}));
+  fireEvent.click(screen.getAllByRole('button',{name:'I’ve practiced this step · self-review'})[0]);
   await screen.findByRole('heading',{name:lesson.steps[1].title!});
   expect(ackKeys).toHaveLength(2);expect(ackKeys[0]).toBeTruthy();expect(ackKeys[1]).toBe(ackKeys[0]);
   expect(calls.find(call=>call.path.endsWith('/acknowledgements'))?.body?.observations).toEqual([lesson.steps[0].assessment_criteria[0]]);

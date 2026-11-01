@@ -57,7 +57,7 @@ describe("Professional face — trade gallery (differentiation)", () => {
   it("renders trade-training cards, not Hobby capability cards", () => {
     const html = renderToStaticMarkup(<HorizontalGallery professional />);
     const text = html.replace(/&amp;/g, "&");
-    for (const title of [s.proGalleryTitleElectrical, s.proGalleryTitlePlumbing, s.proGalleryTitleCarpentry, s.proGalleryMoreTitle]) {
+    for (const title of [s.proGalleryTitleElectrical, s.proGalleryTitlePlumbing, s.proGalleryTitleCarpentry, s["proGallery.assemblyTitle"]]) {
       expect(text).toContain(title);
     }
     expect(text).not.toContain(s.galleryTitleTower);

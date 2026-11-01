@@ -23,9 +23,10 @@ it('shows server course progress and locks the next lesson until the previous le
 });
 it('blocks invalid photo files locally without sending a request',async()=>{render(<ProfessionalStudio/>);await waitFor(()=>expect(screen.queryByText('Loading saved learning…')).toBeNull());fireEvent.change(screen.getByLabelText('Photo of what you’re doing (optional)'),{target:{files:[new File(['bad'],'work.txt',{type:'text/plain'})]}});expect(screen.getByRole('alert').textContent).toContain('PNG, JPEG or WebP');expect(request.mock.calls.some(([,body])=>body)).toBe(false);});
 
-it('shows the server course description and saved briefs shortcut in the training hub',async()=>{
+it('shows server course lessons and saved briefs shortcut in the training hub',async()=>{
  const base=request.getMockImplementation()!;request.mockImplementation(async(path,body,options)=>path==='/v1/professional/requests'&&!body?{requests:[{id:'r',goal:'Learn to identify valves',trade:'Plumbing',status:'draft',has_photo:false,source_url:null,href:null}]}:base(path,body,options));render(<ProfessionalStudio view="library"/>);
- expect(await screen.findByText('Identify common fittings and plan supervised, disconnected practice.')).toBeTruthy();
+ expect(await screen.findByRole('heading',{name:'Plumbing foundations'})).toBeTruthy();
+ expect(screen.getByText('Identify components · 3 steps')).toBeTruthy();
  expect(await screen.findByRole('heading',{name:'Saved training briefs'})).toBeTruthy();
  expect(screen.getByText('Learn to identify valves')).toBeTruthy();
  expect(screen.getByRole('link',{name:'Open in New training brief'}).getAttribute('href')).toBe('/professional/create/');

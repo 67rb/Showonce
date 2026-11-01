@@ -16,6 +16,7 @@ import { KeyframeVisual } from "@/components/KeyframeVisual";
 const routes: { path: string; label: string }[] = [
   { path: "/", label: "Landing" },
   { path: "/create", label: "Create — import" },
+  { path: "/create/processing", label: "Create — processing redirect" },
   { path: "/create/review", label: "Create — review" },
   { path: "/lessons", label: "Your lessons" },
   { path: "/lesson/sample", label: "Lesson overview" },
@@ -33,6 +34,7 @@ const routes: { path: string; label: string }[] = [
 const proRoutes: { path: string; label: string }[] = [
   { path: "/professional", label: "Professional landing" },
   { path: "/professional/create", label: "Create — import" },
+  { path: "/professional/create/processing", label: "Create — processing redirect" },
   { path: "/professional/create/review", label: "Create — review" },
   { path: "/professional/lessons", label: "Your lessons" },
   { path: "/professional/lesson/sample", label: "Lesson overview" },
