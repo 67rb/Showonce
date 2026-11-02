@@ -361,10 +361,10 @@ export const strings = {
   proDifferenceWrong:
     "The green jumper is in the top rail. In the step it runs between the rails.",
 
-  /* 5.1 — sign-in is not available in this deployment. The OAuth identity
-     headers are stripped by the hosting layer, so there is no working
-     self-service sign-in route. Gated actions render this inline notice in
-     place of dead sign-in / recovery links. */
+  /* 5.1 — inline notice for deployments where sign-in is not configured.
+     server/auth.mjs authReady() returns sign_in_url:null for them, so gated
+     actions render this notice in place of dead sign-in / recovery links.
+     Configured builds render the real sign-in entry instead (5.2). */
   signInUnavailableTitle: "Sign-in is not available here",
   signInUnavailableBody:
     "This preview has no sign-in flow, so saving to an account and instructor review are unavailable. Your browser practice still works and stays private to this device.",
@@ -381,20 +381,26 @@ export const strings = {
      the field) and empty-mode guidance already live in importErrorInvalid. */
   importErrorInvalidEmpty: "Add a YouTube or Instagram link, or your own instructions, to get started.",
 
-  /* 5.7 — Professional create gate + disabled reasons */
+  /* 5.2 — Professional create gate + disabled reasons. When sign-in is
+     configured the notices point at the real entry; the "not available"
+     wording stays only for deployments without sign-in configured. */
   "proCreate.signInGateNotice":
     "Saving a training brief needs a signed-in account, and sign-in is not available in this preview. You can still explore the Training hub.",
+  "proCreate.signInGateNoticeAvailable":
+    "Saving a training brief needs a signed-in account. Sign in with GitHub to save your brief.",
   "proCreate.trainingHubLink": "Open the Training hub",
   "proCreate.saveForReviewLabel": "Save learning request · free",
   "proCreate.classroomHelp":
     "Confirming this attests that you only practise classroom or disconnected training here — no live trade work.",
   "proCreate.disabledNoSignIn": "Sign-in is required to save a training brief. It is not available in this preview.",
+  "proCreate.disabledNoSignInAvailable": "Sign in with GitHub to save a training brief.",
   "proCreate.disabledConfirmClassroom": "Confirm the classroom or disconnected training statement to enable saving.",
 
   /* 5.8 — Training hub simplification */
   "hub.sharedNotice":
     "Courses are practised under classroom or disconnected training only. A saved brief stays in your account and an instructor reviews saved evidence before any classroom sign-off — it is not a trade qualification or safety certification.",
   "hub.enrollDisabledSignIn": "Sign-in is required to enrol. It is not available in this preview.",
+  "hub.enrollDisabledSignInAvailable": "Sign in with GitHub to enrol.",
   "hub.enrollDisabledConfirm": "Confirm the classroom or disconnected training statement to enable enrolment.",
 
   /* 5.9 — instructor empty state + processing/review empty states */
@@ -482,7 +488,7 @@ export const strings = {
   "proSample.stepsHeading": "The sample, step by step",
   "proSample.backToHub": "← Training hub",
   "proCourse.previewEyebrow": "Course preview · read only",
-  "proCourse.enrolGate": "Enrolling stays a separate action — sign-in is required to enrol and is not available in this preview.",
+  "proCourse.enrolGate": "Enrolling stays a separate action — sign-in is required to enrol.",
   "proCourse.enrol": "Enrol",
   "proCourse.lessonStart": "Start sample lesson",
   "proCourse.previewCta": "Read course preview · free",

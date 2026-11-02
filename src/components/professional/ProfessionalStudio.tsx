@@ -768,7 +768,9 @@ function RequestForm({
     return () => URL.revokeObjectURL(url);
   }, [file]);
   const saveReason = !signedIn
-    ? s["proCreate.disabledNoSignIn"]
+    ? identity.account?.sign_in_url
+      ? s["proCreate.disabledNoSignInAvailable"]
+      : s["proCreate.disabledNoSignIn"]
     : !scope
       ? s["proCreate.disabledConfirmClassroom"]
       : null;
@@ -804,7 +806,9 @@ function RequestForm({
       {!signedIn && (
         <div className="rounded-[16px] border border-site-border bg-white p-4">
           <p className="text-small text-site-ink">
-            {s["proCreate.signInGateNotice"]}
+            {identity.account?.sign_in_url
+              ? s["proCreate.signInGateNoticeAvailable"]
+              : s["proCreate.signInGateNotice"]}
           </p>
           <a
             className="mt-2 inline-block text-small font-semibold text-[#15803D] underline"
@@ -1126,9 +1130,13 @@ function CourseCard({
   signedIn: boolean;
   enroll: () => void;
 }) {
-  /* 5.8 — the classroom confirmation lives once at hub level; each card keeps only the trade label, title, lesson names with step counts and the Enroll button, with the disabled reason inline */ const reason =
+  /* 5.8 — the classroom confirmation lives once at hub level; each card keeps only the trade label, title, lesson names with step counts and the Enroll button, with the disabled reason inline */
+  const identity = useIdentity();
+  const reason =
     !signedIn
-      ? s["hub.enrollDisabledSignIn"]
+      ? identity.account?.sign_in_url
+        ? s["hub.enrollDisabledSignInAvailable"]
+        : s["hub.enrollDisabledSignIn"]
       : !confirmed
         ? s["hub.enrollDisabledConfirm"]
         : null;

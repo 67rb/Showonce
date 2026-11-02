@@ -56,27 +56,5 @@
       "source": "/public-api.js",
       "destination": "/api/backend?__route=/public-api.js"
     }
-  ],
-  "redirects": [
-    {
-      "source": "/lesson/sample/play",
-      "destination": "/lesson/runtime/play/?lesson_id=example_draw-shading",
-      "permanent": false
-    },
-    {
-      "source": "/lesson/sample/play/camera",
-      "destination": "/lesson/runtime/play/camera/?lesson_id=example_draw-shading",
-      "permanent": false
-    },
-    {
-      "source": "/lesson/sample/live",
-      "destination": "/lesson/runtime/live/?lesson_id=example_draw-shading",
-      "permanent": false
-    },
-    {
-      "source": "/lesson/sample/complete",
-      "destination": "/lesson/runtime/complete/?lesson_id=example_draw-shading",
-      "permanent": false
-    }
   ]
 }
