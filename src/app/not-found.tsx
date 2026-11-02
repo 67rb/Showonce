@@ -3,20 +3,22 @@
 import s from "@/lib/strings";
 import Link from "next/link";
 import { Magnetic } from "@/components/Magnetic";
-import { PublicNavbar } from "@/components/PublicNavbar";
+import { InteriorHeader } from "@/components/InteriorHeader";
 import { PublicFooter } from "@/components/PublicFooter";
 import { usePathname } from "next/navigation";
 
 export default function NotFound() {
-  // 5.1 — face-aware 404. The page renders inside the shared navbar + footer,
-  // and its home link goes to /professional when the failed path started with
-  // /professional, otherwise to /. The navbar/footer components are not redesigned.
+  // 5.1 — face-aware 404. P1: the 404 is an interior route, so it renders the
+  // docked InteriorHeader (face-aware, ModeToggle included) instead of the
+  // floating pill; the footer stays the shared PublicFooter (compact off the
+  // landing routes), and its home link goes to /professional when the failed
+  // path started with /professional, otherwise to /.
   const pathname = usePathname();
   const home = pathname?.startsWith("/professional") ? "/professional" : "/";
 
   return (
     <div className="flex min-h-dvh flex-col">
-      <PublicNavbar />
+      <InteriorHeader />
       <main className="relative flex flex-1 flex-col items-center justify-center gap-4 overflow-hidden px-6 py-28 text-center">
         {/* 5.3 (L12) — the numeral renders at full ink strength (was pale
             grey on the pale ground). */}

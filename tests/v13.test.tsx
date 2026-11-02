@@ -447,8 +447,11 @@ describe("v2.3 — Aceternity Resizable Navbar as the public header (Tasks A & B
     path.resolve(process.cwd(), "src/components/PublicNavbar.tsx"),
     "utf8",
   );
+  // P1: the (public) layout delegates to the PublicShell client component,
+  // which keeps the landing pill (PublicNavbar + pt-24 + dark activation)
+  // byte-for-byte and renders the docked InteriorHeader on interior routes.
   const layoutSource = fs.readFileSync(
-    path.resolve(process.cwd(), "src/app/(public)/layout.tsx"),
+    path.resolve(process.cwd(), "src/components/PublicShell.tsx"),
     "utf8",
   );
   const regSource = fs.readFileSync(

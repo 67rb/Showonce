@@ -1,8 +1,12 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="420" height="320" viewBox="0 0 420 320" role="img" aria-labelledby="t">
   <title id="t">Curved P-trap under a fixture drain</title>
   <rect width="420" height="320" fill="#F7F7F8"/>
-  <rect x="160" y="36" width="100" height="24" rx="8" fill="#fff" stroke="#16161A" stroke-width="3"/>
-  <line x1="210" y1="60" x2="210" y2="150" stroke="#16161A" stroke-width="9"/>
-  <path d="M210,150 C210,238 150,238 150,180" stroke="#16161A" stroke-width="9" fill="none"/>
-  <path d="M214,150 C214,238 154,238 154,180" stroke="#22C55E" stroke-width="3" stroke-dasharray="8 6" fill="none"/>
+  <line x1="60" y1="60" x2="60" y2="260" stroke="#16161A" stroke-width="3"/>
+  <rect x="120" y="40" width="180" height="26" rx="6" fill="#ffffff" stroke="#16161A" stroke-width="3"/>
+  <line x1="120" y1="53" x2="300" y2="53" stroke="#16161A" stroke-width="3"/>
+  <circle cx="210" cy="66" r="6" fill="#F7F7F8" stroke="#16161A" stroke-width="3"/>
+  <path d="M202 66 L202 132" stroke="#16161A" stroke-width="14" stroke-linecap="square"/>
+  <path d="M202 66 L202 132" stroke="#ffffff" stroke-width="8" stroke-linecap="square"/>
+  <path d="M202 132 L202 196 A28 28 0 0 1 146 196 L146 156 L60 156" fill="none" stroke="#16A34A" stroke-width="14" stroke-linecap="square"/>
+  <path d="M202 132 L202 196 A28 28 0 0 1 146 196 L146 156 L60 156" fill="none" stroke="#ffffff" stroke-width="8" stroke-linecap="square"/>
 </svg>

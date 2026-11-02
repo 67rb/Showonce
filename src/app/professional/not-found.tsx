@@ -3,12 +3,12 @@
 import s from "@/lib/strings";
 import Link from "next/link";
 import { Magnetic } from "@/components/Magnetic";
-import { PublicFooter } from "@/components/PublicFooter";
 
 /* 5.3 (L12) — the Professional 404 reuses the face-aware pattern: it renders
-   inside the Professional layout (ProfessionalChrome supplies the Professional
-   navbar with Pro nav links), the footer is the Professional face's own footer
-   component, and the home target is /professional. */
+   inside the Professional layout (P1: ProfessionalChrome supplies the docked
+   InteriorHeader with Pro nav links), and P2: the chrome's compact footer is
+   the single footer — the page-level PublicFooter copy is removed so the
+   footer renders exactly once. The home target is /professional. */
 export default function ProfessionalNotFound() {
   return (
     <div className="flex flex-1 flex-col">
@@ -41,7 +41,6 @@ export default function ProfessionalNotFound() {
           {s["proNotFound.action"]}
         </Link>
       </div>
-      <PublicFooter />
     </div>
   );
 }

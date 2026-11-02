@@ -21,7 +21,7 @@ const primary =
 export default function SampleLessonPage() {
   return (
     <div className="mx-auto w-full max-w-[720px] px-4 pt-4 pb-24 md:px-6 lg:max-w-[1120px] lg:px-8">
-      <header className="scroll-mt-28">
+      <header className="scroll-mt-18">
         <div className="min-w-0">
           <p className="font-body-ui text-small font-semibold uppercase tracking-[0.14em] text-accent-deep">
             {s["sample.origamiEyebrow"]}
@@ -40,7 +40,7 @@ export default function SampleLessonPage() {
         </div>
       </header>
 
-      <section className="scroll-mt-28 mt-8">
+      <section className="scroll-mt-18 mt-8">
         <h2 className="font-body-ui text-xl font-bold tracking-[-0.01em] text-site-ink">
           {s["sample.materialsLabel"]}
         </h2>
@@ -51,7 +51,7 @@ export default function SampleLessonPage() {
         </ul>
       </section>
 
-      <section className="scroll-mt-28 mt-8">
+      <section className="scroll-mt-18 mt-8">
         <h2 className="font-body-ui text-xl font-bold tracking-[-0.01em] text-site-ink">
           {s["sample.stepsHeading"]}
         </h2>
@@ -59,7 +59,7 @@ export default function SampleLessonPage() {
           {origamiSample.steps.map((step, i) => (
             <article
               key={step.id}
-              className="scroll-mt-28 rounded-[16px] border border-site-border bg-white p-4 lg:p-5"
+              className="scroll-mt-18 rounded-[16px] border border-site-border bg-white p-4 lg:p-5"
             >
               {/* 5.3 (L5a) — the media column gets a fixed desktop height so
                   it cannot drive the card taller than its text; the text
@@ -101,7 +101,7 @@ export default function SampleLessonPage() {
         </div>
       </section>
 
-      <section className="scroll-mt-28 mt-8 rounded-[16px] border border-accent/30 bg-accent/5 p-4">
+      <section className="scroll-mt-18 mt-8 rounded-[16px] border border-accent/30 bg-accent/5 p-4">
         <p className="font-body-ui text-small text-site-ink">
           {s["sample.livePlayerNote"]}
         </p>

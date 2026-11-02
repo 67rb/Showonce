@@ -25,7 +25,7 @@ export default function ProfessionalSamplePage() {
         >
           {s["proSample.backToHub"]}
         </a>
-        <header className="scroll-mt-28">
+        <header className="scroll-mt-18">
           <div className="min-w-0">
             <p className="font-body-ui text-small font-semibold uppercase tracking-[0.14em] text-[#15803D]">
               {s["proSample.eyebrow"]}
@@ -49,7 +49,7 @@ export default function ProfessionalSamplePage() {
           {s["proSample.readNote"]}
         </p>
 
-        <section className="scroll-mt-28 mt-8">
+        <section className="scroll-mt-18 mt-8">
           <h2 className="font-body-ui text-xl font-bold tracking-[-0.01em] text-site-ink">
             {s["proSample.materialsLabel"]}
           </h2>
@@ -58,7 +58,7 @@ export default function ProfessionalSamplePage() {
           </p>
         </section>
 
-        <section className="scroll-mt-28 mt-8">
+        <section className="scroll-mt-18 mt-8">
           <h2 className="font-body-ui text-xl font-bold tracking-[-0.01em] text-site-ink">
             {s["proSample.stepsHeading"]}
           </h2>
@@ -66,7 +66,7 @@ export default function ProfessionalSamplePage() {
             {proSampleLesson.steps.map((step, i) => (
               <article
                 key={step.id}
-                className="scroll-mt-28 rounded-[16px] border border-site-border bg-white p-4 lg:p-5"
+                className="scroll-mt-18 rounded-[16px] border border-site-border bg-white p-4 lg:p-5"
               >
                 {/* 5.3 (L5a) — fixed media height; text column centres. */}
                 <div className="lg:flex lg:items-center lg:gap-6">
@@ -89,7 +89,7 @@ export default function ProfessionalSamplePage() {
           </div>
         </section>
 
-        <section className="scroll-mt-28 mt-8 rounded-[16px] border border-[#16A34A]/30 bg-[#16A34A]/5 p-4">
+        <section className="scroll-mt-18 mt-8 rounded-[16px] border border-[#16A34A]/30 bg-[#16A34A]/5 p-4">
           <ProSampleStart className={primary}/>
         </section>
       </div>

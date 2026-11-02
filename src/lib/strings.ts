@@ -20,6 +20,7 @@ export const strings = {
   yourLessonsLink: "Your lessons",
   navCreate: "Create",
   navPrivacy: "Privacy",
+  navMenu: "Menu",
   footerLine: "YouTube shows. Show Once watches.",
   designLink: "Design",
   exitLesson: "Exit",

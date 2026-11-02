@@ -222,6 +222,17 @@ section[id] {
   scroll-margin-top: 7rem;
 }
 
+/* P1 — interior routes dock the 64px InteriorHeader in flow instead of the
+   floating pill, so anchored headings and cards clear it with header height +
+   8px (72px) rather than the pill's 7rem. Landing rendering is untouched:
+   the override only applies where the docked header is present. */
+body:has(.interior-header) #main-content section :is(h1, h2) {
+  scroll-margin-top: 4.5rem;
+}
+body:has(.interior-header) section[id] {
+  scroll-margin-top: 4.5rem;
+}
+
 /* Site language card (v3, Adorn): white surface, 24px radius, hairline
    border, soft low shadow (no heavy drop). */
 .site-card {

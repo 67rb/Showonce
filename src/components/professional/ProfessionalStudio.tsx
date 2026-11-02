@@ -20,7 +20,7 @@ const primary =
 const secondary =
   "inline-flex min-h-11 items-center justify-center rounded-full border border-site-border bg-white px-5 py-3 text-small font-semibold text-site-ink transition hover:border-[#16A34A] disabled:bg-[#E5E5E5] disabled:text-[#71717A] disabled:opacity-100";
 const field =
-  "mt-2 w-full min-w-0 rounded-xl border border-site-border bg-white px-4 py-3 text-site-ink placeholder:text-site-muted focus:outline focus:outline-2 focus:outline-[#16A34A]";
+  "mt-4 w-full min-w-0 rounded-xl border border-site-border bg-white px-4 py-3 text-site-ink placeholder:text-site-muted focus:outline focus:outline-2 focus:outline-[#16A34A]";
 const statusName = (value: string) =>
   ({
     learning: "Practice in progress",
@@ -138,7 +138,7 @@ export function ProfessionalStudio({
         aria-label={label}
       >
         <div className="h-10 w-2/3 rounded-xl bg-site-border" />
-        <div className="h-5 mt-2 w-1/3 rounded bg-site-border" />
+        <div className="h-5 mt-3 w-1/3 rounded bg-site-border" />
         <div className="h-24 mt-5 rounded-[16px] border border-site-border bg-white" />
         <div className="h-24 mt-3 rounded-[16px] border border-site-border bg-white" />
       </div>
@@ -312,7 +312,9 @@ function StudioBody({ view }: { view: "create" | "library" | "instructor" }) {
       className={
         "professional-studio mx-auto w-full px-4 pt-6 pb-24 md:px-6 lg:px-8 lg:pt-10 " +
         (view === "instructor"
-          ? "max-w-[720px]"
+          ? /* P4 — full-height flex column so the empty gate card centres in
+               the remaining space and the footnote sits at the bottom */
+            "flex min-h-full flex-col max-w-[720px]"
           : "max-w-[640px] lg:max-w-[1120px]")
       }
     >
@@ -387,7 +389,7 @@ function StudioBody({ view }: { view: "create" | "library" | "instructor" }) {
               : s["proCreate.signInGateNotice"]}
           </p>
           <a
-            className="mt-2 inline-block text-small font-semibold text-[#15803D] underline"
+            className="mt-3 inline-block text-small font-semibold text-[#15803D] underline"
             href={identity.account?.sign_in_url || "/professional/lessons"}
           >
             {identity.account?.sign_in_url
@@ -413,8 +415,8 @@ function StudioBody({ view }: { view: "create" | "library" | "instructor" }) {
               }}
             />
           </div>
-          <aside className="mt-10 space-y-5 lg:sticky lg:top-[112px] lg:mt-0 lg:w-[320px]">
-            <div className="rounded-[16px] border border-site-border bg-white p-5">
+          <aside className="mt-8 space-y-5 lg:sticky lg:top-20 lg:mt-0 lg:w-[320px]">
+            <div className="rounded-[16px] border border-site-border bg-white p-4 lg:p-6">
               <p className="pro-kicker">WHAT HAPPENS NEXT</p>
               <p className="mt-3 text-small text-site-ink">
                 1. Build brief · 2. Practise · 3. Instructor review
@@ -424,7 +426,7 @@ function StudioBody({ view }: { view: "create" | "library" | "instructor" }) {
                 empty-state anatomy (heading, one line, action slot); the brief
                 cards render inside it, no duplicated list. */}
             <div className="rounded-[16px] border border-site-border bg-white">
-              <h2 className="border-b border-site-border px-4 py-3 font-body-ui text-lg font-bold text-site-ink lg:px-5">
+              <h2 className="border-b border-site-border px-4 py-3 font-body-ui text-lg font-bold text-site-ink lg:px-6">
                 Saved training briefs
               </h2>
               {!loading && !requests.length ? (
@@ -440,7 +442,7 @@ function StudioBody({ view }: { view: "create" | "library" | "instructor" }) {
                   </a>
                 </EmptyState>
               ) : (
-                <div className="space-y-4 p-4 lg:p-5">
+                <div className="space-y-5 p-4 lg:p-6">
                   {requests.map((item) => (
                     <RequestCard
                       key={item.id}
@@ -475,7 +477,7 @@ function StudioBody({ view }: { view: "create" | "library" | "instructor" }) {
           </aside>
         </div>
       )}
-      <div className="my-6 flex items-center justify-between gap-3">
+      <div className="my-8 flex items-center justify-between gap-3">
         <p className="text-small text-site-muted" role="status">
           {loading ? "Loading saved learning…" : "Saved progress and requests"}
         </p>
@@ -491,11 +493,11 @@ function StudioBody({ view }: { view: "create" | "library" | "instructor" }) {
         <div className="pro-hub-sections">
           {/* 5.3 (L8a) — order: Next action FIRST, then saved progress + saved
               briefs in one grid, then Trade courses. Every group is a card. */}
-          <section className="pro-active-training scroll-mt-28 mt-8">
+          <section className="pro-active-training scroll-mt-18 mt-8">
             <Panel>
               <div>
                 <p className="pro-kicker">YOUR NEXT ACTION</p>
-                <h2 className="mt-2 font-body-ui text-2xl font-bold text-site-ink">
+                <h2 className="mt-3 font-body-ui text-2xl font-bold text-site-ink">
                   Active training
                 </h2>
               </div>
@@ -556,7 +558,7 @@ function StudioBody({ view }: { view: "create" | "library" | "instructor" }) {
             </Panel>
           </section>
           <div className="mt-8 grid gap-3 lg:grid-cols-2 lg:gap-5">
-            <section className="pro-saved-sessions scroll-mt-28 space-y-3">
+            <section className="pro-saved-sessions scroll-mt-18 space-y-3">
               <Panel className="h-full">
                 <h2 className="font-body-ui text-2xl font-bold text-site-ink">
                   Saved practice sessions
@@ -580,7 +582,7 @@ function StudioBody({ view }: { view: "create" | "library" | "instructor" }) {
                       <h3 className="break-words font-body-ui text-xl font-semibold">
                         {entry.title}
                       </h3>
-                      <p className="mt-2 text-small text-site-muted">
+                      <p className="mt-3 text-small text-site-muted">
                         {entry.completed_steps}/{entry.total_steps} practice
                         checkpoints
                       </p>
@@ -590,7 +592,7 @@ function StudioBody({ view }: { view: "create" | "library" | "instructor" }) {
                 ))}
               </Panel>
             </section>
-            <section className="pro-saved-briefs scroll-mt-28 space-y-3">
+            <section className="pro-saved-briefs scroll-mt-18 space-y-3">
               <Panel className="h-full">
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <h2 className="font-body-ui text-2xl font-bold text-site-ink">
@@ -649,7 +651,7 @@ function StudioBody({ view }: { view: "create" | "library" | "instructor" }) {
               </Panel>
             </section>
           </div>
-          <section className="pro-catalogue scroll-mt-28 mt-8">
+          <section className="pro-catalogue scroll-mt-18 mt-8">
             <Panel>
               <h2 className="font-body-ui text-2xl font-bold text-site-ink">
                 Trade courses
@@ -687,6 +689,15 @@ function StudioBody({ view }: { view: "create" | "library" | "instructor" }) {
               {!loading && !shown.length && (
                 <EmptyState heading="Trade courses" line="No matching courses." />
               )}
+              {/* P3 — the full enrol gate explanation lives ONLY in this one
+                  shared notice above the course grid; the per-card sign-in
+                  sentence is removed (the disabled Enrol button + this notice
+                  carry the meaning). */}
+              {!signedIn && (
+                <p className="mb-4 rounded-[16px] border border-[#F59E0B]/30 bg-[#F59E0B]/10 p-4 text-small text-site-ink">
+                  {s["hub.enrollDisabledSignIn"]}
+                </p>
+              )}
               {/* 5.6 — course cards: two columns from 1024px (2x2 at ≥1280), equal height per row */}
               <div className="grid grid-cols-1 gap-3 lg:grid-cols-2 lg:gap-5">
                 {shown.map((course) => (
@@ -712,49 +723,53 @@ function StudioBody({ view }: { view: "create" | "library" | "instructor" }) {
           </section>
         </div>
       )}
-      {view === "instructor" && (
-        <div className="space-y-5">
-          {/* 5.4 (M8) — the empty gate card is vertically centred in the
-              remaining viewport height; the desk layout is untouched when
-              reviews exist. */}
-          {!identity.account?.is_admin ? (
-            <div className="flex min-h-[60svh] items-center justify-center">
-              <div className="w-full max-w-[720px] rounded-[16px] border border-site-border bg-white p-8 text-center">
+      {/* P4 — the studio column is a full-height flex column on the instructor
+          view; the empty gate card is centred in the REMAINING space (my-auto
+          on a flex-col child distributes leftover space equally above and
+          below), replacing the former min-h-[60svh] wrapper that pushed the
+          card down instead of centring it. The desk layout is untouched when
+          reviews exist. */}
+      {view === "instructor" &&
+        (identity.account?.is_admin ? (
+          <div className="space-y-5">
+            {!loading && !queue.length ? (
+              <p className="text-site-muted">No reviews waiting.</p>
+            ) : (
+              queue.map((entry) => (
+                <InstructorCard
+                  key={entry.id}
+                  entry={entry}
+                  busy={busy}
+                  run={run}
+                  refresh={load}
+                  decide={(decision, notes) =>
+                    void run(async () => {
+                      await post(
+                        "/v1/professional/enrollments/" + entry.id + "/review",
+                        { expected_version: entry.version, decision, notes },
+                      );
+                      await load();
+                    })
+                  }
+                />
+              ))
+            )}
+          </div>
+        ) : (
+          <div className="my-auto flex items-center justify-center py-8">
+            <div className="w-full max-w-[720px] rounded-[16px] border border-site-border bg-white p-4 text-center lg:p-6">
               <h2 className="font-body-ui text-2xl font-bold text-site-ink">
                 {s["proInstructor.EmptyTitle"]}
               </h2>
-              <p className="mx-auto mt-2 max-w-[448px] text-small text-site-muted">
+              <p className="mx-auto mt-3 max-w-[448px] text-small text-site-muted">
                 {s["proInstructor.EmptyLine"]}
               </p>
               <a className={secondary + " mt-4"} href="/professional/lessons">
                 {s["proInstructor.EmptyAction"]}
               </a>
-              </div>
             </div>
-          ) : !loading && !queue.length ? (
-            <p className="text-site-muted">No reviews waiting.</p>
-          ) : (
-            queue.map((entry) => (
-              <InstructorCard
-                key={entry.id}
-                entry={entry}
-                busy={busy}
-                run={run}
-                refresh={load}
-                decide={(decision, notes) =>
-                  void run(async () => {
-                    await post(
-                      "/v1/professional/enrollments/" + entry.id + "/review",
-                      { expected_version: entry.version, decision, notes },
-                    );
-                    await load();
-                  })
-                }
-              />
-            ))
-          )}
-        </div>
-      )}
+          </div>
+        ))}
       {view === "instructor" && identity.account?.is_admin && (
         <InstructorAssignments
           assignments={assignments}
@@ -768,7 +783,7 @@ function StudioBody({ view }: { view: "create" | "library" | "instructor" }) {
           footnote: one slim allowance row + the muted disclaimer line + one
           slim account row (the real sign-in entry is preserved). The create
           view keeps the full allowance card (5.3 L4). */}
-      <section aria-label={s.footnoteBlocks} className="mt-10 space-y-3">
+      <section aria-label={s.footnoteBlocks} className="mt-8 space-y-3">
         {view === "create" ? (
           <>
             <AiAllowance config={identity.config} />
@@ -904,7 +919,7 @@ function RequestForm({
           an internal section, a divider, the confirmation checkbox, then the
           footer action row. Nothing form-related renders outside the card. */}
       <Panel>
-        <div className="space-y-5">
+        <div className="space-y-4">
           <p className="pro-kicker">01 / TRAINING BRIEF</p>
           <div className="grid gap-4 sm:grid-cols-2">
             <label className="block text-small font-semibold text-site-ink">
@@ -1035,7 +1050,7 @@ function RequestForm({
             />
             <span>Classroom or disconnected training only.</span>
           </label>
-          <p className="mt-2 text-caption text-site-muted">
+          <p className="mt-3 text-caption text-site-muted">
             {s["proCreate.classroomHelp"]}
           </p>
         </div>
@@ -1123,7 +1138,7 @@ function RequestCard({
       <h3 className="break-words font-body-ui text-xl font-semibold text-site-ink">
         {item.goal}
       </h3>
-      <p className="mt-2 text-small text-site-muted">
+      <p className="mt-3 text-small text-site-muted">
         {item.status === "draft"
           ? "Saved inputs · not analyzed by AI"
           : item.status === "ready"
@@ -1215,27 +1230,30 @@ function CourseCard({
   signedIn: boolean;
   enroll: () => void;
 }) {
-  /* 5.8 — the classroom confirmation lives once at hub level; each card keeps only the trade label, title, lesson names with step counts and the Enroll button, with the disabled reason inline */
+  /* 5.8 / P3 — the classroom confirmation lives once at hub level; each card
+     keeps only the trade label, title, lesson names with step counts and the
+     Enrol button. The full sign-in sentence is NOT repeated per card — it
+     lives in the one shared notice above the course grid; the per-card reason
+     keeps only the actionable sign-in link line or the confirm reminder. */
   const identity = useIdentity();
-  const reason =
-    !signedIn
-      ? identity.account?.sign_in_url
-        ? s["hub.enrollDisabledSignInAvailable"]
-        : s["hub.enrollDisabledSignIn"]
-      : !confirmed
-        ? s["hub.enrollDisabledConfirm"]
-        : null;
+  const reason = signedIn
+    ? !confirmed
+      ? s["hub.enrollDisabledConfirm"]
+      : null
+    : identity.account?.sign_in_url
+      ? s["hub.enrollDisabledSignInAvailable"]
+      : null;
   return (
     <Panel>
       <p className="text-caption font-semibold uppercase tracking-wide text-[#15803D]">
         {course.trade}
       </p>
       <a href={"/professional/course/" + course.id}>
-        <h3 className="mt-2 font-body-ui text-xl font-bold text-site-ink group-hover:text-[#15803D]">
+        <h3 className="mt-3 font-body-ui text-xl font-bold text-site-ink group-hover:text-[#15803D]">
           {course.title}
         </h3>
       </a>
-      <ol className="mt-4 list-inside list-decimal space-y-2 text-small text-site-ink">
+      <ol className="mt-4 list-inside list-decimal space-y-3 text-small text-site-ink">
         {course.lessons.map((lesson) => (
           <li key={lesson.id}>
             <a
@@ -1265,7 +1283,7 @@ function CourseCard({
           {s["proCourse.previewCta"]}
         </a>
       </div>
-      {reason && <p className="mt-2 text-small text-site-muted">{reason}</p>}
+      {reason && <p className="mt-3 text-small text-site-muted">{reason}</p>}
     </Panel>
   );
 }
@@ -1296,10 +1314,10 @@ function EnrollmentCard({
       <p className="pro-kicker">
         {entry.course.trade} / {statusName(entry.status)}
       </p>
-      <h3 className="mt-2 font-body-ui text-xl font-semibold text-site-ink">
+      <h3 className="mt-3 font-body-ui text-xl font-semibold text-site-ink">
         {entry.course.title}
       </h3>
-      <p className="mt-2 text-small text-site-muted">
+      <p className="mt-3 text-small text-site-muted">
         {done}/{total} practice steps · {entry.evidence_count || 0} evidence
         records ·{" "}
         {entry.evidence_shared
@@ -1403,7 +1421,7 @@ function EnrollmentCard({
           Request instructor review
         </button>
         {!entry.practice_complete && (
-          <p className="mt-2 text-small text-site-muted">
+          <p className="mt-3 text-small text-site-muted">
             Complete all lesson checkpoints before requesting review.
           </p>
         )}
@@ -1429,10 +1447,10 @@ function InstructorCard({
   return (
     <Panel>
       <p className="pro-kicker">{entry.course.trade} / REVIEW REQUEST</p>
-      <h3 className="mt-2 font-body-ui text-xl font-bold text-site-ink">
+      <h3 className="mt-3 font-body-ui text-xl font-bold text-site-ink">
         {entry.course.title}
       </h3>
-      <p className="mt-2 text-small text-site-muted">
+      <p className="mt-3 text-small text-site-muted">
         Learner: {entry.learner_name}. Review the classroom work directly before
         deciding.
       </p>
@@ -1532,16 +1550,16 @@ function AssignmentPanel({
       approved: "Passed — instructor-reviewed training assessment",
     }[assignment.status] || assignment.status;
   return (
-    <div className="mt-5 rounded-2xl border border-[#16A34A]/30 bg-[#16A34A]/5 p-4">
+    <div className="mt-5 rounded-2xl border border-[#16A34A]/30 bg-[#16A34A]/5 p-4 lg:p-6">
       <p className="pro-kicker">PROFESSIONAL ASSIGNMENT</p>
-      <h4 className="mt-2 font-body-ui text-lg font-bold text-site-ink">
+      <h4 className="mt-3 font-body-ui text-lg font-bold text-site-ink">
         {assignment.brief.title}
       </h4>
-      <p className="mt-2 text-small text-site-ink">
+      <p className="mt-3 text-small text-site-ink">
         {assignment.brief.outcome}
       </p>
       {assignment.brief.materials.length > 0 && (
-        <p className="mt-2 text-small text-site-muted">
+        <p className="mt-3 text-small text-site-muted">
           Materials: {assignment.brief.materials.join(" · ")}
         </p>
       )}
@@ -1554,7 +1572,7 @@ function AssignmentPanel({
       <h5 className="mt-4 text-small font-semibold text-site-ink">
         Preparation checks
       </h5>
-      <div className="mt-2 space-y-2">
+      <div className="mt-3 space-y-3">
         {assignment.preparation.map((item) => (
           <label
             key={item.id}
@@ -1600,7 +1618,7 @@ function AssignmentPanel({
       <h5 className="mt-4 text-small font-semibold text-site-ink">
         Required criteria
       </h5>
-      <ul className="mt-2 space-y-2">
+      <ul className="mt-3 space-y-3">
         {assignment.criteria.map((item) => (
           <li
             key={item.id}
@@ -1707,10 +1725,10 @@ function InstructorAssignments({
       .map((item) => item.trim())
       .filter(Boolean);
   return (
-    <div className="mt-10 space-y-5">
+    <div className="mt-8 space-y-5">
       <div>
         <p className="pro-kicker">ASSIGNMENTS</p>
-        <h2 className="mt-2 font-body-ui text-2xl font-bold text-site-ink">
+        <h2 className="mt-3 font-body-ui text-2xl font-bold text-site-ink">
           Assignment briefs and assessment
         </h2>
       </div>
@@ -1824,10 +1842,10 @@ function InstructorAssignments({
           <p className="pro-kicker">
             {assignment.learner_name || "Learner"} · {assignment.status}
           </p>
-          <h3 className="mt-2 font-body-ui text-xl font-bold text-site-ink">
+          <h3 className="mt-3 font-body-ui text-xl font-bold text-site-ink">
             {assignment.brief.title}
           </h3>
-          <p className="mt-2 text-small text-site-muted">
+          <p className="mt-3 text-small text-site-muted">
             {assignment.brief.outcome}
           </p>
           {assignment.status === "submitted" ? (
@@ -1842,7 +1860,7 @@ function InstructorAssignments({
                     <p className="text-small font-semibold text-site-ink">
                       {criterion.label}
                     </p>
-                    <label className="mt-2 block text-small font-semibold text-site-ink">
+                    <label className="mt-3 block text-small font-semibold text-site-ink">
                       Criterion feedback
                       <textarea
                         className={field}
@@ -1862,7 +1880,7 @@ function InstructorAssignments({
                       enrollmentID={assignment.enrollment_id}
                       criterionID={criterion.id}
                     />
-                    <div className="mt-3 flex flex-wrap gap-2">
+                    <div className="mt-3 flex flex-wrap gap-3">
                       <button
                         className={primary}
                         disabled={busy}
@@ -2008,26 +2026,26 @@ function CriterionEvidence({
   }, [identity.request, enrollmentID, criterionID]);
   if (state === "loading")
     return (
-      <p role="status" className="mt-2 text-small text-site-muted">
+      <p role="status" className="mt-3 text-small text-site-muted">
         Loading submitted evidence…
       </p>
     );
   if (state === "unavailable")
     return (
-      <p className="mt-2 text-small text-site-muted">
+      <p className="mt-3 text-small text-site-muted">
         Submitted evidence is not shared with instructors right now.
       </p>
     );
   if (!items.length)
     return (
-      <p className="mt-2 text-small text-site-muted">
+      <p className="mt-3 text-small text-site-muted">
         {criterionID
           ? "No evidence linked to this criterion yet."
           : "No general evidence submitted."}
       </p>
     );
   return (
-    <div className="mt-2 space-y-2">
+    <div className="mt-3 space-y-3">
       {items.map((item) => (
         <div key={item.id} className="rounded-lg bg-white p-3">
           <p className="text-small font-semibold text-site-ink">
@@ -2041,7 +2059,7 @@ function CriterionEvidence({
           {item.has_photo && (
             <button
               type="button"
-              className={secondary + " mt-2"}
+              className={secondary + " mt-3"}
               onClick={() =>
                 setVisible((previous) =>
                   previous.includes(item.id)

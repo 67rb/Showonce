@@ -51,7 +51,7 @@ export default async function CoursePreviewPage({
         <a className="text-small font-medium underline text-site-ink" href="/professional/lessons/">
           {s["proSample.backToHub"]}
         </a>
-        <header className="scroll-mt-28 lg:flex lg:items-start lg:justify-between lg:gap-8">
+        <header className="scroll-mt-18 lg:flex lg:items-start lg:justify-between lg:gap-8">
           <div className="min-w-0">
           <p className="font-body-ui text-small font-semibold uppercase tracking-[0.14em] text-[#15803D]">
             {course.trade} · {course.level}
@@ -92,7 +92,7 @@ export default async function CoursePreviewPage({
             <section
               key={lesson.id}
               id={"lesson-" + lesson.id}
-              className="mt-8 scroll-mt-28 first:mt-0"
+              className="mt-8 scroll-mt-18 first:mt-0"
             >
               <div className="rounded-[16px] border border-site-border bg-white p-4 lg:p-6">
                 <div className="flex flex-wrap items-baseline justify-between gap-3">
@@ -151,7 +151,7 @@ export default async function CoursePreviewPage({
 
         {/* 5.4 (M3) — ONE slim enrol banner replaces the dual-CTA card: the
             gate reason plus the hub as a text link. */}
-        <section className="scroll-mt-28 mt-10 rounded-[16px] border border-[#16A34A]/30 bg-[#16A34A]/5 p-4">
+        <section className="scroll-mt-18 mt-10 rounded-[16px] border border-[#16A34A]/30 bg-[#16A34A]/5 p-4">
           <p className="font-body-ui text-small text-site-ink">
             {s["proCourse.enrolGate"]} In the training hub you confirm
             classroom-only training, enrol, and your progress is saved for

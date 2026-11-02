@@ -21,4 +21,6 @@
 .pro-input { margin-top:.5rem; width:100%; min-width:0; border:1px solid #c0d6c7; border-radius:.65rem; padding:.75rem; background:white; color:#16161a; }
 .pro-input:focus-visible,.pro-action:focus-visible { outline:2px solid #15803d; outline-offset:3px; }
 @media(max-width:700px) { .pro-stat-grid { grid-template-columns:repeat(2,minmax(0,1fr)); gap:.6rem; } }
-.professional-studio section[id^="brief-"] { scroll-margin-top:8rem; }
+/* P1 — the docked interior header is 64px in flow, so the brief anchors clear
+   it with header height + 8px (72px) instead of the old fixed-pill 8rem. */
+.professional-studio section[id^="brief-"] { scroll-margin-top:4.5rem; }

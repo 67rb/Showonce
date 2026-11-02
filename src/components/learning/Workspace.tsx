@@ -39,7 +39,7 @@ const primary =
 const secondary =
   "inline-flex min-h-11 items-center justify-center text-center rounded-full border border-site-border bg-white px-5 py-3 font-semibold text-site-ink disabled:opacity-50";
 const field =
-  "mt-2 w-full rounded-2xl border border-site-border bg-white p-4 text-site-ink";
+  "mt-4 w-full rounded-2xl border border-site-border bg-white p-4 text-site-ink";
 /* 5.4 (M5c) — committed media for the example rail cards: the origami example
    reuses the committed origami sample asset; the other categories use
    committed category line-diagrams drawn in the same style. No external
@@ -112,7 +112,7 @@ function SavedObservations({
   return (
     <div className="mt-5 rounded-2xl border border-site-border bg-site-page p-4">
       <h3 className="font-semibold text-site-ink">Your saved self-review</h3>
-      <ul className="mt-3 list-inside list-disc space-y-2 text-site-ink">
+      <ul className="mt-3 list-inside list-disc space-y-3 text-site-ink">
         {entries.flatMap((entry) => {
           const stepIndex = lesson.steps.findIndex(
             (item) => item.id === entry.step_id,
@@ -569,12 +569,12 @@ function CreatePanel() {
             </button>
           </div>
         </div>
-        <aside className="mt-8 space-y-5 lg:mt-0 lg:sticky lg:top-[112px] lg:w-[320px]">
+        <aside className="mt-8 space-y-5 lg:mt-0 lg:sticky lg:top-20 lg:w-[320px]">
           <Card>
             <h2 className="text-2xl font-bold text-site-ink">
               {preview.title}
             </h2>
-            <p className="mt-2 text-site-ink">
+            <p className="mt-3 text-site-ink">
               Review the steps and edit any instructions before you start.
             </p>
           </Card>
@@ -687,7 +687,7 @@ function CreatePanel() {
                       onChange={(e) => setPracticeName(e.target.value)}
                       placeholder={s["freeSteps.nameHint"]}
                     />
-                    <span className="mt-2 block text-small text-site-muted">
+                    <span className="mt-3 block text-small text-site-muted">
                       {s["freeSteps.nameHint"]}
                     </span>
                   </label>
@@ -714,7 +714,7 @@ function CreatePanel() {
                     className={field}
                   />
                   {draft.mode === "topic" && (
-                    <span className="mt-2 block text-small font-normal text-site-muted">
+                    <span className="mt-3 block text-small font-normal text-site-muted">
                       {s["topic.hint"]}
                     </span>
                   )}
@@ -752,7 +752,7 @@ function CreatePanel() {
                   onChange={(e) => update("linkTranscript", e.target.value)}
                   className={field}
                 />
-                <span className="mt-2 block text-small text-site-muted">
+                <span className="mt-3 block text-small text-site-muted">
                   Your original link remains attached. Changing the link will
                   not submit this transcript for a different source.
                 </span>
@@ -854,18 +854,18 @@ function CreatePanel() {
               >
                 Use numbered steps · free
               </button>
-              <p className="mt-1 text-site-muted">
+              <p className="mt-3 text-site-muted">
                 Write 2–18 steps. Your source link stays attached; no AI request
                 is needed.
               </p>
             </div>
           )}
         </form>
-        <p className="mt-6 text-center font-body-ui text-caption text-site-muted">
+        <p className="mt-8 text-center font-body-ui text-caption text-site-muted">
           {s.privacyClaim}
         </p>
       </div>
-      <aside className="mt-8 space-y-5 lg:mt-0 lg:sticky lg:top-[112px] lg:w-[320px]">
+      <aside className="mt-8 space-y-5 lg:mt-0 lg:sticky lg:top-20 lg:w-[320px]">
         <Card>
           <p className="text-small font-semibold uppercase text-site-muted">
             {s.createStepStripTitle}
@@ -896,11 +896,11 @@ function CreatePanel() {
             </p>
           </div>
         )}
-        <section id="examples" className="learning-examples scroll-mt-28">
+        <section id="examples" className="learning-examples scroll-mt-18">
           <h2 className="font-body-ui text-2xl font-bold text-site-ink">
             Try a free example.
           </h2>
-          <p className="mt-2 text-small text-site-muted">
+          <p className="mt-3 text-small text-site-muted">
             Opening an author-written example uses no AI credits.
           </p>
           <div className="mt-5 grid gap-3 lg:gap-5">
@@ -1085,7 +1085,7 @@ function LibraryPanel() {
         .includes(search.trim().toLowerCase()),
   );
   return (
-    <div className="space-y-6 lg:space-y-8">
+    <div className="space-y-8 lg:space-y-12">
       {/* 5.3 (L6) — exactly ONE New lesson action: desktop right-aligned on the
           H1 row (hidden on mobile, which uses the sticky bottom bar below). */}
       <header className="flex flex-wrap items-start justify-between gap-4">
@@ -1104,7 +1104,7 @@ function LibraryPanel() {
       </header>
       {/* 5.3 (L6) — the filter card keeps Search + Status only, labels above
           both on a shared baseline; the New lesson button no longer lives here. */}
-      <div className="scroll-mt-28 rounded-[16px] border border-site-border bg-white p-4 lg:p-6">
+      <div className="scroll-mt-18 rounded-[16px] border border-site-border bg-white p-4 lg:p-6">
         <p className="text-small font-semibold text-site-ink">
           Find and filter practices
         </p>
@@ -1155,7 +1155,7 @@ function LibraryPanel() {
         </p>
       )}
       {/* 5.6 — lesson cards: one column on mobile/tablet, two columns from 1024px; equal height per row, titles never truncate */}
-      <div className="mt-4 grid scroll-mt-28 grid-cols-1 gap-3 lg:grid-cols-2 lg:gap-5">
+      <div className="mt-4 grid scroll-mt-18 grid-cols-1 gap-3 lg:grid-cols-2 lg:gap-5">
         {shown.map((entry, idx) => (
           <article
             key={entry.id}
@@ -1184,7 +1184,7 @@ function LibraryPanel() {
                     →
                   </span>
                 </div>
-                <p className="mt-1 font-body-ui text-small font-medium text-site-muted">
+                <p className="mt-3 font-body-ui text-small font-medium text-site-muted">
                   {String(idx + 1).padStart(2, "0")} · {entry.total_steps}{" "}
                   checkpoints · {entry.category}
                 </p>
@@ -1194,7 +1194,7 @@ function LibraryPanel() {
                   max={entry.total_steps}
                   aria-label={`${entry.completed_steps} of ${entry.total_steps} checkpoints practiced`}
                 />
-                <p className="mt-1.5 text-small font-medium text-site-muted">
+                <p className="mt-3 text-small font-medium text-site-muted">
                   {entry.completed_steps} of {entry.total_steps} checkpoints
                   practiced ·{" "}
                   {entry.completed_steps === 0
@@ -1205,7 +1205,7 @@ function LibraryPanel() {
                 </p>
               </div>
             </a>
-            <div className="flex items-center justify-between gap-2 border-t border-site-border px-4 py-3 lg:px-6">
+            <div className="flex items-center justify-between gap-3 border-t border-site-border px-4 py-3 lg:px-6">
               <a
                 href={lessonHref(
                   entry.lesson_id,
@@ -1718,7 +1718,7 @@ function LessonPanel({
         </button>
       </div>
       {history && (
-        <ul className="mt-5 space-y-6">
+        <ul className="mt-5 space-y-5">
           {history.length ? (
             history.map((item) => (
               <li key={item.id} className="border-t border-site-border pt-4">
@@ -1728,7 +1728,7 @@ function LessonPanel({
                     1}{" "}
                   · {item.assessment?.result || item.status}
                 </strong>
-                <p className="my-2 text-site-ink">
+                <p className="my-3 text-site-ink">
                   {item.assessment?.feedback}
                 </p>
                 <p className="text-small text-site-muted">
@@ -1855,7 +1855,7 @@ function LessonPanel({
     </Card>
   );
   return (
-    <div className="space-y-6 lg:space-y-8">
+    <div className="space-y-8 lg:space-y-12">
       <div className="flex flex-wrap items-center justify-between gap-4">
         {/* 5.4 (M4c) — ONE back link per player: on Professional it lives in
             the banner (rendering immediately, before the account check), on
@@ -1895,7 +1895,7 @@ function LessonPanel({
       <ErrorMessage message={error} />
       {completed && !revisit ? (
         /* 5.6 — completion state: summary left, history/actions right (same two columns) */ <div className="lg:grid lg:grid-cols-[minmax(0,560px)_minmax(0,1fr)] lg:items-start lg:gap-8">
-          <div className="min-w-0 space-y-5 lg:sticky lg:top-[112px] lg:max-w-[560px]">
+          <div className="min-w-0 space-y-5 lg:sticky lg:top-20 lg:max-w-[560px]">
             <Card>
               <h2 className="text-3xl font-bold text-site-ink">
                 A step further along.
@@ -1972,8 +1972,8 @@ function LessonPanel({
         </div>
       ) : /* 5.6 — lesson overview: cover left, path + materials right, same two-column desktop grid */ screen ===
           "overview" || !progress ? (
-        <div className="mt-4 scroll-mt-28 lg:grid lg:grid-cols-[minmax(0,560px)_minmax(0,1fr)] lg:items-start lg:gap-8">
-          <div className="mb-6 min-w-0 self-start lg:mb-0 lg:sticky lg:top-[112px] lg:max-w-[560px]">
+        <div className="mt-4 scroll-mt-18 lg:grid lg:grid-cols-[minmax(0,560px)_minmax(0,1fr)] lg:items-start lg:gap-8">
+          <div className="mb-8 min-w-0 self-start lg:mb-0 lg:sticky lg:top-20 lg:max-w-[560px]">
             <div className="rounded-[16px] border border-site-border bg-white p-3">
               <SavedLessonCover lesson={lesson} token={token} large />
             </div>
@@ -2029,7 +2029,7 @@ function LessonPanel({
                 ))}
               </ul>
               <Source lesson={lesson} />
-              <div className="mt-6">
+              <div className="mt-8">
                 {progress ? (
                   <a
                     className={primary}
@@ -2059,8 +2059,8 @@ function LessonPanel({
           </div>
         </div>
       ) : (
-        /* 5.6 — runtime play: two columns on desktop (progress + target visual + step text left, sticky; Check / camera panel / Ask right); single column on mobile with the primary step action in the sticky bottom bar */ <div className="scroll-mt-28 lg:grid lg:grid-cols-[minmax(0,560px)_minmax(0,1fr)] lg:items-start lg:gap-8">
-          <div className="min-w-0 space-y-5 lg:sticky lg:top-[112px] lg:max-w-[560px]">
+        /* 5.6 — runtime play: two columns on desktop (progress + target visual + step text left, sticky; Check / camera panel / Ask right); single column on mobile with the primary step action in the sticky bottom bar */ <div className="scroll-mt-18 lg:grid lg:grid-cols-[minmax(0,560px)_minmax(0,1fr)] lg:items-start lg:gap-8">
+          <div className="min-w-0 space-y-5 lg:sticky lg:top-20 lg:max-w-[560px]">
             <label className="block font-semibold text-site-ink">
               Checkpoint
               <select
@@ -2115,7 +2115,7 @@ function LessonPanel({
                 {step.title || "Try this step"}
               </h2>
               <p className="mt-4 text-xl text-site-ink">{step.instructions}</p>
-              <div className="my-5 rounded-2xl bg-site-page p-5 text-site-ink">
+              <div className="my-5 rounded-2xl bg-site-page p-4 text-site-ink lg:p-6">
                 <p>{step.expected_visual_result}</p>
                 <StepIllustration
                   key={lesson.id + ":" + step.id}
@@ -2134,7 +2134,7 @@ function LessonPanel({
                   />
                 )}
               </div>
-              <ul className="space-y-2 text-site-ink">
+              <ul className="space-y-3 text-site-ink">
                 {step.assessment_criteria?.map((item) => (
                   <li key={item}>✓ {item}</li>
                 ))}
@@ -2152,7 +2152,7 @@ function LessonPanel({
               <Source lesson={lesson} step={step} />
             </Card>
           </div>
-          <div className="min-w-0 mt-6 space-y-5 lg:mt-0">
+          <div className="min-w-0 mt-8 space-y-5 lg:mt-0">
             <Card>
               {!current ? (
                 <>
@@ -2196,13 +2196,13 @@ function LessonPanel({
                         <h3 className="font-semibold text-site-ink">
                           {s["freeSteps.localCompareTitle"]}
                         </h3>
-                        <p className="mt-2 text-small text-site-muted">
+                        <p className="mt-3 text-small text-site-muted">
                           {s["freeSteps.localCompareBody"]}
                         </p>
                         <label className="mt-3 block text-small font-semibold text-site-ink">
                           {s["freeSteps.choosePhoto"]}
                           <input
-                            className="mt-2 w-full rounded-2xl border border-site-border bg-white px-4 py-3 text-small text-site-ink"
+                            className="mt-4 w-full rounded-2xl border border-site-border bg-white px-4 py-3 text-small text-site-ink"
                             type="file"
                             accept="image/png,image/jpeg,image/webp"
                             disabled={busy}
@@ -2304,7 +2304,7 @@ function LessonPanel({
                   {step.photo_assessable === false ? null : (
                     <button
                       disabled={busy}
-                      className={secondary + " mt-4 w-full lg:mt-6"}
+                      className={secondary + " mt-4 w-full lg:mt-8"}
                       onClick={() => void acknowledge()}
                     >
                       I’ve practiced this step · self-review
@@ -2416,7 +2416,7 @@ function Feedback({ value }: { value: Assessment }) {
   return (
     <div
       role="status"
-      className="mt-6 rounded-2xl border border-site-border bg-site-page p-5"
+      className="mt-8 rounded-2xl border border-site-border bg-site-page p-4 lg:p-6"
     >
       <h3 className="font-semibold">
         {
@@ -2427,7 +2427,7 @@ function Feedback({ value }: { value: Assessment }) {
           }[value.result]
         }
       </h3>
-      <p className="mt-2">{value.feedback}</p>
+      <p className="mt-3">{value.feedback}</p>
       <ul className="mt-3 list-inside list-disc">
         {[...value.corrections, ...value.requested_evidence].map((item) => (
           <li key={item}>{item}</li>
