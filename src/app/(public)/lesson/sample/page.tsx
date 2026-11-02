@@ -85,17 +85,12 @@ export default function SampleLessonPage() {
                   <p className="mt-2 font-body-ui text-site-ink">
                     {step.instructions}
                   </p>
-                  {/* 5.3 (L5b) — label and value are separate elements: the
-                      small-caps label gets its own line with a 4px gap. */}
-                  <p className="mt-3 font-body-ui text-small font-semibold uppercase tracking-[0.12em] text-accent-deep">
-                    {s["sample.targetLabel"]}
-                  </p>
+                  {/* 5.4 (M7a) — quiet shared label style (step-label). */}
+                  <p className="step-label mt-3">{s["sample.targetLabel"]}</p>
                   <p className="mt-1 text-small font-body-ui text-site-muted">
                     {step.target}
                   </p>
-                  <p className="mt-3 font-body-ui text-small font-semibold uppercase tracking-[0.12em] text-accent-deep">
-                    {s["sample.criterionLabel"]}
-                  </p>
+                  <p className="step-label mt-3">{s["sample.criterionLabel"]}</p>
                   <p className="mt-1 text-small font-body-ui text-site-muted">
                     {step.criterion}
                   </p>

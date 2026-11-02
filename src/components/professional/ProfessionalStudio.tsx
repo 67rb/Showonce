@@ -499,13 +499,32 @@ function StudioBody({ view }: { view: "create" | "library" | "instructor" }) {
                   Active training
                 </h2>
               </div>
+              {/* 5.4 (M6a) — the resolved empty states carry a heading, one
+                  line and the action slot (the three-dot decoration is gone
+                  from EmptyState itself). */}
               {!loading && !enrollments.length && (
-                <EmptyState line="Enroll in a course to begin.">
+                <EmptyState
+                  heading="Next action"
+                  line="Enroll in a course to begin."
+                >
                   <a className={secondary} href="/professional/create/">
                     {s.proNavBrief}
                   </a>
                 </EmptyState>
               )}
+              {/* 5.4 (M6b) — the classroom confirmation moves into the
+                  Next-action card it actually gates (enrolment), not between
+                  the filter card and the course grid. */}
+              <label className="flex items-start gap-3 text-small text-site-ink">
+                <input
+                  type="checkbox"
+                  className="mt-1"
+                  checked={confirmAll}
+                  onChange={(e) => setConfirmAll(e.target.checked)}
+                  disabled={busy}
+                />
+                <span>{s["hub.confirmLabel"]}</span>
+              </label>
               {enrollments.map((entry) => (
                 <EnrollmentCard
                   key={entry.id}
@@ -661,24 +680,12 @@ function StudioBody({ view }: { view: "create" | "library" | "instructor" }) {
                   </select>
                 </label>
               </div>
-              {/* 5.3 (L8b) — the notice keeps its text only; the classroom
-                  confirmation lives in its own labelled row (not inside the
-                  notice box, and not deleted: it still gates enrol). */}
-              <p className="rounded-[16px] border border-site-border bg-site-page p-4 text-small text-site-muted">
-                {s["hub.sharedNotice"]}
-              </p>
-              <label className="mt-4 flex items-start gap-3 text-small text-site-ink">
-                <input
-                  type="checkbox"
-                  className="mt-1"
-                  checked={confirmAll}
-                  onChange={(e) => setConfirmAll(e.target.checked)}
-                  disabled={busy}
-                />
-                <span>{s["hub.confirmLabel"]}</span>
-              </label>
+              {/* 5.4 (M6b/M6c) — the between-groups disclaimer and checkbox
+                  are gone from here: the disclaimer lives in the compact
+                  footnote (M1), the checkbox lives in the Next-action card.
+                  Each course card keeps only its own gate reason line. */}
               {!loading && !shown.length && (
-                <EmptyState line="No matching courses." />
+                <EmptyState heading="Trade courses" line="No matching courses." />
               )}
               {/* 5.6 — course cards: two columns from 1024px (2x2 at ≥1280), equal height per row */}
               <div className="grid grid-cols-1 gap-3 lg:grid-cols-2 lg:gap-5">
@@ -707,8 +714,12 @@ function StudioBody({ view }: { view: "create" | "library" | "instructor" }) {
       )}
       {view === "instructor" && (
         <div className="space-y-5">
+          {/* 5.4 (M8) — the empty gate card is vertically centred in the
+              remaining viewport height; the desk layout is untouched when
+              reviews exist. */}
           {!identity.account?.is_admin ? (
-            <div className="rounded-[16px] border border-site-border bg-white p-8 text-center">
+            <div className="flex min-h-[60svh] items-center justify-center">
+              <div className="w-full max-w-[720px] rounded-[16px] border border-site-border bg-white p-8 text-center">
               <h2 className="font-body-ui text-2xl font-bold text-site-ink">
                 {s["proInstructor.EmptyTitle"]}
               </h2>
@@ -718,6 +729,7 @@ function StudioBody({ view }: { view: "create" | "library" | "instructor" }) {
               <a className={secondary + " mt-4"} href="/professional/lessons">
                 {s["proInstructor.EmptyAction"]}
               </a>
+              </div>
             </div>
           ) : !loading && !queue.length ? (
             <p className="text-site-muted">No reviews waiting.</p>
@@ -752,15 +764,34 @@ function StudioBody({ view }: { view: "create" | "library" | "instructor" }) {
           refresh={load}
         />
       )}
-      {/* 5.10 — the allowance block and the workspace account block appear once, after the main content, as one combined compact block */}
-      <section aria-label={s.footnoteBlocks} className="mt-10 space-y-5">
-        <AiAllowance config={identity.config} />
-        <p className="text-caption text-site-muted">
-          Practice and AI feedback are separate from instructor approval.
-          Starter curricula need instructor validation; this is not a trade
-          qualification or safety certification.
-        </p>
-        <AccountBar />
+      {/* 5.4 (M1) — pages with no AI action (hub, instructor) use the compact
+          footnote: one slim allowance row + the muted disclaimer line + one
+          slim account row (the real sign-in entry is preserved). The create
+          view keeps the full allowance card (5.3 L4). */}
+      <section aria-label={s.footnoteBlocks} className="mt-10 space-y-3">
+        {view === "create" ? (
+          <>
+            <AiAllowance config={identity.config} />
+            <p className="text-caption text-site-muted">
+              Practice and AI feedback are separate from instructor approval.
+              Starter curricula need instructor validation; this is not a trade
+              qualification or safety certification.
+            </p>
+            <AccountBar />
+          </>
+        ) : (
+          <>
+            <AiAllowance compact config={identity.config} />
+            {/* 5.4 (M6b) — the hub's disclaimer line lives here in the compact
+                footnote instead of between the filter card and the course grid. */}
+            <p className="text-caption text-site-muted">
+              {view === "library"
+                ? s["hub.sharedNotice"]
+                : "Practice and AI feedback are separate from instructor approval. Starter curricula need instructor validation; this is not a trade qualification or safety certification."}
+            </p>
+            <AccountBar compact />
+          </>
+        )}
       </section>
     </div>
   );

@@ -371,6 +371,10 @@ export const strings = {
   signInWorkspaceLine:
     "Practice works without signing in and stays private to this browser.",
 
+  /* 5.4 (M2) — onward links on the face-aware 404s */
+  notFoundSampleAction: "Try the sample lesson",
+  "proNotFound.action": "Open the Training hub",
+
   /* 5.2 — account-check loading and timeout */
   checkingAccount: "Checking your account…",
   accountCheckTimedOut:
@@ -494,6 +498,8 @@ export const strings = {
   "proSample.backToHub": "← Training hub",
   "proCourse.previewEyebrow": "Course preview · read only",
   "proCourse.enrolGate": "Enrolling stays a separate action — sign-in is required to enrol.",
+  "proCourse.runsAfterEnrolment": "Runs after enrolment — this lesson opens in the training hub.",
+  "proCourse.sampleNote": "The free plumbing sample is separate practice; it does not enrol you in this course.",
   "proCourse.enrol": "Enrol",
   "proCourse.lessonStart": "Start sample lesson",
   "proCourse.previewCta": "Read course preview · free",

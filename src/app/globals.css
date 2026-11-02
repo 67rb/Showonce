@@ -90,6 +90,18 @@
   --radius-card: 24px;
 }
 
+/* 5.4 (M7a) — the ONE shared quiet step-label style: 12px semibold, ink-muted,
+   letter-spaced small caps — visually subordinate to the sentence it labels.
+   Used by the sample overviews, the course preview rows and the player target
+   block on both faces. */
+.step-label {
+  font-size: var(--text-caption);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--color-site-muted);
+}
+
 html {
   scroll-behavior: smooth;
 }

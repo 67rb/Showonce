@@ -77,10 +77,10 @@ export default function ProfessionalSamplePage() {
                   <div className="mt-4 min-w-0 flex-1 lg:mt-0">
                     <p className="font-body-ui text-small font-semibold uppercase tracking-[0.12em] text-site-muted">{s["sample.stepLabel"]} {i + 1} · {step.title}</p>
                     <p className="mt-2 font-body-ui text-site-ink">{step.instructions}</p>
-                    {/* 5.3 (L5b) — label and value as separate lines. */}
-                    <p className="mt-3 font-body-ui text-small font-semibold uppercase tracking-[0.12em] text-[#15803D]">{s["sample.targetLabel"]}</p>
+                    {/* 5.4 (M7a) — quiet shared label style (step-label). */}
+                    <p className="step-label mt-3">{s["sample.targetLabel"]}</p>
                     <p className="mt-1 text-small font-body-ui text-site-muted">{step.target}</p>
-                    <p className="mt-3 font-body-ui text-small font-semibold uppercase tracking-[0.12em] text-[#15803D]">{s["sample.criterionLabel"]}</p>
+                    <p className="step-label mt-3">{s["sample.criterionLabel"]}</p>
                     <p className="mt-1 text-small font-body-ui text-site-muted">{step.criterion}</p>
                   </div>
                 </div>

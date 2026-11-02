@@ -33,6 +33,13 @@ export default function ProfessionalNotFound() {
             {s.backHome}
           </Link>
         </Magnetic>
+        {/* 5.4 (M2) — one useful onward link on the Professional face. */}
+        <Link
+          href="/professional/lessons/"
+          className="font-body-ui text-small font-semibold underline text-site-ink"
+        >
+          {s["proNotFound.action"]}
+        </Link>
       </div>
       <PublicFooter />
     </div>

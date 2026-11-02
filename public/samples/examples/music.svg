@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="420" height="320" viewBox="0 0 420 320" role="img" aria-labelledby="t">
+  <title id="t">Steady guitar rhythm reference</title>
+  <rect width="420" height="320" fill="#F7F7F8"/>
+  <path d="M60 240 L60 90 L360 90 L360 240 Z" fill="none" stroke="#16161A" stroke-width="3"/>
+  <line x1="120" y1="90" x2="120" y2="240" stroke="#16161A" stroke-width="3"/>
+  <line x1="180" y1="90" x2="180" y2="240" stroke="#16161A" stroke-width="3"/>
+  <line x1="240" y1="90" x2="240" y2="240" stroke="#16161A" stroke-width="3"/>
+  <line x1="300" y1="90" x2="300" y2="240" stroke="#16161A" stroke-width="3"/>
+  <path d="M70 165 q20 -14 40 0 q20 14 40 0" fill="none" stroke="#16161A" stroke-width="3" stroke-linecap="round"/>
+</svg>

@@ -40,6 +40,13 @@ export default function NotFound() {
             {s.backHome}
           </Link>
         </Magnetic>
+        {/* 5.4 (M2) — one useful onward link on the Hobby face. */}
+        <Link
+          href="/lesson/sample"
+          className="font-body-ui text-small font-semibold underline text-site-ink"
+        >
+          {s.notFoundSampleAction}
+        </Link>
       </main>
       <PublicFooter />
     </div>

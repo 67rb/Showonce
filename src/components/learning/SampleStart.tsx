@@ -17,7 +17,10 @@ export function SampleStart({className}:{className:string}){
   try{
    const lesson=await identity.request<Lesson>('/v1/lessons',{
     processing_mode:'structured_text',
-    source_text:origamiSample.steps.map((step,i)=>`${i+1}. ${step.instructions}`).join('\n'),
+    /* 5.4 (M4a) — the sample title is the first non-numbered line, which
+       numberedLesson (core.mjs) adopts as the lesson title, so the player
+       header and the library card carry the real title. */
+    source_text:[origamiSample.title,...origamiSample.steps.map((step,i)=>`${i+1}. ${step.instructions}`)].join('\n'),
     save_to_account:!!identity.account?.user,
    });
    const progress=await identity.request<Progress>('/v1/sessions',{lesson_id:lesson.id,save_to_account:!!identity.account?.user});

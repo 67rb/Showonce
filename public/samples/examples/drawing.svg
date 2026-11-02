@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="420" height="320" viewBox="0 0 420 320" role="img" aria-labelledby="t">
+  <title id="t">Shaded sphere drawing reference</title>
+  <rect width="420" height="320" fill="#F7F7F8"/>
+  <circle cx="210" cy="160" r="92" fill="#ffffff" stroke="#16161A" stroke-width="3"/>
+  <path d="M210 68 a92 92 0 0 1 0 184 a46 92 0 0 0 0 -184 Z" fill="#16161A" opacity="0.18"/>
+  <circle cx="176" cy="132" r="5" fill="#16161A"/>
+</svg>

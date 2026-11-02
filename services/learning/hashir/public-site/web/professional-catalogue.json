@@ -5,7 +5,7 @@
       "title": "Plumbing foundations",
       "trade": "Plumbing",
       "level": "Foundation",
-      "content_status": "Starter curriculum \u00b7 instructor validation pending",
+      "content_status": "Starter curriculum · instructor validation pending",
       "description": "Two classroom lessons with practice evidence, saved progress and instructor review.",
       "lesson_ids": [
         "pro_plumbing_parts",
@@ -22,7 +22,7 @@
       "title": "Electrical foundations",
       "trade": "Electrical",
       "level": "Foundation",
-      "content_status": "Starter curriculum \u00b7 instructor validation pending",
+      "content_status": "Starter curriculum · instructor validation pending",
       "description": "Two classroom lessons with practice evidence, saved progress and instructor review.",
       "lesson_ids": [
         "pro_electrical_symbols",
@@ -39,7 +39,7 @@
       "title": "Carpentry preparation",
       "trade": "Carpentry",
       "level": "Foundation",
-      "content_status": "Starter curriculum \u00b7 instructor validation pending",
+      "content_status": "Starter curriculum · instructor validation pending",
       "description": "Two classroom lessons with practice evidence, saved progress and instructor review.",
       "lesson_ids": [
         "pro_carpentry_measure",
@@ -56,7 +56,7 @@
       "title": "Maintenance documentation",
       "trade": "Maintenance",
       "level": "Foundation",
-      "content_status": "Starter curriculum \u00b7 instructor validation pending",
+      "content_status": "Starter curriculum · instructor validation pending",
       "description": "Two classroom lessons with practice evidence, saved progress and instructor review.",
       "lesson_ids": [
         "pro_maintenance_inspection",
@@ -74,7 +74,7 @@
       "id": "pro_plumbing_parts",
       "title": "Identify plumbing components",
       "category": "Plumbing",
-      "difficulty": "Foundation \u00b7 classroom only",
+      "difficulty": "Foundation · classroom only",
       "materials": [
         "An instructor-supplied parts diagram or disconnected training components"
       ],
@@ -86,7 +86,7 @@
           "instructions": "Use only the supplied diagram or disconnected classroom components. Record each component label and the matching reference in your instructor worksheet.",
           "expected_visual_result": "A labelled inventory sheet is visible.",
           "assessment_criteria": [
-            "A labelled inventory sheet is visible."
+            "Every listed component name matches a reference in the worksheet — no unmatched entries."
           ],
           "visual_limits": [
             "Photos cannot verify measurements, hidden properties, safe isolation or occupational competence."
@@ -103,7 +103,7 @@
           "instructions": "On a copy of the instructor-supplied diagram, mark the component labels and questions you need the instructor to answer. Do not operate valves or connect the kit to a water supply.",
           "expected_visual_result": "The diagram contains readable labels and questions.",
           "assessment_criteria": [
-            "The diagram contains readable labels and questions."
+            "Each label sits next to the component it names, and open questions are listed separately from labels."
           ],
           "visual_limits": [
             "Photos cannot verify measurements, hidden properties, safe isolation or occupational competence."
@@ -120,7 +120,7 @@
           "instructions": "Photograph your worksheet and write a short handover describing what you identified and what you could not verify.",
           "expected_visual_result": "A completed worksheet and handover are visible.",
           "assessment_criteria": [
-            "A completed worksheet and handover are visible."
+            "The handover states which components were identified and which could not be verified — nothing is left unstated."
           ],
           "visual_limits": [
             "Photos cannot verify measurements, hidden properties, safe isolation or occupational competence."
@@ -143,7 +143,7 @@
       "id": "pro_plumbing_planning",
       "title": "Plan a supervised plumbing practice",
       "category": "Plumbing",
-      "difficulty": "Foundation \u00b7 classroom only",
+      "difficulty": "Foundation · classroom only",
       "materials": [
         "An instructor-supplied job brief, blank paper and pencil"
       ],
@@ -155,7 +155,7 @@
           "instructions": "Read the classroom job brief. List its intended result, supplied materials and information that is missing.",
           "expected_visual_result": "The planning sheet lists the result, materials and open questions.",
           "assessment_criteria": [
-            "The planning sheet lists the result, materials and open questions."
+            "All three sections (result, materials, questions) are present, and the result is written in one sentence."
           ],
           "visual_limits": [
             "Photos cannot verify measurements, hidden properties, safe isolation or occupational competence."
@@ -172,7 +172,7 @@
           "instructions": "Write questions about the approved training setup, supervision and checks your instructor will demonstrate. Do not begin work on an installed system.",
           "expected_visual_result": "A list of instructor questions is visible.",
           "assessment_criteria": [
-            "A list of instructor questions is visible."
+            "Every question refers to a named step or component — no general questions."
           ],
           "visual_limits": [
             "Photos cannot verify measurements, hidden properties, safe isolation or occupational competence."
@@ -189,7 +189,7 @@
           "instructions": "Arrange your planning sheet and notes for instructor review. Record that no installed plumbing was worked on.",
           "expected_visual_result": "The review packet is complete and labelled training only.",
           "assessment_criteria": [
-            "The review packet is complete and labelled training only."
+            "The packet states, in your own words, that no installed plumbing was worked on."
           ],
           "visual_limits": [
             "Photos cannot verify measurements, hidden properties, safe isolation or occupational competence."
@@ -212,7 +212,7 @@
       "id": "pro_electrical_symbols",
       "title": "Read an instructor-supplied circuit diagram",
       "category": "Electrical",
-      "difficulty": "Foundation \u00b7 classroom only",
+      "difficulty": "Foundation · classroom only",
       "materials": [
         "A printed classroom diagram, pencil and instructor symbol key"
       ],
@@ -224,7 +224,7 @@
           "instructions": "Use the instructor symbol key to annotate the printed diagram. Record uncertainties rather than guessing. Do not open equipment or connect anything to power.",
           "expected_visual_result": "A diagram annotated using the supplied key is visible.",
           "assessment_criteria": [
-            "A diagram annotated using the supplied key is visible."
+            "Uncertainties are recorded as questions, not filled in as guesses."
           ],
           "visual_limits": [
             "Photos cannot verify measurements, hidden properties, safe isolation or occupational competence."
@@ -241,7 +241,7 @@
           "instructions": "Mark the connections on a second paper copy and compare your annotations with the instructor reference. This is a paper task only.",
           "expected_visual_result": "The paper diagram shows your trace and reference labels.",
           "assessment_criteria": [
-            "The paper diagram shows your trace and reference labels."
+            "Your traced connections match the instructor reference; any mismatch is circled and noted."
           ],
           "visual_limits": [
             "Photos cannot verify measurements, hidden properties, safe isolation or occupational competence."
@@ -258,7 +258,7 @@
           "instructions": "List the differences and questions for your instructor. A photograph can show your worksheet, not electrical safety or competence.",
           "expected_visual_result": "A review note with questions is visible.",
           "assessment_criteria": [
-            "A review note with questions is visible."
+            "Each difference from the reference appears with its own question."
           ],
           "visual_limits": [
             "Photos cannot verify measurements, hidden properties, safe isolation or occupational competence."
@@ -281,7 +281,7 @@
       "id": "pro_electrical_briefing",
       "title": "Prepare for supervised electrical training",
       "category": "Electrical",
-      "difficulty": "Foundation \u00b7 classroom only",
+      "difficulty": "Foundation · classroom only",
       "materials": [
         "An instructor-issued training brief and a blank worksheet"
       ],
@@ -293,7 +293,7 @@
           "instructions": "Write down the classroom exercise scope and identify the named supervisor from the supplied brief. If no supervisor is named, record that as a blocker.",
           "expected_visual_result": "A scope and supervision note is visible.",
           "assessment_criteria": [
-            "A scope and supervision note is visible."
+            "The named supervisor is written on the note, or no supervisor named is recorded as a blocker."
           ],
           "visual_limits": [
             "Photos cannot verify measurements, hidden properties, safe isolation or occupational competence."
@@ -310,7 +310,7 @@
           "instructions": "Copy the prerequisites from the instructor brief and mark each as confirmed or unconfirmed. Do not perform isolation, testing or installation based on app instructions.",
           "expected_visual_result": "A prerequisite checklist is visible.",
           "assessment_criteria": [
-            "A prerequisite checklist is visible."
+            "Every prerequisite line is marked confirmed or unconfirmed — none left blank."
           ],
           "visual_limits": [
             "Photos cannot verify measurements, hidden properties, safe isolation or occupational competence."
@@ -327,7 +327,7 @@
           "instructions": "Write a handover of the unresolved prerequisites. Ask your instructor to review it before any practical work.",
           "expected_visual_result": "A handover lists unresolved prerequisites.",
           "assessment_criteria": [
-            "A handover lists unresolved prerequisites."
+            "The handover asks for the instructor review before any practical work."
           ],
           "visual_limits": [
             "Photos cannot verify measurements, hidden properties, safe isolation or occupational competence."
@@ -350,7 +350,7 @@
       "id": "pro_carpentry_measure",
       "title": "Read a dimensioned practice drawing",
       "category": "Carpentry",
-      "difficulty": "Foundation \u00b7 classroom only",
+      "difficulty": "Foundation · classroom only",
       "materials": [
         "An instructor drawing, ruler, paper and pencil"
       ],
@@ -362,7 +362,7 @@
           "instructions": "Copy the dimensions and units shown on the instructor practice drawing into a worksheet. Mark unclear dimensions.",
           "expected_visual_result": "The copied dimensions and units are legible.",
           "assessment_criteria": [
-            "The copied dimensions and units are legible."
+            "Units are written next to every number, and unclear dimensions are flagged."
           ],
           "visual_limits": [
             "Photos cannot verify measurements, hidden properties, safe isolation or occupational competence."
@@ -379,7 +379,7 @@
           "instructions": "Use a ruler to mark a paper template from the supplied dimensions. Keep this exercise on paper; no cutting or powered tools.",
           "expected_visual_result": "A paper template with labelled dimensions is visible.",
           "assessment_criteria": [
-            "A paper template with labelled dimensions is visible."
+            "Marked lengths match the drawn dimensions when checked against the ruler."
           ],
           "visual_limits": [
             "Photos cannot verify measurements, hidden properties, safe isolation or occupational competence."
@@ -396,7 +396,7 @@
           "instructions": "Compare the template with the instructor reference and record differences for review.",
           "expected_visual_result": "A comparison note is visible.",
           "assessment_criteria": [
-            "A comparison note is visible."
+            "Each difference between template and reference is recorded with its measurement."
           ],
           "visual_limits": [
             "Photos cannot verify measurements, hidden properties, safe isolation or occupational competence."
@@ -419,7 +419,7 @@
       "id": "pro_carpentry_materials",
       "title": "Prepare a materials worksheet",
       "category": "Carpentry",
-      "difficulty": "Foundation \u00b7 classroom only",
+      "difficulty": "Foundation · classroom only",
       "materials": [
         "An instructor project brief and blank paper"
       ],
@@ -431,7 +431,7 @@
           "instructions": "List the components specified by the instructor project brief without substituting specifications.",
           "expected_visual_result": "A component list is visible.",
           "assessment_criteria": [
-            "A component list is visible."
+            "Every listed component carries the specification given in the brief — no substitutions."
           ],
           "visual_limits": [
             "Photos cannot verify measurements, hidden properties, safe isolation or occupational competence."
@@ -448,7 +448,7 @@
           "instructions": "Record the quantities and units in a simple table. Flag missing values for your instructor.",
           "expected_visual_result": "A quantities table is visible.",
           "assessment_criteria": [
-            "A quantities table is visible."
+            "Each row shows a quantity with its unit, and missing values are flagged."
           ],
           "visual_limits": [
             "Photos cannot verify measurements, hidden properties, safe isolation or occupational competence."
@@ -465,7 +465,7 @@
           "instructions": "Put the brief, drawing and materials table together with your unresolved questions.",
           "expected_visual_result": "A labelled review packet is visible.",
           "assessment_criteria": [
-            "A labelled review packet is visible."
+            "The packet contains all three items (brief, drawing, table) plus the open questions."
           ],
           "visual_limits": [
             "Photos cannot verify measurements, hidden properties, safe isolation or occupational competence."
@@ -488,7 +488,7 @@
       "id": "pro_maintenance_inspection",
       "title": "Document a mock inspection",
       "category": "Maintenance",
-      "difficulty": "Foundation \u00b7 classroom only",
+      "difficulty": "Foundation · classroom only",
       "materials": [
         "Instructor-supplied equipment photos and an inspection worksheet"
       ],
@@ -500,7 +500,7 @@
           "instructions": "Record the equipment identifier supplied in the classroom photo pack. Do not inspect live or moving equipment.",
           "expected_visual_result": "A worksheet with the supplied identifier is visible.",
           "assessment_criteria": [
-            "A worksheet with the supplied identifier is visible."
+            "The identifier is copied exactly, letter for letter."
           ],
           "visual_limits": [
             "Photos cannot verify measurements, hidden properties, safe isolation or occupational competence."
@@ -517,7 +517,7 @@
           "instructions": "Describe only what is visible in the supplied photos. Separate observations from guesses and mark anything needing an instructor check.",
           "expected_visual_result": "An observation table separates visible details and unknowns.",
           "assessment_criteria": [
-            "An observation table separates visible details and unknowns."
+            "No guess appears in the observations column; every unknown has an instructor-check marker."
           ],
           "visual_limits": [
             "Photos cannot verify measurements, hidden properties, safe isolation or occupational competence."
@@ -534,7 +534,7 @@
           "instructions": "Write a short handover from your worksheet without claiming that the equipment is safe to use.",
           "expected_visual_result": "The handover includes unresolved checks.",
           "assessment_criteria": [
-            "The handover includes unresolved checks."
+            "The handover makes no claim that the equipment is safe to use."
           ],
           "visual_limits": [
             "Photos cannot verify measurements, hidden properties, safe isolation or occupational competence."
@@ -557,7 +557,7 @@
       "id": "pro_maintenance_jobcard",
       "title": "Create a practice job card",
       "category": "Maintenance",
-      "difficulty": "Foundation \u00b7 classroom only",
+      "difficulty": "Foundation · classroom only",
       "materials": [
         "An instructor mock work request and blank job card"
       ],
@@ -569,7 +569,7 @@
           "instructions": "Copy the mock request identifier, reported issue and scope into the job card.",
           "expected_visual_result": "The job card identifies the request and scope.",
           "assessment_criteria": [
-            "The job card identifies the request and scope."
+            "The scope line separates what was requested from what was done."
           ],
           "visual_limits": [
             "Photos cannot verify measurements, hidden properties, safe isolation or occupational competence."
@@ -586,7 +586,7 @@
           "instructions": "List the supplied evidence and missing information. Do not invent completed work or measurements.",
           "expected_visual_result": "Evidence and missing information are listed.",
           "assessment_criteria": [
-            "Evidence and missing information are listed."
+            "Every missing item has a question or a named source to obtain it."
           ],
           "visual_limits": [
             "Photos cannot verify measurements, hidden properties, safe isolation or occupational competence."
@@ -603,7 +603,7 @@
           "instructions": "Write the proposed next questions and submit the job card for instructor review.",
           "expected_visual_result": "The job card is labelled for instructor review.",
           "assessment_criteria": [
-            "The job card is labelled for instructor review."
+            "The proposed next questions are written before submission."
           ],
           "visual_limits": [
             "Photos cannot verify measurements, hidden properties, safe isolation or occupational competence."

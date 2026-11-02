@@ -50,13 +50,18 @@ export function IdentityProvider({children}:{children:ReactNode}){
  return <Context.Provider value={{practice,ready,timedOut,account,config,error,notice,epoch:()=>version.current,request,refresh,guestEntries,remember,forget,draft,setDraft}}>{children}</Context.Provider>;
 }
 export function useIdentity(){const value=useContext(Context);if(!value)throw new Error('Learning identity provider is missing.');return value;}
-export function AccountBar(){
+export function AccountBar({compact=false}:{compact?:boolean}){
  const identity=useIdentity();
  if(identity.timedOut){
-   return <div className="rounded-2xl border border-site-border bg-white p-5 text-small"><p className="font-semibold text-site-ink">{s["signInUnavailableTitle"]}</p><p className="mt-1 text-site-muted">{s["accountCheckTimedOut"]}</p><p role="status" className="mt-2 text-site-muted">{s["signInWorkspaceLine"]}</p><button onClick={()=>void identity.refresh()} className="mt-3 min-h-11 rounded-full border border-site-border bg-white px-4 font-semibold text-site-ink">{s["retry"]}</button></div>;
+  return <div className="rounded-2xl border border-site-border bg-white p-5 text-small"><p className="font-semibold text-site-ink">{s["signInUnavailableTitle"]}</p><p className="mt-1 text-site-muted">{s["accountCheckTimedOut"]}</p><p role="status" className="mt-2 text-site-muted">{s["signInWorkspaceLine"]}</p><button onClick={()=>void identity.refresh()} className="mt-3 min-h-11 rounded-full border border-site-border bg-white px-4 font-semibold text-site-ink">{s["retry"]}</button></div>;
  }
  if(!identity.ready){
   return <div className="space-y-3 rounded-2xl border border-site-border bg-white p-5" role="status" aria-label={s["checkingAccount"]}><p className="h-3 w-1/3 rounded bg-site-border"/><div className="h-4 w-full rounded bg-site-border"/><div className="h-4 w-2/3 rounded bg-site-border"/></div>;
+ }
+ /* 5.4 (M1) — compact variant: ONE slim account row that keeps the real
+    sign-in/sign-out entry (no dead links, no card stack). */
+ if(compact){
+  return <div className="flex flex-wrap items-center justify-between gap-2 rounded-[16px] border border-site-border bg-white px-4 py-3 text-small"><span className="min-w-0 text-site-muted">{identity.account?.user?identity.account.user.display_name:s["signInWorkspaceLine"]}</span><span className="flex flex-wrap items-center gap-3">{identity.account?.is_admin&&<a href="/team.html" className="underline">Manage catalogue & reports</a>}{identity.account?.user&&identity.account.sign_out_url&&<a className="py-2 underline" href={accountActionHref(identity.account.sign_out_url)}>Sign out</a>}{!identity.account?.user&&(identity.account?.sign_in_url?<a className="py-2 font-semibold underline" href={accountActionHref(identity.account.sign_in_url)}>{identity.account.identity_provider==='github'?'Sign in with GitHub':'Sign in'}</a>:<p className="text-site-muted">{s["signInUnavailableBody"]}</p>)}</span>{identity.notice&&<p className="w-full text-small" role="status">{identity.notice}</p>}</div>;
  }
  return <div className="site-card flex flex-wrap items-center justify-between gap-3 p-5"><div><strong>{identity.account?.user?.display_name||'Your practice workspace'}</strong><p className="text-small text-site-muted">{identity.account?.user?'Saved across devices with your account.':s["signInWorkspaceLine"]}</p></div><div className="flex flex-wrap gap-3 text-small">{identity.account?.is_admin&&<a href="/team.html" className="underline">Manage catalogue & reports</a>}{identity.account?.user&&identity.account.sign_out_url&&<a className="min-h-11 py-3 underline" href={accountActionHref(identity.account.sign_out_url)}>Sign out</a>}{!identity.account?.user&&(identity.account?.sign_in_url?<a className="min-h-11 py-3 font-semibold underline" href={accountActionHref(identity.account.sign_in_url)}>{identity.account.identity_provider==='github'?'Sign in with GitHub':'Sign in'}</a>:<p className="text-site-muted">{s["signInUnavailableBody"]}</p>)}</div>{identity.notice&&<p className="w-full text-small" role="status">{identity.notice}</p>}</div>;
 }

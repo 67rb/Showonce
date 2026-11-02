@@ -17,7 +17,10 @@ export function ProSampleStart({className}:{className:string}){
   try{
    const lesson=await identity.request<Lesson>('/v1/lessons',{
     processing_mode:'structured_text',
-    source_text:proSampleLesson.steps.map(step=>`${step.position}. ${step.instructions}`).join('\n'),
+    /* 5.4 (M4a) — the sample title is the first non-numbered line, which
+       numberedLesson (core.mjs) adopts as the lesson title, so the player
+       header and the library card carry the real title. */
+    source_text:[proSampleLesson.lessonTitle,...proSampleLesson.steps.map(step=>`${step.position}. ${step.instructions}`)].join('\n'),
     save_to_account:!!identity.account?.user,
    });
    const progress=await identity.request<Progress>('/v1/sessions',{lesson_id:lesson.id,save_to_account:!!identity.account?.user});

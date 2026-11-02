@@ -18,10 +18,10 @@ export default function PrivacyPage() {
         />
       </header>
 
-      {/* the claim — a soft amber statement, left-aligned (5.3 L12: no centred
-          orphan wrap) */}
-      <div className="mt-8 rounded-[20px] border border-[#F59E0B]/30 bg-[#F59E0B]/[0.10] px-6 py-6">
-        <p className="font-body-ui text-[1.5rem] font-bold tracking-[-0.01em] text-accent-deep">
+      {/* the claim — a soft amber statement. 5.4 (M8): ink text for contrast;
+          the accent is reserved for the left border. */}
+      <div className="mt-8 rounded-[20px] border border-[#F59E0B]/30 border-l-4 border-l-accent bg-[#F59E0B]/[0.10] px-6 py-6">
+        <p className="font-body-ui text-[1.5rem] font-bold tracking-[-0.01em] text-site-ink">
           {s.privacyClaim}
         </p>
       </div>

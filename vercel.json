@@ -55,6 +55,10 @@
     {
       "source": "/public-api.js",
       "destination": "/api/backend?__route=/public-api.js"
+    },
+    {
+      "source": "/professional/:path*",
+      "destination": "/404.html"
     }
   ]
 }

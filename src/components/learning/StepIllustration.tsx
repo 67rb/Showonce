@@ -51,8 +51,8 @@ export function StepIllustration({lessonID,step,token,disabled=false,onPrepare}:
   void generate();
   // eslint-disable-next-line react-hooks/exhaustive-deps
  },[state,canGenerateEarly,disabled,step.id,savedSample]);
- if(savedSample)return <figure className="mt-4"><img className="max-h-96 w-full rounded-xl bg-white object-contain" src={savedSample.visual} alt={savedSample.target} width={420} height={320}/><figcaption className="mt-2 text-small text-site-muted">Saved sample reference illustration</figcaption></figure>;
- if(image)return <figure className="mt-4"><img className="max-h-96 w-full rounded-xl bg-white object-contain" src={image} alt={'AI illustration: '+step.expected_visual_result}/><figcaption className="mt-2 text-small text-site-muted">AI illustration · may contain visual inaccuracies</figcaption></figure>;
+ if(savedSample)return <figure className="mt-4">{/* 5.4 (M4d) — fixed 4:3 media area, contained and centred; the card height follows its content. */}<div className="mx-auto aspect-[4/3] w-full max-w-[420px] overflow-hidden rounded-xl bg-white"><img className="h-full w-full object-contain" src={savedSample.visual} alt={savedSample.target} width={420} height={320}/></div><figcaption className="mt-2 text-small text-site-muted">Saved sample reference illustration</figcaption></figure>;
+ if(image)return <figure className="mt-4"><div className="mx-auto aspect-[4/3] w-full max-w-[420px] overflow-hidden rounded-xl bg-white"><img className="h-full w-full object-contain" src={image} alt={'AI illustration: '+step.expected_visual_result}/></div><figcaption className="mt-2 text-small text-site-muted">AI illustration · may contain visual inaccuracies</figcaption></figure>;
  const canGenerate=aiChecksAvailable(identity.config);
  return <div className="mt-4 rounded-xl border border-site-border bg-white p-4">
   <p role="status" className="text-small text-site-muted">{state==='loading'?'Loading saved step image…':state==='generating'?'Creating and checking your step image… This uses the AI allowance.':state==='error'?error:'No image has been saved for this step yet.'}</p>

@@ -40,6 +40,24 @@ const secondary =
   "inline-flex min-h-11 items-center justify-center text-center rounded-full border border-site-border bg-white px-5 py-3 font-semibold text-site-ink disabled:opacity-50";
 const field =
   "mt-2 w-full rounded-2xl border border-site-border bg-white p-4 text-site-ink";
+/* 5.4 (M5c) — committed media for the example rail cards: the origami example
+   reuses the committed origami sample asset; the other categories use
+   committed category line-diagrams drawn in the same style. No external
+   images, no art generated at view time. */
+function exampleVisual(category: string): string {
+  switch (category) {
+    case "origami":
+      return "/samples/origami/step-1.svg";
+    case "drawing":
+      return "/samples/examples/drawing.svg";
+    case "crochet":
+      return "/samples/examples/crochet.svg";
+    case "music":
+      return "/samples/examples/music.svg";
+    default:
+      return "";
+  }
+}
 /* 5.5 — the sticky bottom action bar: mobile only, solid ground colour, 1px
    top border, 12px padding, safe-area inset. Desktop renders the primary
    action inline (the same markup becomes static and loses the bar chrome). */
@@ -127,7 +145,7 @@ export function LearningWorkspace({
     ) : screen === "library" ? (
       <LibraryPanel />
     ) : (
-      <LessonPanel screen={screen} />
+      <LessonPanel screen={screen} professional={professional} />
     );
   /* 5.4 — interior pages sit on solid ground: Hobby #F7F7F8, Professional
     #FFFFFF. No photo, texture, gradient, glow or per-load background remains.
@@ -157,8 +175,12 @@ export function LearningWorkspace({
               : "max-w-[640px] px-4 pt-6 pb-24 md:px-6 lg:max-w-[1120px] lg:px-8 lg:pt-10")
         }
       >
+        {/* 5.4 (M4c) — ONE back link per player: on Professional it lives in
+            the banner (rendering immediately, before the account check), on
+            Hobby in the LessonPanel row. The classroom notice stays as the
+            banner text. */}
         {professional && (
-          <div className="mb-4 rounded-[16px] border border-site-border bg-white p-3 text-sm text-site-ink">
+          <div className="mb-4 rounded-[16px] border border-site-border bg-white p-3 text-small text-site-ink">
             <a className="underline" href="/professional/lessons/">
               ← Professional courses
             </a>
@@ -576,6 +598,38 @@ function CreatePanel() {
           aria-busy={busy}
         >
           <Card>
+            {/* 5.4 (M5a) — ONE segmented mode selector: a single tab container;
+                the selected tab is filled ink, the rest quiet. This replaces the
+                old dashed "or start another way" stack whose selected state was
+                a second orange primary. */}
+            <div
+              aria-label="Choose how to bring your practice"
+              className="flex flex-col gap-1 rounded-full border border-site-border bg-site-page p-1 sm:flex-row"
+            >
+              {[
+                ["link", "Tutorial link"],
+                ["topic", s["topic.mode"]],
+                ["text", "Paste instructions"],
+                ["steps", "Free numbered steps"],
+              ].map(([mode, label]) => (
+                <button
+                  type="button"
+                  key={mode}
+                  aria-pressed={draft.mode === mode}
+                  className={
+                    draft.mode === mode
+                      ? "min-h-11 flex-1 rounded-full bg-site-ink px-5 py-3 text-center text-small font-semibold text-white"
+                      : "min-h-11 flex-1 rounded-full border border-transparent bg-white px-5 py-3 text-center text-small font-semibold text-site-ink transition-colors duration-[150ms] hover:bg-site-page"
+                  }
+                  onClick={() => {
+                    update("mode", mode);
+                    setFieldError("");
+                  }}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
             {draft.mode === "link" ? (
               <>
                 <div className="flex items-center gap-3">
@@ -807,40 +861,6 @@ function CreatePanel() {
             </div>
           )}
         </form>
-        <div aria-hidden className="my-6 h-px w-full bg-site-border" />
-        <fieldset
-          disabled={busy}
-          className="rounded-[16px] border-2 border-dashed border-site-border bg-white px-6 py-7 text-center"
-        >
-          <legend className="px-2 text-small text-site-muted">
-            or start another way
-          </legend>
-          <div className="flex flex-col gap-3">
-            {[
-              ["link", "Tutorial link"],
-              ["topic", s["topic.mode"]],
-              ["text", "Paste instructions"],
-              ["steps", "Free numbered steps"],
-            ].map(([mode, label]) => (
-              <button
-                type="button"
-                key={mode}
-                className={
-                  draft.mode === mode
-                    ? primary
-                    : "min-h-11 rounded-full border border-site-border bg-white px-5 py-3 text-center text-site-ink transition-colors duration-[150ms] hover:bg-site-page"
-                }
-                aria-pressed={draft.mode === mode}
-                onClick={() => {
-                  update("mode", mode);
-                  setFieldError("");
-                }}
-              >
-                {label}
-              </button>
-            ))}
-          </div>
-        </fieldset>
         <p className="mt-6 text-center font-body-ui text-caption text-site-muted">
           {s.privacyClaim}
         </p>
@@ -891,9 +911,23 @@ function CreatePanel() {
                 onClick={() => void create(example.id)}
                 className="rounded-[16px] border border-site-border bg-white p-4 text-left lg:p-6"
               >
-                <span className="text-small uppercase text-site-muted">
+                {/* 5.4 (M5c) — shared lesson-card anatomy with a committed
+                    media thumb: the origami example reuses the committed sample
+                    asset; the other categories use committed category
+                    line-diagrams in the same drawing style. */}
+                <div className="aspect-[4/3] w-full max-w-[280px] overflow-hidden rounded-xl border border-site-border">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    className="h-full w-full object-contain"
+                    src={exampleVisual(example.category)}
+                    alt={`${example.title} reference diagram`}
+                    width={420}
+                    height={320}
+                  />
+                </div>
+                <p className="mt-3 text-small uppercase text-site-muted">
                   {example.category} · {example.steps} steps
-                </span>
+                </p>
                 <h3 className="mt-3 text-xl font-semibold text-site-ink">
                   {example.title}
                 </h3>
@@ -1301,7 +1335,13 @@ function LibraryPanel() {
     </div>
   );
 }
-function LessonPanel({ screen }: { screen: string }) {
+function LessonPanel({
+  screen,
+  professional = false,
+}: {
+  screen: string;
+  professional?: boolean;
+}) {
   const identity = useIdentity(),
     router = useRouter(),
     [lesson, setLesson] = useState<Lesson | null>(null),
@@ -1817,12 +1857,17 @@ function LessonPanel({ screen }: { screen: string }) {
   return (
     <div className="space-y-6 lg:space-y-8">
       <div className="flex flex-wrap items-center justify-between gap-4">
-        <a
-          href={workspaceHref("library")}
-          className="text-small underline text-site-ink"
-        >
-          ← Your lessons
-        </a>
+        {/* 5.4 (M4c) — ONE back link per player: on Professional it lives in
+            the banner (rendering immediately, before the account check), on
+            Hobby here in the LessonPanel row. */}
+        {!professional && (
+          <a
+            href={workspaceHref("library")}
+            className="text-small underline text-site-ink"
+          >
+            ← Your lessons
+          </a>
+        )}
         {progress && (
           <button
             className={secondary}
@@ -2025,9 +2070,12 @@ function LessonPanel({ screen }: { screen: string }) {
                 title={step.title || step.instructions}
                 onChange={(event) => setIndex(Number(event.target.value))}
               >
+                {/* 5.4 (M4b) — the dropdown's closed display shows the step
+                    position, not the full title; the title renders once as the
+                    step card heading below. */}
                 {lesson.steps.map((item, i) => (
                   <option key={item.id} value={i}>
-                    {i + 1}. {item.title || item.instructions}
+                    {`Step ${i + 1} of ${lesson.steps.length}`}
                     {progress.completed_step_ids.includes(item.id)
                       ? " · practiced"
                       : ""}
@@ -2062,9 +2110,7 @@ function LessonPanel({ screen }: { screen: string }) {
               stepID={step.id}
             />
             <Card>
-              <p className="text-small uppercase text-site-muted">
-                Your target · step {index + 1}
-              </p>
+              <p className="step-label">Your target · step {index + 1}</p>
               <h2 className="mt-3 text-2xl font-bold text-site-ink">
                 {step.title || "Try this step"}
               </h2>

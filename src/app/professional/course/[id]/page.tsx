@@ -82,77 +82,87 @@ export default async function CoursePreviewPage({
           </p>
         </header>
 
-        {lessons.map((lesson, lessonIndex) => (
-          <section
-            key={lesson.id}
-            id={"lesson-" + lesson.id}
-            className="mt-8 scroll-mt-28 border-t border-site-border pt-8 first:border-t-0"
-          >
-            <h2 className="font-body-ui text-2xl font-bold tracking-[-0.01em] text-site-ink">
-              Lesson {lessonIndex + 1} · {lesson.title}{" "}
-              <span className="text-base font-medium text-site-muted">
-                · {lesson.steps.length} steps
-              </span>
-            </h2>
-            {lesson.materials.length > 0 && (
-              <p className="mt-2 font-body-ui text-small text-site-muted">
-                {lesson.materials.join(" · ")}
-              </p>
-            )}
-            <ol className="mt-4 space-y-4">
-              {lesson.steps.map((step, i) => (
-                <li
-                  key={step.id}
-                  className="rounded-[16px] border border-site-border bg-white p-4"
-                >
-                  <p className="font-body-ui text-small font-semibold uppercase tracking-[0.12em] text-site-muted">
-                    {s["sample.stepLabel"]} {i + 1}
+        {/* 5.4 (M3) — each lesson is ONE card: header with the meta line, the
+            steps as numbered rows inside the card, and a single per-lesson
+            action (the playable sample starts; the rest state the gate). */}
+        {lessons.map((lesson, lessonIndex) => {
+          const isSampleLesson =
+            isSampleCourse && lesson.id === "pro_plumbing_parts";
+          return (
+            <section
+              key={lesson.id}
+              id={"lesson-" + lesson.id}
+              className="mt-8 scroll-mt-28 first:mt-0"
+            >
+              <div className="rounded-[16px] border border-site-border bg-white p-4 lg:p-6">
+                <div className="flex flex-wrap items-baseline justify-between gap-3">
+                  <h2 className="font-body-ui text-2xl font-bold tracking-[-0.01em] text-site-ink">
+                    {lesson.title}
+                  </h2>
+                  <p className="font-body-ui text-small font-medium text-site-muted">
+                    {lesson.steps.length} steps
                   </p>
-                  <h3 className="mt-1 font-body-ui text-lg font-bold text-site-ink">
-                    {step.title}
-                  </h3>
-                  <p className="mt-2 font-body-ui text-site-ink">{step.instructions}</p>
-                  <p className="mt-2 text-small font-body-ui text-site-muted">
-                    <span className="font-semibold text-[#15803D]">
-                      {s["sample.targetLabel"]}
-                    </span>
-                    <span className="mt-1 block">{step.expected_visual_result}</span>
-                  </p>
-                  {step.assessment_criteria.length > 0 && (
-                    <p className="mt-1 text-small font-body-ui text-site-muted">
-                      <span className="font-semibold text-[#15803D]">
-                        {s["sample.criterionLabel"]}
-                      </span>
-                      <span className="mt-1 block">{step.assessment_criteria.join(" ")}</span>
+                </div>
+                <ol className="mt-4 space-y-5">
+                  {lesson.steps.map((step, i) => (
+                    <li key={step.id} className="border-t border-site-border pt-4 first:border-t-0 first:pt-0">
+                      <p className="step-label">
+                        {s["sample.stepLabel"]} {i + 1}
+                      </p>
+                      <h3 className="mt-1 font-body-ui text-lg font-bold text-site-ink">
+                        {step.title}
+                      </h3>
+                      <p className="mt-2 font-body-ui text-site-ink">{step.instructions}</p>
+                      <p className="step-label mt-3">{s["sample.targetLabel"]}</p>
+                      <p className="mt-1 font-body-ui text-small text-site-muted">
+                        {step.expected_visual_result}
+                      </p>
+                      {step.assessment_criteria.length > 0 && (
+                        <>
+                          <p className="step-label mt-3">{s["sample.criterionLabel"]}</p>
+                          <p className="mt-1 font-body-ui text-small text-site-muted">
+                            {step.assessment_criteria.join(" ")}
+                          </p>
+                        </>
+                      )}
+                    </li>
+                  ))}
+                </ol>
+                <div className="mt-5 border-t border-site-border pt-4">
+                  {isSampleLesson ? (
+                    <>
+                      <ProSampleStart className={primary} />
+                      {/* 5.4 (M3) — the sample start is never presented as
+                          enrolment (course-routes test contract). */}
+                      <p className="mt-2 font-body-ui text-small text-site-muted">
+                        {s["proCourse.sampleNote"]}
+                      </p>
+                    </>
+                  ) : (
+                    <p className="text-small font-body-ui text-site-muted">
+                      {s["proCourse.runsAfterEnrolment"]}
                     </p>
                   )}
-                </li>
-              ))}
-            </ol>
-          </section>
-        ))}
+                </div>
+              </div>
+            </section>
+          );
+        })}
 
+        {/* 5.4 (M3) — ONE slim enrol banner replaces the dual-CTA card: the
+            gate reason plus the hub as a text link. */}
         <section className="scroll-mt-28 mt-10 rounded-[16px] border border-[#16A34A]/30 bg-[#16A34A]/5 p-4">
-          <h2 className="font-body-ui text-xl font-bold text-site-ink">Next step</h2>
-          <p className="mt-2 font-body-ui text-small text-site-ink">
+          <p className="font-body-ui text-small text-site-ink">
             {s["proCourse.enrolGate"]} In the training hub you confirm
             classroom-only training, enrol, and your progress is saved for
             instructor review.
           </p>
-          <div className="mt-4 flex flex-wrap gap-3">
-            <a className={primary} href="/professional/lessons/">
-              Go to the training hub to enrol
-            </a>
-            {isSampleCourse && (
-              <ProSampleStart className={secondary} />
-            )}
-          </div>
-          {isSampleCourse && (
-            <p className="mt-3 font-body-ui text-small text-site-muted">
-              The free plumbing sample is separate practice; it does not enrol
-              you in this course.
-            </p>
-          )}
+          <a
+            className="mt-2 inline-block text-small font-semibold text-[#15803D] underline"
+            href="/professional/lessons/"
+          >
+            Go to the training hub to enrol
+          </a>
         </section>
       </div>
       <PublicFooter />
