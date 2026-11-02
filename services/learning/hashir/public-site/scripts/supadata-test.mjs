@@ -153,3 +153,28 @@ test('accepts the actual Free (100/mo) plan label with bounded included credits'
  const e=env(),p=provider('youtube',{account:{plan:'Free (100/mo)',maxCredits:100,usedCredits:0}});
  try{assert.equal((await resolveTutorial(e,'https://youtu.be/aAxGTnVNJiE',p.fetcher)).origin,'social_transcript');assert.equal(p.calls.filter(x=>x==='/v1/transcript').length,1);}finally{e.DB.close();}
 });
+
+test('caption fallback tries another usable English track after the preferred track fails',async()=>{
+ const e=env(),seen=[];
+ const fetcher=async(input,options)=>{
+  const u=new URL(input);seen.push(u.href);
+  if(u.hostname==='api.supadata.ai')return Response.json({...free,usedCredits:100});
+  if(u.pathname==='/watch')return new Response(JSON.stringify({captionTracks:[{baseUrl:'https://www.youtube.com/api/timedtext?v=aAxGTnVNJiE&lang=en',languageCode:'en'},{baseUrl:'https://www.youtube.com/api/timedtext?v=aAxGTnVNJiE&lang=en&kind=asr',languageCode:'en',kind:'asr'}]}));
+  if(!u.searchParams.has('kind'))return new Response(null,{status:403});
+  assert.equal(options.redirect,'manual');assert.ok(!options.headers['x-api-key']);
+  return Response.json({events:[{segs:[{utf8:speech}]}]});
+ };
+ try{const source=await resolveTutorial(e,'https://youtu.be/aAxGTnVNJiE',fetcher);assert.equal(source.origin,'social_transcript');assert.match(source.text,/Draw a circle/);assert.equal(seen.filter(x=>x.includes('/api/timedtext')).length,2);}finally{e.DB.close();}
+});
+test('caption URLs outside the fixed public YouTube caption endpoint are never fetched',async()=>{
+ for(const target of ['http://127.0.0.1/private','https://evil.test/captions','https://www.youtube.com/redirect?to=http://127.0.0.1','https://www.youtube.com/api/timedtext?v=wrongvideo1']){
+  const e=env();let unexpected=0;
+  const fetcher=async(input)=>{const u=new URL(input);if(u.hostname==='api.supadata.ai')return Response.json({...free,usedCredits:100});if(u.pathname==='/watch')return new Response(JSON.stringify({captionTracks:[{baseUrl:target,languageCode:'en'}]}));unexpected++;return Response.json({events:[{segs:[{utf8:speech}]}]});};
+  try{await assert.rejects(()=>resolveTutorial(e,'https://youtu.be/aAxGTnVNJiE',fetcher),error=>error.code==='source_free_quota_exhausted');assert.equal(unexpected,0);}finally{e.DB.close();}
+ }
+});
+test('oversized caption responses are cancelled while preserving the quota fallback message',async()=>{
+ const e=env();let cancelled=false;
+ const fetcher=async(input)=>{const u=new URL(input);if(u.hostname==='api.supadata.ai')return Response.json({...free,usedCredits:100});if(u.pathname==='/watch')return new Response(JSON.stringify({captionTracks:[{baseUrl:'https://www.youtube.com/api/timedtext?v=aAxGTnVNJiE',languageCode:'en'}]}));return new Response(new ReadableStream({start(c){c.enqueue(new Uint8Array(1100000));c.enqueue(new Uint8Array(1));c.close();},cancel(){cancelled=true;}}),{headers:{'Content-Type':'application/json'}});};
+ try{await assert.rejects(()=>resolveTutorial(e,'https://youtu.be/aAxGTnVNJiE',fetcher),error=>error.code==='source_free_quota_exhausted');assert.equal(cancelled,true);}finally{e.DB.close();}
+});

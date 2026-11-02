@@ -788,6 +788,11 @@ function CreatePanel() {
                   ? "Video-reading credits are used up. You can still practice for free."
                   : "You can continue with your own instructions."}
               </p>
+              {draft.mode === "link" && /(?:youtube\.com|youtu\.be)/i.test(draft.url) && ["source_free_quota_exhausted", "source_paid_usage_disabled", "source_rate_limited", "source_provider_setup", "source_visual_quota"].includes(errorCode) && (
+                <div className="mt-3">
+                  {draft.learningMode === "visual" ? <button type="button" className="min-h-11 underline" onClick={() => update("learningMode", "auto")}>Use spoken captions instead</button> : <p role="status">Spoken captions selected. Choose Get the steps to retry. Caption extraction is free; creating the AI lesson still uses the existing allowance. Visual actions are not analysed.</p>}
+                </div>
+              )}
               <button
                 type="button"
                 className="mt-3 min-h-11 underline"

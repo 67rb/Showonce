@@ -85,25 +85,47 @@ function captionTextFromJSON3(value){
  * become a lesson with no provider account and no charge. Returns a stored
  * source, or null when no usable captions exist (callers then surface the
  * original quota error and the paste-instructions path). */
+async function captionBody(response,signal,maxBytes){
+ const reader=response.body?.getReader();if(!reader)throw new Error('No caption body');
+ let size=0,complete=false,onAbort;const chunks=[];
+ const aborted=new Promise((_,reject)=>{onAbort=()=>reject(new Error('Caption timeout'));signal.addEventListener('abort',onAbort,{once:true});if(signal.aborted)onAbort();});
+ try{return await Promise.race([(async()=>{
+  while(true){const {done,value}=await reader.read();if(done){complete=true;break;}size+=value.byteLength;if(size>maxBytes)throw new Error('Caption response too large');chunks.push(value);}
+  const all=new Uint8Array(size);let offset=0;for(const chunk of chunks){all.set(chunk,offset);offset+=chunk.byteLength;}return new TextDecoder().decode(all);
+ })(),aborted]);}
+ finally{signal.removeEventListener('abort',onAbort);if(!complete)void reader.cancel().catch(()=>{});try{reader.releaseLock();}catch{}}
+}
+function publicCaptionURL(track,videoID){
+ try{const url=new URL(track?.baseUrl);if(url.protocol!=='https:'||url.username||url.password||url.port||!['youtube.com','www.youtube.com','m.youtube.com'].includes(url.hostname)||url.pathname!=='/api/timedtext'||url.searchParams.get('v')!==videoID)return null;url.searchParams.set('fmt','json3');return url.href;}catch{return null;}
+}
 async function youtubeCaptionFallback(env,rowID,url,fetcher){
  try{
   const videoID=youtubeVideoID(url);if(!videoID)return null;
-  const page=await fetcher('https://www.youtube.com/watch?v='+videoID,{redirect:'follow',signal:AbortSignal.timeout(12000),headers:{Accept:'text/html','User-Agent':'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124 Safari/537.36','Accept-Language':'en'}});
-  if(!page.ok)return null;
-  const html=(await page.text()).slice(0,3000000);
-  const tracks=captionTracksFromHTML(html).filter(track=>typeof track?.baseUrl==='string');
-  if(!tracks.length)return null;
-  const pick=tracks.find(track=>String(track.languageCode||'').startsWith('en')&&track.kind!=='asr')||tracks.find(track=>String(track.languageCode||'').startsWith('en'))||tracks[0];
-  const timed=await fetcher(pick.baseUrl+(pick.baseUrl.includes('?')?'&':'?')+'fmt=json3',{redirect:'follow',signal:AbortSignal.timeout(12000),headers:{Accept:'application/json'}});
-  if(!timed.ok)return null;
-  let text='';try{text=captionTextFromJSON3(await timed.json());}catch{text='';}
-  if(text.length<100)return null;
-  const source=sourceFromData(url.href,'',text);
-  source.limitations=[...source.limitations,'Captions were read directly from the public video because the free source-processing allowance is unavailable.'];
-  await env.DB.prepare("UPDATE source_extractions SET status='ready',source_json=?,updated_at=? WHERE id=?").bind(JSON.stringify(source),Date.now(),rowID).run();
-  return source;
+  const signal=AbortSignal.timeout(20000);
+  const page=await fetcher('https://www.youtube.com/watch?v='+videoID,{redirect:'manual',signal,headers:{Accept:'text/html','User-Agent':'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124 Safari/537.36','Accept-Language':'en'}});
+  if(!page.ok){void page.body?.cancel().catch(()=>{});return null;}
+  const html=await captionBody(page,signal,3000000);
+  const rank=track=>String(track.languageCode||'').toLowerCase().startsWith('en')?(track.kind==='asr'?1:0):2;
+  const tracks=captionTracksFromHTML(html).filter(track=>publicCaptionURL(track,videoID)).sort((a,b)=>rank(a)-rank(b));
+  const seen=new Set();
+  for(const track of tracks){
+   const href=publicCaptionURL(track,videoID);if(seen.has(href))continue;seen.add(href);if(seen.size>3)break;
+   let text='';
+   try{
+    const timed=await fetcher(href,{redirect:'manual',signal,headers:{Accept:'application/json'}});
+    if(!timed.ok){void timed.body?.cancel().catch(()=>{});continue;}
+    text=captionTextFromJSON3(JSON.parse(await captionBody(timed,signal,1000000)));
+   }catch{if(signal.aborted)return null;continue;}
+   if(text.length<100||text.length>30000)continue;
+   const source=sourceFromData(url.href,'',text);
+   source.limitations=[...source.limitations,'Captions were read directly from the public video because the free source-processing allowance is unavailable.'];
+   await env.DB.prepare("UPDATE source_extractions SET status='ready',source_json=?,updated_at=? WHERE id=?").bind(JSON.stringify(source),Date.now(),rowID).run();
+   return source;
+  }
+  return null;
  }catch{return null;}
 }
+
 export async function resolveTutorial(env,input,fetcher=fetch,{visualOnly=false}={}){
  const url=sourceURL(input),platform=socialPlatform(url);
  if(!platform||!socialExtractionEnabled(env))return fetchTutorial(url.href,fetcher);
