@@ -448,3 +448,32 @@ Real YouTube transcript ingestion (aAxGTnVNJiE) returned 201 with an
 charged / US$4.793475 of US$5 remaining; total additional live spend across
 Q&A, photo checks and ingestion US$0.01542. Physical-device and production
 OAuth acceptance remain unverified/unconfigured.
+
+---
+
+# Navbar overlap fix — 2026-11-02
+
+Screenshot evidence showed the desktop Professional navbar crowding:
+wordmark over the first link and the Privacy link touching the Hobby/
+Professional toggle. In the shrunken (scrolled) pill the full cluster
+(wordmark + 3 links + toggle + CTA, ~880px of non-wrapping content) had
+only ~25px of slack inside the 800px-minimum pill, and below xl widths the
+same cluster was squeezed into the lg layout. Fixes
+(`src/components/ui/resizable-navbar.tsx`, `src/components/PublicNavbar.tsx`):
+
+- Full desktop nav now appears only from **xl (1280px)** up, where the
+  cluster provably fits; between lg and xl the existing mobile header
+  (wordmark, Hobby/Pro toggle, hamburger menu) is used instead.
+- The shrunken pill's minimum width is `min(880px, calc(100vw - 48px))` —
+  wide enough for its content, never wider than the viewport.
+- The wordmark is `shrink-0` so it can never be compressed into the links.
+
+Verified with Playwright geometry checks at 1024–1600px, top and scrolled
+states (no overlapping navbar elements), plus screenshots at 1100px
+(mobile header) and 1440px scrolled (Privacy fully clear of the toggle),
+shown in the session. Frontend **335 passed** + Auth fixtures; TypeScript
+clean; build passed; smoke 16/37/31, no paid requests. Note: the
+screenshot's extra inline "New training brief" link exists only on the old
+live build (removed in master earlier); a redeploy carries this fix too.
+
+Imported alongside GitHub master 1f0b8b1: its new docked interior headers and layouts are retained. Independent import checks: 335 frontend tests plus Auth.js fixtures, Vercel production build, credential scan (499 files), 16-route/31-API smoke checks passed. No paid provider calls.

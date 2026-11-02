@@ -103,10 +103,10 @@ export const NavBody = ({ children, className, visible }: NavBodyProps) => {
         mass: 0.9,
       }}
       style={{
-        minWidth: "800px",
+        minWidth: "min(880px, calc(100vw - 48px))",
       }}
       className={cn(
-        "relative z-[60] mx-auto hidden w-full max-w-7xl flex-row items-center justify-between self-start rounded-full bg-transparent px-4 py-2 lg:flex dark:bg-transparent",
+        "relative z-[60] mx-auto hidden w-full max-w-7xl flex-row items-center justify-between self-start rounded-full bg-transparent px-4 py-2 xl:flex dark:bg-transparent",
         visible && "bg-white/80 dark:bg-neutral-950/80",
         className,
       )}
@@ -123,7 +123,7 @@ export const NavItems = ({ items, className, onItemClick }: NavItemsProps) => {
     <motion.div
       onMouseLeave={() => setHovered(null)}
       className={cn(
-        "absolute inset-0 hidden flex-1 flex-row items-center justify-center space-x-2 text-sm font-medium text-zinc-600 transition duration-200 hover:text-zinc-800 lg:flex lg:space-x-2",
+        "absolute inset-0 hidden flex-1 flex-row items-center justify-center space-x-2 text-sm font-medium text-zinc-600 transition duration-200 hover:text-zinc-800 xl:flex xl:space-x-2",
         className,
       )}
     >
@@ -170,7 +170,7 @@ export const MobileNav = ({ children, className, visible }: MobileNavProps) => {
         mass: 0.9,
       }}
       className={cn(
-        "relative z-50 mx-auto flex w-full max-w-7xl flex-col items-center justify-between bg-transparent px-4 py-3 lg:hidden",
+        "relative z-50 mx-auto flex w-full max-w-7xl flex-col items-center justify-between bg-transparent px-4 py-3 xl:hidden",
         visible && "bg-white/80 dark:bg-neutral-950/80",
         className,
       )}

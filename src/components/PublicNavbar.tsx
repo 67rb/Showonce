@@ -53,7 +53,7 @@ function WordmarkAnchor({
       href={professional ? "/professional" : "/"}
       onClick={onClick}
       aria-label="Show Once — home"
-      className={`wordmark relative z-20 pointer-events-auto cursor-pointer select-none ${className}`}
+      className={`wordmark relative z-20 shrink-0 pointer-events-auto cursor-pointer select-none ${className}`}
     >
       <span className={light ? "text-[#121212]" : ""}>{s.wordmarkShow}</span>
       <span
