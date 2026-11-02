@@ -3,9 +3,11 @@ import s from "@/lib/strings";
 
 export default function PrivacyPage() {
   return (
-    // 5.6 — text pages: readable single column, max-w-[720px], 16px sides on
-    // mobile, centred on desktop, left-aligned text.
-    <div className="mx-auto w-full max-w-[720px] px-4 py-16">
+    // 5.6 — text pages: readable single column. 5.3 (L12) — the content sits
+    // in the shared interior container (max-w-[1120px] shell) and the 720px
+    // text column is left-aligned at its left edge, not floated centre.
+    <div className="mx-auto w-full max-w-[1120px] px-4 py-16 md:px-6 lg:px-8">
+      <div className="max-w-[720px]">
       <header>
         <h1 className="font-body-ui text-[2.5rem] font-bold tracking-[-0.02em] text-site-ink">
           {s.privacyPageHeading}
@@ -16,8 +18,9 @@ export default function PrivacyPage() {
         />
       </header>
 
-      {/* the claim — a soft amber statement */}
-      <div className="mt-8 rounded-[20px] border border-[#F59E0B]/30 bg-[#F59E0B]/[0.10] px-6 py-6 text-center">
+      {/* the claim — a soft amber statement, left-aligned (5.3 L12: no centred
+          orphan wrap) */}
+      <div className="mt-8 rounded-[20px] border border-[#F59E0B]/30 bg-[#F59E0B]/[0.10] px-6 py-6">
         <p className="font-body-ui text-[1.5rem] font-bold tracking-[-0.01em] text-accent-deep">
           {s.privacyClaim}
         </p>
@@ -38,6 +41,7 @@ export default function PrivacyPage() {
             </p>
           </section>
         ))}
+      </div>
       </div>
     </div>
   );

@@ -20,28 +20,27 @@ const primary =
 
 export default function SampleLessonPage() {
   return (
-    <div className="mx-auto w-full max-w-[720px] px-4 pb-24 md:px-6 lg:max-w-[1120px] lg:px-8">
-      <header className="lg:flex lg:items-start lg:justify-between lg:gap-8">
+    <div className="mx-auto w-full max-w-[720px] px-4 pt-4 pb-24 md:px-6 lg:max-w-[1120px] lg:px-8">
+      <header className="scroll-mt-28">
         <div className="min-w-0">
           <p className="font-body-ui text-small font-semibold uppercase tracking-[0.14em] text-accent-deep">
             {s["sample.origamiEyebrow"]}
           </p>
           <h1 className="mt-1 font-body-ui text-[2rem] font-bold tracking-[-0.02em] text-site-ink lg:text-[2.5rem]">
-            {s["sample.origamiTitle"]} · {origamiSample.steps.length} steps
+            {s["sample.origamiTitle"]}
           </h1>
+          {/* 5.3 (L5c) — the step count leaves the H1 and becomes the muted
+              meta line under it, like the lesson cards. */}
+          <p className="mt-2 font-body-ui text-small font-medium text-site-muted">
+            {origamiSample.steps.length} steps · {s.sampleFreeNote}
+          </p>
           <p className="mt-3 max-w-[560px] font-body-ui text-body text-site-muted">
             {s["sample.origamiSubtitle"]}
           </p>
         </div>
-        <div className="mt-5 flex flex-col gap-3 lg:mt-0 lg:items-end">
-          <SampleStart className={primary}/>
-          <p className="text-small font-body-ui text-site-muted">
-            {s.sampleFreeNote}
-          </p>
-        </div>
       </header>
 
-      <section className="mt-8">
+      <section className="scroll-mt-28 mt-8">
         <h2 className="font-body-ui text-xl font-bold tracking-[-0.01em] text-site-ink">
           {s["sample.materialsLabel"]}
         </h2>
@@ -52,7 +51,7 @@ export default function SampleLessonPage() {
         </ul>
       </section>
 
-      <section className="mt-8">
+      <section className="scroll-mt-28 mt-8">
         <h2 className="font-body-ui text-xl font-bold tracking-[-0.01em] text-site-ink">
           {s["sample.stepsHeading"]}
         </h2>
@@ -60,13 +59,16 @@ export default function SampleLessonPage() {
           {origamiSample.steps.map((step, i) => (
             <article
               key={step.id}
-              className="rounded-[16px] border border-site-border bg-white p-4 lg:p-5"
+              className="scroll-mt-28 rounded-[16px] border border-site-border bg-white p-4 lg:p-5"
             >
-              <div className="lg:flex lg:gap-6">
+              {/* 5.3 (L5a) — the media column gets a fixed desktop height so
+                  it cannot drive the card taller than its text; the text
+                  column centres when it is the shorter side. */}
+              <div className="lg:flex lg:items-center lg:gap-6">
                 <div className="shrink-0 overflow-hidden rounded-xl border border-site-border lg:w-[300px]">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
-                    className="w-full object-contain"
+                    className="w-full object-contain lg:h-[200px]"
                     src={step.visual}
                     alt={`${s["sample.stepLabel"]} ${i + 1} — ${step.title}`}
                     width={420}
@@ -83,16 +85,18 @@ export default function SampleLessonPage() {
                   <p className="mt-2 font-body-ui text-site-ink">
                     {step.instructions}
                   </p>
-                  <p className="mt-3 text-small font-body-ui text-site-muted">
-                    <span className="font-semibold text-accent-deep">
-                      {s["sample.targetLabel"]}
-                    </span>{" "}
-                    {step.target}
+                  {/* 5.3 (L5b) — label and value are separate elements: the
+                      small-caps label gets its own line with a 4px gap. */}
+                  <p className="mt-3 font-body-ui text-small font-semibold uppercase tracking-[0.12em] text-accent-deep">
+                    {s["sample.targetLabel"]}
                   </p>
                   <p className="mt-1 text-small font-body-ui text-site-muted">
-                    <span className="font-semibold text-accent-deep">
-                      {s["sample.criterionLabel"]}
-                    </span>{" "}
+                    {step.target}
+                  </p>
+                  <p className="mt-3 font-body-ui text-small font-semibold uppercase tracking-[0.12em] text-accent-deep">
+                    {s["sample.criterionLabel"]}
+                  </p>
+                  <p className="mt-1 text-small font-body-ui text-site-muted">
                     {step.criterion}
                   </p>
                 </div>
@@ -102,7 +106,7 @@ export default function SampleLessonPage() {
         </div>
       </section>
 
-      <section className="mt-8 rounded-[16px] border border-accent/30 bg-accent/5 p-4">
+      <section className="scroll-mt-28 mt-8 rounded-[16px] border border-accent/30 bg-accent/5 p-4">
         <p className="font-body-ui text-small text-site-ink">
           {s["sample.livePlayerNote"]}
         </p>

@@ -215,7 +215,12 @@ export function LiveCamera({lesson,step,progress,token,disabled,stopRef,initialL
  }
  const activeStill=stills.find(still=>still.id===selectedId)||null,criteria=step.assessment_criteria?.length?step.assessment_criteria:[step.expected_visual_result||step.instructions];
  return <section className="mt-6 border-t border-site-border pt-5" aria-label="Live camera practice">
-  <button type="button" className="text-small font-semibold underline" aria-expanded={shown} disabled={disabled} onClick={()=>{if(shown)stop();setShown(value=>!value);}}>{shown?'Hide live camera':'Practice with live camera · free'}</button>
+  {/* 5.3 (L11c) — the panel header itself is the toggle: one full-width
+      header-row button with the state chevron; no separate underlined link. */}
+  <button type="button" className="flex w-full items-center justify-between gap-3 text-left" aria-expanded={shown} disabled={disabled} onClick={()=>{if(shown)stop();setShown(value=>!value);}}>
+    <span className="text-small font-semibold text-site-ink">{shown?'Hide live camera':'Practice with live camera · free'}</span>
+    <span aria-hidden="true" className="text-small text-site-muted">{shown?'▾':'▸'}</span>
+  </button>
   {shown&&<div className="mt-4 space-y-4">
    <div className="flex flex-wrap items-center justify-between gap-2"><h3 className="text-xl font-semibold">See it. Try it. Compare.</h3><span role="status" className="rounded-full bg-accent/15 px-3 py-1 text-small">{checksSent===0?'Free local preview · 0 uploads':'Free local preview · '+checksSent+(checksSent===1?' check sent · not stored':' checks sent · not stored')}</span></div>
    <p className="text-small text-site-muted">Keep your work in view while you follow this step. Preview, stills and the checklist stay on this device. No microphone or recording.</p><div className="rounded-2xl border border-site-border p-4" aria-label={'Target for step '+step.position}><p className="text-small font-semibold">Target · step {step.position}</p><div className={target?'mt-2 grid items-start gap-3 sm:grid-cols-[128px_1fr]':'mt-2'}>{target&&<img src={target} alt={'Target illustration: '+step.expected_visual_result} className="max-h-36 w-full rounded-xl bg-site-page object-contain"/>}<p className="text-small text-site-muted">{step.expected_visual_result}</p></div></div>

@@ -251,39 +251,48 @@ function AllowancePanel() {
       if (!request.signal.aborted) setBusy(false);
     }
   }
+  /* 5.3 (L4) — the balance line and Refresh action are the allowance card's
+     footer row (rendered inside the card), not orphaned open-space rows. */
   return (
-    <section aria-label="Shared AI allowance" className="space-y-2">
-      <AiAllowance config={snapshot || identity.config} />
-      <div className="flex flex-wrap items-center justify-between gap-2 text-small">
-        <span className="text-site-muted">Balance at last check</span>
-        <button
-          type="button"
-          className="min-h-11 rounded-full bg-white px-4 text-site-ink underline disabled:opacity-50"
-          disabled={busy}
-          onClick={() => void refresh()}
-        >
-          {busy ? "Refreshing balance…" : "Refresh balance · free"}
-        </button>
-      </div>
-      {error && (
-        <p
-          role="alert"
-          className="rounded-xl bg-white p-3 text-small text-site-ink"
-        >
-          {error}
-        </p>
-      )}
+    <section aria-label="Shared AI allowance">
+      <AiAllowance
+        config={snapshot || identity.config}
+        footer={
+          <>
+            <span className="text-site-muted">Balance at last check</span>
+            <button
+              type="button"
+              className="min-h-11 rounded-full bg-white px-4 text-site-ink underline disabled:opacity-50"
+              disabled={busy}
+              onClick={() => void refresh()}
+            >
+              {busy ? "Refreshing balance…" : "Refresh balance · free"}
+            </button>
+            {error && (
+              <p
+                role="alert"
+                className="w-full text-small text-site-ink"
+              >
+                {error}
+              </p>
+            )}
+          </>
+        }
+      />
     </section>
   );
 }
 function CreateHeading() {
+  /* 5.3 (L1) — one stacked header block: eyebrow row, H1 and subtitle all
+     share the container's left edge (the old mx-auto centred subtitle block is
+     removed), mirroring the /professional/create heading structure. */
   return (
     <div className="mb-8">
       <header>
         <h1 className="font-body-ui text-[2.75rem] font-bold tracking-[-0.02em] text-site-ink lg:text-[3.5rem]">
           {s.createHeading}
         </h1>
-        <p className="mx-auto mt-3 max-w-[320px] font-body-ui text-body font-semibold leading-relaxed text-site-muted">
+        <p className="mt-3 max-w-[560px] font-body-ui text-body font-semibold leading-relaxed text-site-muted">
           {s.createScopeNote}
         </p>
       </header>
@@ -856,7 +865,7 @@ function CreatePanel() {
                 disabled={busy}
                 key={example.id}
                 onClick={() => void create(example.id)}
-                className="rounded-[16px] border border-site-border bg-white p-6 text-left"
+                className="rounded-[16px] border border-site-border bg-white p-4 text-left lg:p-6"
               >
                 <span className="text-small uppercase text-site-muted">
                   {example.category} · {example.steps} steps
@@ -1019,17 +1028,29 @@ function LibraryPanel() {
   );
   return (
     <div className="space-y-6 lg:space-y-8">
-      <header>
-        <h1 className="font-body-ui text-[2.5rem] font-bold tracking-[-0.02em] text-site-ink lg:text-[3rem]">
-          {s.lessonsHeading}
-        </h1>
-        <div aria-hidden className="mt-3 h-1 w-16 rounded-full bg-accent" />
+      {/* 5.3 (L6) — exactly ONE New lesson action: desktop right-aligned on the
+          H1 row (hidden on mobile, which uses the sticky bottom bar below). */}
+      <header className="flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <h1 className="font-body-ui text-[2.5rem] font-bold tracking-[-0.02em] text-site-ink lg:text-[3rem]">
+            {s.lessonsHeading}
+          </h1>
+          <div aria-hidden className="mt-3 h-1 w-16 rounded-full bg-accent" />
+        </div>
+        <a
+          href={workspaceHref("create")}
+          className={primary + " hidden shrink-0 md:inline-flex"}
+        >
+          {s.newLesson}
+        </a>
       </header>
-      <div className="rounded-[16px] border border-site-border bg-white p-4 lg:p-6">
+      {/* 5.3 (L6) — the filter card keeps Search + Status only, labels above
+          both on a shared baseline; the New lesson button no longer lives here. */}
+      <div className="scroll-mt-28 rounded-[16px] border border-site-border bg-white p-4 lg:p-6">
         <p className="text-small font-semibold text-site-ink">
           Find and filter practices
         </p>
-        {/* 5.6 — desktop: one toolbar row; search grows, filter and the New action sit beside it */}
+        {/* 5.6 — desktop: one toolbar row; search grows beside the filter */}
         <div className="mt-4 flex flex-col gap-3 lg:flex-row lg:items-end">
           <label className="grow">
             Find a practice
@@ -1052,16 +1073,10 @@ function LibraryPanel() {
               <option value="completed">Completed</option>
             </select>
           </label>
-          <a
-            href={workspaceHref("create")}
-            className={primary + " shrink-0 lg:mt-0"}
-          >
-            {s.newLesson}
-          </a>
         </div>
       </div>
-      {/* 5.5 — mobile-only sticky bottom action bar repeats the screen's primary action */}
-      <div className={stickyBar}>
+      {/* 5.3 (L6) — mobile-only sticky bottom bar (removed from the desktop flow) */}
+      <div className={stickyBar + " md:hidden"}>
         <a href={workspaceHref("create")} className={primary + " w-full"}>
           {s.newLesson}
         </a>
@@ -1082,7 +1097,7 @@ function LibraryPanel() {
         </p>
       )}
       {/* 5.6 — lesson cards: one column on mobile/tablet, two columns from 1024px; equal height per row, titles never truncate */}
-      <div className="mt-4 grid grid-cols-1 gap-3 lg:grid-cols-2 lg:gap-5">
+      <div className="mt-4 grid scroll-mt-28 grid-cols-1 gap-3 lg:grid-cols-2 lg:gap-5">
         {shown.map((entry, idx) => (
           <article
             key={entry.id}
@@ -1607,7 +1622,9 @@ function LessonPanel({ screen }: { screen: string }) {
   // the completion right column when complete).
   const historyBlock = progress && (
     <Card>
-      <div className="flex flex-wrap gap-3">
+      {/* 5.3 (L11d) — the practice-history actions sit in the card's header row,
+          right-aligned. */}
+      <div className="flex flex-wrap items-center justify-end gap-3">
         <button
           className={secondary}
           disabled={busy}
@@ -1666,7 +1683,8 @@ function LessonPanel({ screen }: { screen: string }) {
               </li>
             ))
           ) : (
-            <li className="text-site-muted">
+            /* 5.3 (L11d) — the empty state uses the shared centred anatomy. */
+            <li className="py-8 text-center text-small text-site-muted">
               No photo submissions yet. Self-reviews are included in your
               checkpoint totals.
             </li>
@@ -1827,6 +1845,7 @@ function LessonPanel({ screen }: { screen: string }) {
                 <select
                   className={field}
                   value={index}
+                  title={lesson.steps[index]?.title || undefined}
                   onChange={(event) => {
                     setIndex(Number(event.target.value));
                     setRevisit(true);
@@ -1834,7 +1853,7 @@ function LessonPanel({ screen }: { screen: string }) {
                 >
                   {lesson.steps.map((item, i) => (
                     <option key={item.id} value={i}>
-                      {i + 1}. {item.title || item.instructions.slice(0, 65)}
+                      {i + 1}. {item.title || item.instructions}
                     </option>
                   ))}
                 </select>
@@ -1867,7 +1886,7 @@ function LessonPanel({ screen }: { screen: string }) {
         </div>
       ) : /* 5.6 — lesson overview: cover left, path + materials right, same two-column desktop grid */ screen ===
           "overview" || !progress ? (
-        <div className="mt-4 lg:grid lg:grid-cols-[minmax(0,560px)_minmax(0,1fr)] lg:items-start lg:gap-8">
+        <div className="mt-4 scroll-mt-28 lg:grid lg:grid-cols-[minmax(0,560px)_minmax(0,1fr)] lg:items-start lg:gap-8">
           <div className="mb-6 min-w-0 self-start lg:mb-0 lg:sticky lg:top-[112px] lg:max-w-[560px]">
             <div className="rounded-[16px] border border-site-border bg-white p-3">
               <SavedLessonCover lesson={lesson} token={token} large />
@@ -1954,7 +1973,7 @@ function LessonPanel({ screen }: { screen: string }) {
           </div>
         </div>
       ) : (
-        /* 5.6 — runtime play: two columns on desktop (progress + target visual + step text left, sticky; Check / camera panel / Ask right); single column on mobile with the primary step action in the sticky bottom bar */ <div className="lg:grid lg:grid-cols-[minmax(0,560px)_minmax(0,1fr)] lg:items-start lg:gap-8">
+        /* 5.6 — runtime play: two columns on desktop (progress + target visual + step text left, sticky; Check / camera panel / Ask right); single column on mobile with the primary step action in the sticky bottom bar */ <div className="scroll-mt-28 lg:grid lg:grid-cols-[minmax(0,560px)_minmax(0,1fr)] lg:items-start lg:gap-8">
           <div className="min-w-0 space-y-5 lg:sticky lg:top-[112px] lg:max-w-[560px]">
             <label className="block font-semibold text-site-ink">
               Checkpoint
@@ -1962,11 +1981,12 @@ function LessonPanel({ screen }: { screen: string }) {
                 className={field}
                 value={index}
                 disabled={busy}
+                title={step.title || step.instructions}
                 onChange={(event) => setIndex(Number(event.target.value))}
               >
                 {lesson.steps.map((item, i) => (
                   <option key={item.id} value={i}>
-                    {i + 1}. {item.title || item.instructions.slice(0, 65)}
+                    {i + 1}. {item.title || item.instructions}
                     {progress.completed_step_ids.includes(item.id)
                       ? " · practiced"
                       : ""}

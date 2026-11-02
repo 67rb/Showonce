@@ -18,9 +18,11 @@ export default function NotFound() {
     <div className="flex min-h-dvh flex-col">
       <PublicNavbar />
       <main className="relative flex flex-1 flex-col items-center justify-center gap-4 overflow-hidden px-6 py-28 text-center">
+        {/* 5.3 (L12) — the numeral renders at full ink strength (was pale
+            grey on the pale ground). */}
         <p
           aria-hidden
-          className="font-body-ui text-[6rem] font-extrabold leading-none text-site-ink/20"
+          className="font-body-ui text-[6rem] font-extrabold leading-none text-site-ink"
         >
           404
         </p>

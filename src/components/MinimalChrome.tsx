@@ -24,25 +24,27 @@ export function MinimalChrome() {
   const accent = isProfessional ? "bg-[#16A34A]" : "bg-accent";
 
   return (
-    <header className="mx-auto flex w-full max-w-6xl items-center justify-between gap-4 px-4 py-3">
-      <Wordmark
-        href={isProfessional?"/professional":"/"}
-        size="sm"
-        onceClassName={isProfessional ? "text-[#16A34A]" : undefined}
-      />
-      <div className="min-w-0 flex-1">
-        {showProgress && (
-          <ProgressSteps accentClass={accent} current={current} total={barTotal} />
+    <div className="mx-auto w-full max-w-6xl px-4 py-3">
+      <header className="flex items-center justify-between gap-4">
+        <Wordmark
+          href={isProfessional?"/professional":"/"}
+          size="sm"
+          onceClassName={isProfessional ? "text-[#16A34A]" : undefined}
+        />
+        {!isComplete && (
+          <Link
+            href={isProfessional ? "/professional/lessons" : "/lessons"}
+            className="shrink-0 text-small font-medium text-muted transition-colors duration-[150ms] hover:text-ink"
+          >
+            {s.exitLesson}
+          </Link>
         )}
-      </div>
-      {!isComplete && (
-        <Link
-          href={isProfessional ? "/professional/lessons" : "/lessons"}
-          className="shrink-0 text-small font-medium text-muted transition-colors duration-[150ms] hover:text-ink"
-        >
-          {s.exitLesson}
-        </Link>
-      )}
-    </header>
+      </header>
+      {/* 5.3 (L11b) — the progress track sits directly under the header row and
+          spans the full container width. */}
+      <div className="mt-2">{showProgress && (
+        <ProgressSteps accentClass={accent} current={current} total={barTotal} />
+      )}</div>
+    </div>
   );
 }

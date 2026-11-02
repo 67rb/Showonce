@@ -10,6 +10,7 @@ import {
 import { AccountBar, useIdentity } from "@/components/learning/Identity";
 import { EvidenceJournal, PrivateWorkPhoto } from "./EvidenceJournal";
 import { AiAllowance } from "@/components/learning/AiAllowance";
+import { EmptyState } from "@/components/EmptyState";
 
 import { aiChecksAvailable, photoData, type Entry } from "@/lib/learning";
 import s from "@/lib/strings";
@@ -88,11 +89,22 @@ type Assignment = {
     notes: string;
   }[];
 };
-function Panel({ children, id }: { children: ReactNode; id?: string }) {
+function Panel({
+  children,
+  id,
+  className = "",
+}: {
+  children: ReactNode;
+  id?: string;
+  className?: string;
+}) {
   return (
     <section
       id={id}
-      className="relative rounded-[16px] border border-site-border bg-white p-4 lg:p-6"
+      className={
+        "relative rounded-[16px] border border-site-border bg-white p-4 lg:p-6 " +
+        className
+      }
     >
       {children}
     </section>
@@ -304,27 +316,28 @@ function StudioBody({ view }: { view: "create" | "library" | "instructor" }) {
           : "max-w-[640px] lg:max-w-[1120px]")
       }
     >
+      {/* 5.3 (L12) — the title block spans the full header width; the scope tag
+          becomes the meta line under the H1 instead of a competing right
+          column that squeezed the H1 on /professional/instructor. */}
       <header className="pro-workspace-heading">
-        <div>
-          <p className="pro-kicker">
-            SHOW ONCE / PROFESSIONAL · TRAINING WORKSPACE
-          </p>
-          <h1 className="mt-3 font-body-ui text-[clamp(2rem,4vw,3.5rem)] font-extrabold leading-tight tracking-tight text-site-ink">
-            {view === "create"
-              ? "Build your training brief."
-              : view === "instructor"
-                ? "Instructor review desk."
-                : "Your training hub."}
-          </h1>
-          <p className="mt-4 max-w-[672px] text-body text-site-muted">
-            {view === "create"
-              ? "Set a trade, define the outcome and bring a reference or work photo."
-              : view === "instructor"
-                ? "Review completed practice, shared evidence and the learner’s next steps."
-                : "Continue a trade course, record work evidence and prepare for instructor review."}
-          </p>
-        </div>
-        <span className="pro-scope-tag">CLASSROOM / DISCONNECTED TRAINING</span>
+        <p className="pro-kicker">
+          SHOW ONCE / PROFESSIONAL · TRAINING WORKSPACE
+        </p>
+        <h1 className="mt-3 font-body-ui text-[clamp(2rem,4vw,3.5rem)] font-extrabold leading-tight tracking-tight text-site-ink">
+          {view === "create"
+            ? "Build your training brief."
+            : view === "instructor"
+              ? "Instructor review desk."
+              : "Your training hub."}
+        </h1>
+        <p className="mt-4 max-w-[672px] text-body text-site-muted">
+          {view === "create"
+            ? "Set a trade, define the outcome and bring a reference or work photo."
+            : view === "instructor"
+              ? "Review completed practice, shared evidence and the learner’s next steps."
+              : "Continue a trade course, record work evidence and prepare for instructor review."}
+        </p>
+        <span className="pro-scope-tag mt-3 self-start">CLASSROOM / DISCONNECTED TRAINING</span>
       </header>
       {error && (
         <p
@@ -363,6 +376,26 @@ function StudioBody({ view }: { view: "create" | "library" | "instructor" }) {
             ))}
           </div>
         )}
+      {/* 5.3 (L7) — the sign-in gate notice is a page-level banner ABOVE the
+          form card (full container width, amber notice styling), no longer a
+          header inside the form card. */}
+      {view === "create" && !signedIn && (
+        <div className="mb-5 rounded-[16px] border border-[#F59E0B]/30 bg-[#F59E0B]/10 p-4">
+          <p className="text-small text-site-ink">
+            {identity.account?.sign_in_url
+              ? s["proCreate.signInGateNoticeAvailable"]
+              : s["proCreate.signInGateNotice"]}
+          </p>
+          <a
+            className="mt-2 inline-block text-small font-semibold text-[#15803D] underline"
+            href={identity.account?.sign_in_url || "/professional/lessons"}
+          >
+            {identity.account?.sign_in_url
+              ? "Sign in with GitHub"
+              : s["proCreate.trainingHubLink"]}
+          </a>
+        </div>
+      )}
       {view === "create" && (
         <div className="lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,320px)] lg:items-start lg:gap-8">
           <div className="lg:max-w-[640px]">
@@ -387,45 +420,57 @@ function StudioBody({ view }: { view: "create" | "library" | "instructor" }) {
                 1. Build brief · 2. Practise · 3. Instructor review
               </p>
             </div>
-            <div className="space-y-5">
-              <h2 className="font-body-ui text-2xl font-bold text-site-ink">
+            {/* 5.3 (L7) — the briefs rail becomes a proper card with the shared
+                empty-state anatomy (heading, one line, action slot); the brief
+                cards render inside it, no duplicated list. */}
+            <div className="rounded-[16px] border border-site-border bg-white">
+              <h2 className="border-b border-site-border px-4 py-3 font-body-ui text-lg font-bold text-site-ink lg:px-5">
                 Saved training briefs
               </h2>
-              {!loading && !requests.length && (
-                <p className="text-site-muted">
-                  {signedIn
-                    ? "No learning requests saved yet."
-                    : s.signInWorkspaceLine}
-                </p>
+              {!loading && !requests.length ? (
+                <EmptyState
+                  line={
+                    signedIn
+                      ? "No learning requests saved yet."
+                      : s.signInWorkspaceLine
+                  }
+                >
+                  <a className={secondary} href="/professional/create/">
+                    {s.proNavBrief}
+                  </a>
+                </EmptyState>
+              ) : (
+                <div className="space-y-4 p-4 lg:p-5">
+                  {requests.map((item) => (
+                    <RequestCard
+                      key={item.id}
+                      item={item}
+                      busy={busy}
+                      aiReady={aiChecksAvailable(identity.config)}
+                      run={run}
+                      generate={async () => {
+                        const value = await post<{ message?: string }>(
+                          "/v1/professional/requests/" + item.id + "/plan",
+                          { ai_consent: true },
+                        );
+                        if (active.current)
+                          setNotice(
+                            value.message || "Your AI-suggested practice is ready.",
+                          );
+                        await load();
+                      }}
+                      remove={async () => {
+                        await identity.request(
+                          "/v1/professional/requests/" + item.id + "/photo",
+                          undefined,
+                          { method: "DELETE", signal: life.current?.signal },
+                        );
+                        await load();
+                      }}
+                    />
+                  ))}
+                </div>
               )}
-              {requests.map((item) => (
-                <RequestCard
-                  key={item.id}
-                  item={item}
-                  busy={busy}
-                  aiReady={aiChecksAvailable(identity.config)}
-                  run={run}
-                  generate={async () => {
-                    const value = await post<{ message?: string }>(
-                      "/v1/professional/requests/" + item.id + "/plan",
-                      { ai_consent: true },
-                    );
-                    if (active.current)
-                      setNotice(
-                        value.message || "Your AI-suggested practice is ready.",
-                      );
-                    await load();
-                  }}
-                  remove={async () => {
-                    await identity.request(
-                      "/v1/professional/requests/" + item.id + "/photo",
-                      undefined,
-                      { method: "DELETE", signal: life.current?.signal },
-                    );
-                    await load();
-                  }}
-                />
-              ))}
             </div>
           </aside>
         </div>
@@ -444,95 +489,185 @@ function StudioBody({ view }: { view: "create" | "library" | "instructor" }) {
       </div>
       {view === "library" && (
         <div className="pro-hub-sections">
-          <section className="pro-saved-briefs mt-10 space-y-3">
-            <div className="flex flex-wrap items-center justify-between gap-3">
-              <h2 className="font-body-ui text-2xl font-bold text-site-ink">
-                Saved training briefs
-              </h2>
-              <a className={secondary} href="/professional/create/">
-                Open in New training brief
-              </a>
-            </div>
-            {!loading && !requests.length && (
-              <p className="text-site-muted">
-                {signedIn
-                  ? "No training briefs saved yet. Start one from New training brief."
-                  : s.signInWorkspaceLine}
-              </p>
-            )}
-            {requests.map((item) => (
-              <div
-                key={item.id}
-                className="flex flex-wrap items-center justify-between gap-3 border-b border-site-border py-4"
-              >
-                <div className="min-w-0">
-                  <h3 className="break-words font-body-ui text-lg font-semibold text-site-ink">
-                    {item.goal}
-                  </h3>
-                  <p className="mt-1 text-small text-site-muted">
-                    {item.trade || "Training brief"} ·{" "}
-                    {item.status === "ready"
-                      ? "Practice plan ready"
-                      : item.status === "processing"
-                        ? "Processing"
-                        : item.status === "failed"
-                          ? "Attempt failed · no automatic repeat"
-                          : item.status === "draft"
-                            ? "Saved · not analyzed"
-                            : "Status unavailable · refresh saved data"}
-                  </p>
-                </div>
-                <a
-                  className="text-small font-semibold text-[#15803D] underline"
-                  href={
-                    item.href ||
-                    "/professional/create/#brief-" + encodeURIComponent(item.id)
-                  }
-                >
-                  {item.href
-                    ? "Open practice plan →"
-                    : item.status === "failed"
-                      ? "View failed brief →"
-                      : "Open brief →"}
-                </a>
+          {/* 5.3 (L8a) — order: Next action FIRST, then saved progress + saved
+              briefs in one grid, then Trade courses. Every group is a card. */}
+          <section className="pro-active-training scroll-mt-28 mt-8">
+            <Panel>
+              <div>
+                <p className="pro-kicker">YOUR NEXT ACTION</p>
+                <h2 className="mt-2 font-body-ui text-2xl font-bold text-site-ink">
+                  Active training
+                </h2>
               </div>
-            ))}
-          </section>
-          <section className="pro-catalogue mt-10 space-y-5">
-            <h2 className="font-body-ui text-2xl font-bold text-site-ink">
-              Trade courses
-            </h2>
-            <div className="flex flex-col gap-3 lg:flex-row lg:items-end">
-              <label className="text-small font-semibold text-site-ink lg:flex-1">
-                Find a course
-                <input
-                  className={field}
-                  type="search"
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
+              {!loading && !enrollments.length && (
+                <EmptyState line="Enroll in a course to begin.">
+                  <a className={secondary} href="/professional/create/">
+                    {s.proNavBrief}
+                  </a>
+                </EmptyState>
+              )}
+              {enrollments.map((entry) => (
+                <EnrollmentCard
+                  key={entry.id}
+                  entry={entry}
+                  assignment={
+                    assignments.find((item) => item.enrollment_id === entry.id) ||
+                    null
+                  }
+                  busy={busy}
+                  start={(id) => void run(() => start(entry, id))}
+                  refresh={load}
+                  run={run}
+                  review={(share) =>
+                    void run(async () => {
+                      await post(
+                        "/v1/professional/enrollments/" +
+                          entry.id +
+                          "/request-review",
+                        {
+                          expected_version: entry.version,
+                          share_evidence: share,
+                        },
+                      );
+                      await load();
+                    })
+                  }
                 />
-              </label>
-              <label className="text-small font-semibold text-site-ink">
-                Trade
-                <select
-                  className={field}
-                  value={trade}
-                  onChange={(e) => setTrade(e.target.value)}
-                >
-                  <option value="">All trades</option>
-                  {Array.from(new Set(courses.map((item) => item.trade))).map(
-                    (value) => (
-                      <option key={value}>{value}</option>
-                    ),
-                  )}
-                </select>
-              </label>
-            </div>
-            <div className="rounded-[16px] border border-site-border bg-white p-4">
-              <p className="text-small text-site-muted">
+              ))}
+            </Panel>
+          </section>
+          <div className="mt-8 grid gap-3 lg:grid-cols-2 lg:gap-5">
+            <section className="pro-saved-sessions scroll-mt-28 space-y-3">
+              <Panel className="h-full">
+                <h2 className="font-body-ui text-2xl font-bold text-site-ink">
+                  Saved practice sessions
+                </h2>
+                {!loading && !entries.length && (
+                  <EmptyState line="No saved practice sessions yet." />
+                )}
+                {entries.map((entry) => (
+                  <a
+                    key={entry.id}
+                    href={
+                      "/professional/lesson/runtime/play/?" +
+                      new URLSearchParams({
+                        lesson_id: entry.lesson_id,
+                        session_id: entry.id,
+                      })
+                    }
+                    className="group flex items-center justify-between gap-4 border-b border-site-border py-5 text-site-ink transition last:border-b-0 hover:text-[#16A34A]"
+                  >
+                    <div className="min-w-0">
+                      <h3 className="break-words font-body-ui text-xl font-semibold">
+                        {entry.title}
+                      </h3>
+                      <p className="mt-2 text-small text-site-muted">
+                        {entry.completed_steps}/{entry.total_steps} practice
+                        checkpoints
+                      </p>
+                    </div>
+                    <span aria-hidden>→</span>
+                  </a>
+                ))}
+              </Panel>
+            </section>
+            <section className="pro-saved-briefs scroll-mt-28 space-y-3">
+              <Panel className="h-full">
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <h2 className="font-body-ui text-2xl font-bold text-site-ink">
+                    Saved training briefs
+                  </h2>
+                  <a className={secondary} href="/professional/create/">
+                    Open in New training brief
+                  </a>
+                </div>
+                {!loading && !requests.length && (
+                  <EmptyState
+                    line={
+                      signedIn
+                        ? "No training briefs saved yet. Start one from New training brief."
+                        : s.signInWorkspaceLine
+                    }
+                  />
+                )}
+                {requests.map((item) => (
+                  <div
+                    key={item.id}
+                    className="flex flex-wrap items-center justify-between gap-3 border-b border-site-border py-4 last:border-b-0"
+                  >
+                    <div className="min-w-0">
+                      <h3 className="break-words font-body-ui text-lg font-semibold text-site-ink">
+                        {item.goal}
+                      </h3>
+                      <p className="mt-1 text-small text-site-muted">
+                        {item.trade || "Training brief"} ·{" "}
+                        {item.status === "ready"
+                          ? "Practice plan ready"
+                          : item.status === "processing"
+                            ? "Processing"
+                            : item.status === "failed"
+                              ? "Attempt failed · no automatic repeat"
+                              : item.status === "draft"
+                                ? "Saved · not analyzed"
+                                : "Status unavailable · refresh saved data"}
+                      </p>
+                    </div>
+                    <a
+                      className="text-small font-semibold text-[#15803D] underline"
+                      href={
+                        item.href ||
+                        "/professional/create/#brief-" + encodeURIComponent(item.id)
+                      }
+                    >
+                      {item.href
+                        ? "Open practice plan →"
+                        : item.status === "failed"
+                          ? "View failed brief →"
+                          : "Open brief →"}
+                    </a>
+                  </div>
+                ))}
+              </Panel>
+            </section>
+          </div>
+          <section className="pro-catalogue scroll-mt-28 mt-8">
+            <Panel>
+              <h2 className="font-body-ui text-2xl font-bold text-site-ink">
+                Trade courses
+              </h2>
+              <div className="flex flex-col gap-3 lg:flex-row lg:items-end">
+                <label className="text-small font-semibold text-site-ink lg:flex-1">
+                  Find a course
+                  <input
+                    className={field}
+                    type="search"
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                  />
+                </label>
+                <label className="text-small font-semibold text-site-ink">
+                  Trade
+                  <select
+                    className={field}
+                    value={trade}
+                    onChange={(e) => setTrade(e.target.value)}
+                  >
+                    <option value="">All trades</option>
+                    {Array.from(new Set(courses.map((item) => item.trade))).map(
+                      (value) => (
+                        <option key={value}>{value}</option>
+                      ),
+                    )}
+                  </select>
+                </label>
+              </div>
+              {/* 5.3 (L8b) — the notice keeps its text only; the classroom
+                  confirmation lives in its own labelled row (not inside the
+                  notice box, and not deleted: it still gates enrol). */}
+              <p className="rounded-[16px] border border-site-border bg-site-page p-4 text-small text-site-muted">
                 {s["hub.sharedNotice"]}
               </p>
-              <label className="mt-3 flex items-start gap-3 text-small text-site-ink">
+              <label className="mt-4 flex items-start gap-3 text-small text-site-ink">
                 <input
                   type="checkbox"
                   className="mt-1"
@@ -542,99 +677,31 @@ function StudioBody({ view }: { view: "create" | "library" | "instructor" }) {
                 />
                 <span>{s["hub.confirmLabel"]}</span>
               </label>
-            </div>
-            {!loading && !shown.length && (
-              <p className="text-site-muted">No matching courses.</p>
-            )}
-            {/* 5.6 — course cards: two columns from 1024px (2x2 at ≥1280), equal height per row */}
-            <div className="grid grid-cols-1 gap-3 lg:grid-cols-2 lg:gap-5">
-              {shown.map((course) => (
-                <CourseCard
-                  key={course.id}
-                  course={course}
-                  busy={busy}
-                  confirmed={confirmAll}
-                  signedIn={signedIn}
-                  enroll={() =>
-                    void run(async () => {
-                      await post("/v1/professional/enrollments", {
-                        course_id: course.id,
-                        training_only: true,
-                      });
-                      await load();
-                    })
-                  }
-                />
-              ))}
-            </div>
-          </section>
-          <section className="pro-active-training mt-10 space-y-5">
-            <div>
-              <p className="pro-kicker">YOUR NEXT ACTION</p>
-              <h2 className="mt-2 font-body-ui text-2xl font-bold text-site-ink">
-                Active training
-              </h2>
-            </div>
-            {!loading && !enrollments.length && (
-              <p className="text-site-muted">Enroll in a course to begin.</p>
-            )}
-            {enrollments.map((entry) => (
-              <EnrollmentCard
-                key={entry.id}
-                entry={entry}
-                assignment={
-                  assignments.find((item) => item.enrollment_id === entry.id) ||
-                  null
-                }
-                busy={busy}
-                start={(id) => void run(() => start(entry, id))}
-                refresh={load}
-                run={run}
-                review={(share) =>
-                  void run(async () => {
-                    await post(
-                      "/v1/professional/enrollments/" +
-                        entry.id +
-                        "/request-review",
-                      {
-                        expected_version: entry.version,
-                        share_evidence: share,
-                      },
-                    );
-                    await load();
-                  })
-                }
-              />
-            ))}
-          </section>
-          <section className="pro-saved-sessions mt-10 space-y-3">
-            <h2 className="font-body-ui text-2xl font-bold text-site-ink">
-              Saved practice sessions
-            </h2>
-            {entries.map((entry) => (
-              <a
-                key={entry.id}
-                href={
-                  "/professional/lesson/runtime/play/?" +
-                  new URLSearchParams({
-                    lesson_id: entry.lesson_id,
-                    session_id: entry.id,
-                  })
-                }
-                className="group flex items-center justify-between gap-4 border-b border-site-border py-5 text-site-ink transition hover:text-[#16A34A]"
-              >
-                <div className="min-w-0">
-                  <h3 className="break-words font-body-ui text-xl font-semibold">
-                    {entry.title}
-                  </h3>
-                  <p className="mt-2 text-small text-site-muted">
-                    {entry.completed_steps}/{entry.total_steps} practice
-                    checkpoints
-                  </p>
-                </div>
-                <span aria-hidden>→</span>
-              </a>
-            ))}
+              {!loading && !shown.length && (
+                <EmptyState line="No matching courses." />
+              )}
+              {/* 5.6 — course cards: two columns from 1024px (2x2 at ≥1280), equal height per row */}
+              <div className="grid grid-cols-1 gap-3 lg:grid-cols-2 lg:gap-5">
+                {shown.map((course) => (
+                  <CourseCard
+                    key={course.id}
+                    course={course}
+                    busy={busy}
+                    confirmed={confirmAll}
+                    signedIn={signedIn}
+                    enroll={() =>
+                      void run(async () => {
+                        await post("/v1/professional/enrollments", {
+                          course_id: course.id,
+                          training_only: true,
+                        });
+                        await load();
+                      })
+                    }
+                  />
+                ))}
+              </div>
+            </Panel>
           </section>
         </div>
       )}
@@ -777,7 +844,6 @@ function RequestForm({
   return (
     <form
       aria-label="Professional learning request"
-      className="space-y-5"
       onSubmit={(e) => {
         e.preventDefault();
         void run(async () => {
@@ -803,23 +869,9 @@ function RequestForm({
         });
       }}
     >
-      {!signedIn && (
-        <div className="rounded-[16px] border border-site-border bg-white p-4">
-          <p className="text-small text-site-ink">
-            {identity.account?.sign_in_url
-              ? s["proCreate.signInGateNoticeAvailable"]
-              : s["proCreate.signInGateNotice"]}
-          </p>
-          <a
-            className="mt-2 inline-block text-small font-semibold text-[#15803D] underline"
-            href={identity.account?.sign_in_url || "/professional/lessons"}
-          >
-            {identity.account?.sign_in_url
-              ? "Sign in with GitHub"
-              : s["proCreate.trainingHubLink"]}
-          </a>
-        </div>
-      )}
+      {/* 5.3 (L7) — ONE form card: brief fields, a divider, the photo upload as
+          an internal section, a divider, the confirmation checkbox, then the
+          footer action row. Nothing form-related renders outside the card. */}
       <Panel>
         <div className="space-y-5">
           <p className="pro-kicker">01 / TRAINING BRIEF</p>
@@ -895,80 +947,82 @@ function RequestForm({
             />
           </label>
         </div>
-      </Panel>
-      <div className="rounded-[16px] border-2 border-dashed border-site-border-2 bg-white p-6">
-        <label className="block text-small font-semibold text-site-ink">
-          Photo of what you’re doing (optional)
-          <input
-            className="mt-3 block w-full min-w-0 text-small"
-            type="file"
-            accept="image/png,image/jpeg,image/webp"
-            disabled={busy}
-            onChange={(e) => {
-              const value = e.target.files?.[0] || null;
-              setFileError("");
-              if (
-                value &&
-                (!["image/png", "image/jpeg", "image/webp"].includes(
-                  value.type,
-                ) ||
-                  value.size === 0 ||
-                  value.size > 5 * 1024 * 1024)
-              ) {
-                setFile(null);
-                e.target.value = "";
-                setFileError("Choose a PNG, JPEG or WebP up to 5 MiB.");
-                return;
-              }
-              setFile(value);
-            }}
-          />
-        </label>
-        {fileError && (
-          <p role="alert" className="mt-3 text-small text-danger">
-            {fileError}
+        <div className="mt-5 border-t border-site-border pt-4">
+          <label className="block text-small font-semibold text-site-ink">
+            Photo of what you’re doing (optional)
+            <input
+              className="mt-3 block w-full min-w-0 text-small"
+              type="file"
+              accept="image/png,image/jpeg,image/webp"
+              disabled={busy}
+              onChange={(e) => {
+                const value = e.target.files?.[0] || null;
+                setFileError("");
+                if (
+                  value &&
+                  (!["image/png", "image/jpeg", "image/webp"].includes(
+                    value.type,
+                  ) ||
+                    value.size === 0 ||
+                    value.size > 5 * 1024 * 1024)
+                ) {
+                  setFile(null);
+                  e.target.value = "";
+                  setFileError("Choose a PNG, JPEG or WebP up to 5 MiB.");
+                  return;
+                }
+                setFile(value);
+              }}
+            />
+          </label>
+          {fileError && (
+            <p role="alert" className="mt-3 text-small text-danger">
+              {fileError}
+            </p>
+          )}
+          {preview && (
+            <img
+              src={preview}
+              alt="Your selected work photo"
+              className="mt-4 max-h-72 w-full rounded-xl object-contain"
+            />
+          )}
+          <p className="mt-3 text-caption text-site-muted">
+            PNG, JPEG or WebP · up to 5 MiB. Preview stays local. Saving uploads
+            it privately without an AI call.
           </p>
-        )}
-        {preview && (
-          <img
-            src={preview}
-            alt="Your selected work photo"
-            className="mt-4 max-h-72 w-full rounded-xl object-contain"
-          />
-        )}
-        <p className="mt-3 text-caption text-site-muted">
-          PNG, JPEG or WebP · up to 5 MiB. Preview stays local. Saving uploads
-          it privately without an AI call.
-        </p>
-      </div>
-      <label className="flex items-start gap-3 text-small text-site-ink">
-        <input
-          type="checkbox"
-          className="mt-1"
-          checked={scope}
-          onChange={(e) => setScope(e.target.checked)}
-          required
-          disabled={busy}
-        />
-        <span>Classroom or disconnected training only.</span>
-      </label>
-      <p className="text-caption text-site-muted">
-        {s["proCreate.classroomHelp"]}
-      </p>
-      <div className="sticky bottom-0 -mx-4 space-y-3 border-t border-site-border bg-white px-4 py-4 lg:static lg:mx-0 lg:border-0 lg:bg-transparent lg:p-0">
-        {signedIn ? (
-          <button
-            type="submit"
-            className={primary + " w-full"}
-            disabled={busy || !scope}
-          >
-            {busy ? "Saving…" : s["proCreate.saveForReviewLabel"]}
-          </button>
-        ) : null}
-        {saveReason && (
-          <p className="text-small text-site-muted">{saveReason}</p>
-        )}
-      </div>
+        </div>
+        <div className="mt-5 border-t border-site-border pt-4">
+          <label className="flex items-start gap-3 text-small text-site-ink">
+            <input
+              type="checkbox"
+              className="mt-1"
+              checked={scope}
+              onChange={(e) => setScope(e.target.checked)}
+              required
+              disabled={busy}
+            />
+            <span>Classroom or disconnected training only.</span>
+          </label>
+          <p className="mt-2 text-caption text-site-muted">
+            {s["proCreate.classroomHelp"]}
+          </p>
+        </div>
+        <div className="sticky bottom-0 -mx-4 mt-5 space-y-3 border-t border-site-border bg-white px-4 py-4 lg:static lg:mx-0 lg:mt-4 lg:border-0 lg:bg-transparent lg:p-0">
+          {signedIn ? (
+            <button
+              type="submit"
+              className={primary + " w-full"}
+              disabled={busy || !scope}
+            >
+              {busy ? "Saving…" : s["proCreate.saveForReviewLabel"]}
+            </button>
+          ) : null}
+          {saveReason && (
+            <p className="text-small text-site-muted">{saveReason}</p>
+          )}
+        </div>
+      </Panel>
     </form>
   );
 }
@@ -1164,22 +1218,23 @@ function CourseCard({
           </li>
         ))}
       </ol>
-      <div className="mt-3 space-y-2">
-        <a className={primary} href={"/professional/course/" + course.id}>
+      {/* 5.3 (L8c) — hierarchy swapped: Enrol/resume is the primary pill (green);
+          Read course preview is the secondary ghost action in the same row. The
+          enrol gate reason stays as the small line under the row. */}
+      <div className="mt-3 flex flex-wrap items-center gap-3">
+        <button
+          type="button"
+          className={primary}
+          onClick={enroll}
+          disabled={busy || !signedIn || !confirmed}
+        >
+          Enroll / resume course
+        </button>
+        <a className={secondary} href={"/professional/course/" + course.id}>
           {s["proCourse.previewCta"]}
         </a>
-        <div className="flex flex-wrap items-center gap-3">
-          <button
-            type="button"
-            className="text-small font-semibold text-site-ink underline hover:text-[#15803D]"
-            onClick={enroll}
-            disabled={busy || !signedIn || !confirmed}
-          >
-            Enroll / resume course
-          </button>
-        </div>
-        {reason && <p className="text-small text-site-muted">{reason}</p>}
       </div>
+      {reason && <p className="mt-2 text-small text-site-muted">{reason}</p>}
     </Panel>
   );
 }

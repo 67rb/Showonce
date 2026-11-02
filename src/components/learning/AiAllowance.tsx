@@ -1,5 +1,6 @@
 /* Copyright © 2026 Muhammad Hashir (https://github.com/mateir0). All rights reserved. See COPYRIGHT.md. */
 import type { Config } from "@/lib/learning";
+import type { ReactNode } from "react";
 
 const usd = new Intl.NumberFormat("en-US", {
   style: "currency",
@@ -10,13 +11,41 @@ function isMoney(n: unknown): n is number {
   return typeof n === "number" && Number.isFinite(n) && n >= 0;
 }
 
-export function AiAllowance({ config }: { config: Config | null }) {
+/* 5.3 (L4) — one card, one source of truth: the text prints the same
+   `value`/`safeTotal` pair the bar fills from, and the footer row (balance at
+   last check + refresh) lives INSIDE the card. */
+function AllowanceCard({
+  children,
+  footer,
+}: {
+  children: ReactNode;
+  footer?: ReactNode;
+}) {
+  return (
+    <div className="rounded-2xl border border-site-border bg-white p-4 text-small">
+      {children}
+      {footer && (
+        <div className="mt-3 flex flex-wrap items-center justify-between gap-2 border-t border-site-border pt-3">
+          {footer}
+        </div>
+      )}
+    </div>
+  );
+}
+
+export function AiAllowance({
+  config,
+  footer,
+}: {
+  config: Config | null;
+  footer?: ReactNode;
+}) {
   if (!config || !config.ai_available) {
     return (
-      <div className="rounded-2xl border border-site-border bg-white p-4 text-small">
+      <AllowanceCard footer={footer}>
         <p className="text-site-ink">AI checks are unavailable.</p>
         <p className="text-site-muted">Free practice remains available.</p>
-      </div>
+      </AllowanceCard>
     );
   }
 
@@ -27,28 +56,28 @@ export function AiAllowance({ config }: { config: Config | null }) {
 
   if (!budget || !isMoney(remaining)) {
     return (
-      <div className="rounded-2xl border border-site-border bg-white p-4 text-small">
+      <AllowanceCard footer={footer}>
         <p className="text-site-ink">Shared AI allowance unavailable.</p>
         <p className="text-site-muted">Free practice remains available.</p>
-      </div>
+      </AllowanceCard>
     );
   }
 
   if (paused) {
     return (
-      <div className="rounded-2xl border border-site-border bg-white p-4 text-small">
+      <AllowanceCard footer={footer}>
         <p className="text-site-ink">Shared AI allowance is paused.</p>
         <p className="text-site-muted">Free practice remains available.</p>
-      </div>
+      </AllowanceCard>
     );
   }
 
   if (remaining <= 0) {
     return (
-      <div className="rounded-2xl border border-site-border bg-white p-4 text-small">
+      <AllowanceCard footer={footer}>
         <p className="text-site-ink">Shared AI allowance exhausted.</p>
         <p className="text-site-muted">Free practice remains available.</p>
-      </div>
+      </AllowanceCard>
     );
   }
 
@@ -57,7 +86,7 @@ export function AiAllowance({ config }: { config: Config | null }) {
   const value = hasTotal ? Math.min(Math.max(remaining, 0), safeTotal) : remaining;
 
   return (
-    <div className="rounded-2xl border border-site-border bg-white p-4 text-small">
+    <AllowanceCard footer={footer}>
       <p className="text-site-ink">
         Shared AI allowance: {usd.format(value)}
         {hasTotal ? ` of ${usd.format(safeTotal)} remaining` : " remaining"}
@@ -65,12 +94,13 @@ export function AiAllowance({ config }: { config: Config | null }) {
       <p className="text-site-muted">This AI allowance is shared across the site. Free practice remains available.</p>
       {hasTotal ? (
         <progress
+          className="mt-3 block w-full"
           value={value}
           max={safeTotal}
           aria-label={`Shared AI allowance ${usd.format(value)} of ${usd.format(safeTotal)} remaining`}
           style={{ accentColor: "#f59e0b" }}
         />
       ) : null}
-    </div>
+    </AllowanceCard>
   );
 }
