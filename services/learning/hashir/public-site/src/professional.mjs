@@ -36,7 +36,7 @@ function materialList(value){
 }
 async function assignmentDetail(env,row){
  const criteria=JSON.parse(row.criteria_json),prep=JSON.parse(row.prep_json),done=new Set(JSON.parse(row.prep_done_json||'[]'));
- const decisions=(await env.DB.prepare('SELECT * FROM professional_criterion_decisions WHERE assignment_id=? ORDER BY created_at,id').bind(row.id).all()).results;
+ const decisions=(await env.DB.prepare('SELECT * FROM professional_criterion_decisions WHERE assignment_id=? ORDER BY assignment_version,created_at,id').bind(row.id).all()).results;
  const latest={};for(const item of decisions)latest[item.criterion_id]=item;
  const enrollment=await env.DB.prepare('SELECT * FROM professional_enrollments WHERE id=?').bind(row.enrollment_id).first();
  const detail=enrollment?await proDetail(env,enrollment):null;
@@ -67,10 +67,18 @@ export async function routeProfessional(request,env,url){
   const enrollment=await env.DB.prepare('SELECT * FROM professional_enrollments WHERE id=?').bind(body.enrollment_id).first();
   if(!enrollment)throw new AppError('enrollment_not_found','Choose a learner enrollment.',404);
   if(enrollment.owner_id===user.id)throw new AppError('self_assignment_denied','An instructor cannot assign their own training.',403);
+  if(['pending_review','instructor_approved'].includes(enrollment.status))throw new AppError('enrollment_in_review','This enrollment is already awaiting or has received an instructor review, so it cannot be assigned.',409);
   if(await env.DB.prepare('SELECT id FROM professional_assignments WHERE enrollment_id=?').bind(enrollment.id).first())throw new AppError('assignment_exists','This enrollment already has an assignment.',409);
   const title=shortText(body.brief_title||'','brief_title',200),outcome=shortText(body.brief_outcome||'','brief_outcome',1200),materials=materialList(body.materials),criteria=rubricList(body.criteria,'criteria'),prep=rubricList(body.prep_checks,'prep_checks');
   const id=sid('assignment'),now=Date.now();
-  await env.DB.prepare('INSERT INTO professional_assignments(id,enrollment_id,owner_id,created_by,brief_title,brief_outcome,materials_json,criteria_json,prep_json,created_at,updated_at) VALUES(?,?,?,?,?,?,?,?,?,?,?)').bind(id,enrollment.id,enrollment.owner_id,user.id,title,outcome,JSON.stringify(materials),JSON.stringify(criteria),JSON.stringify(prep),now,now).run();
+  const inserted=await env.DB.prepare("INSERT INTO professional_assignments(id,enrollment_id,owner_id,created_by,brief_title,brief_outcome,materials_json,criteria_json,prep_json,created_at,updated_at) SELECT ?,?,?,?,?,?,?,?,?,?,? WHERE EXISTS(SELECT 1 FROM professional_enrollments WHERE id=? AND owner_id=? AND owner_id<>? AND status NOT IN ('pending_review','instructor_approved')) AND NOT EXISTS(SELECT 1 FROM professional_assignments WHERE enrollment_id=?)").bind(id,enrollment.id,enrollment.owner_id,user.id,title,outcome,JSON.stringify(materials),JSON.stringify(criteria),JSON.stringify(prep),now,now,enrollment.id,enrollment.owner_id,user.id,enrollment.id).run();
+  if(!changed(inserted)){
+   const fresh=await env.DB.prepare('SELECT * FROM professional_enrollments WHERE id=?').bind(enrollment.id).first();
+   if(await env.DB.prepare('SELECT id FROM professional_assignments WHERE enrollment_id=?').bind(enrollment.id).first())throw new AppError('assignment_exists','This enrollment already has an assignment.',409);
+   if(fresh&&['pending_review','instructor_approved'].includes(fresh.status))throw new AppError('enrollment_in_review','This enrollment is already awaiting or has received an instructor review, so it cannot be assigned.',409);
+   if(!fresh)throw new AppError('enrollment_not_found','Choose a learner enrollment.',404);
+   throw new AppError('assignment_conflict','This enrollment changed. Refresh before creating the assignment.',409);
+  }
   return json(await assignmentDetail(env,await env.DB.prepare('SELECT * FROM professional_assignments WHERE id=?').bind(id).first()),201);
  }
  const assignmentMatch=path.match(/^\/v1\/professional\/assignments\/([\w-]+)(?:\/(preparation|submit|assess))?$/);
@@ -106,9 +114,12 @@ export async function routeProfessional(request,env,url){
    if(body.share_evidence!==true)throw new AppError('sharing_required','Confirm that submitting shares your course evidence with instructors for this assessment.');
    const enrollment=await env.DB.prepare('SELECT * FROM professional_enrollments WHERE id=?').bind(row.enrollment_id).first();
    if(!enrollment||!(await proDetail(env,enrollment)).practice_complete)throw new AppError('practice_incomplete','Finish all course practice before submitting evidence.',409);
-   const now=Date.now(),result=await env.DB.prepare("UPDATE professional_assignments SET status='submitted',version=version+1,updated_at=? WHERE id=? AND version=?").bind(now,row.id,row.version).run();
-   if(!changed(result))throw new AppError('assignment_conflict','Refresh this assignment before submitting.',409);
-   await env.DB.prepare('UPDATE professional_enrollments SET evidence_shared=1,updated_at=? WHERE id=?').bind(now,row.enrollment_id).run();
+   if(await env.DB.prepare("SELECT id FROM professional_evidence WHERE enrollment_id=? AND status='uploading' LIMIT 1").bind(row.enrollment_id).first())throw new AppError('evidence_busy','Wait for evidence uploads to finish before submitting.',409);
+   const now=Date.now(),results=await env.DB.batch([
+    env.DB.prepare("UPDATE professional_enrollments SET evidence_shared=1,version=version+1,updated_at=? WHERE id=? AND version=? AND EXISTS(SELECT 1 FROM professional_assignments WHERE id=? AND version=? AND status IN ('preparation','practice','changes_requested')) AND NOT EXISTS(SELECT 1 FROM professional_evidence WHERE enrollment_id=professional_enrollments.id AND status='uploading')").bind(now,enrollment.id,enrollment.version,row.id,row.version),
+    env.DB.prepare("UPDATE professional_assignments SET status='submitted',version=version+1,updated_at=? WHERE id=? AND version=? AND EXISTS(SELECT 1 FROM professional_enrollments WHERE id=? AND evidence_shared=1 AND version=?) AND NOT EXISTS(SELECT 1 FROM professional_evidence WHERE enrollment_id=? AND status='uploading')").bind(now,row.id,row.version,enrollment.id,enrollment.version+1,row.enrollment_id)
+   ]);
+   if(!changed(results[0])||!changed(results[1]))throw new AppError('assignment_conflict','Refresh this assignment before submitting.',409);
    return json(await assignmentDetail(env,await env.DB.prepare('SELECT * FROM professional_assignments WHERE id=?').bind(row.id).first()));
   }
   if(assignmentAction==='assess'&&method==='POST'){
@@ -118,12 +129,14 @@ export async function routeProfessional(request,env,url){
    if(row.owner_id===user.id)throw new AppError('self_approval_denied','An instructor cannot assess their own training.',403);
    if(!Number.isSafeInteger(body.expected_version)||body.expected_version!==row.version)throw new AppError('assignment_conflict','The assignment changed. Reload before assessing.',409);
    if(row.status!=='submitted')throw new AppError('assignment_not_submitted','Only a submitted assignment can be assessed.',409);
+   const assessEnrollment=await env.DB.prepare('SELECT evidence_shared FROM professional_enrollments WHERE id=?').bind(row.enrollment_id).first();
+   if(!assessEnrollment?.evidence_shared)throw new AppError('evidence_not_shared','The learner has stopped sharing evidence, so this assignment cannot be assessed.',409);
    const criteria=JSON.parse(row.criteria_json),criterion=criteria.find(item=>item.id===body.criterion_id);
    if(!criterion)throw new AppError('invalid_criterion','Choose a criterion from this assignment rubric.');
    if(!['approved','changes_requested'].includes(body.decision))throw new AppError('invalid_decision','Approve this criterion or request changes.');
    const notes=shortText(body.notes??'','assessment_notes',2000,false);
    if(body.decision==='changes_requested'&&!notes)throw new AppError('notes_required','Explain what must change for this criterion.');
-   const decisions=(await env.DB.prepare('SELECT * FROM professional_criterion_decisions WHERE assignment_id=? ORDER BY created_at,id').bind(row.id).all()).results,latest={};
+   const decisions=(await env.DB.prepare('SELECT * FROM professional_criterion_decisions WHERE assignment_id=? ORDER BY assignment_version,created_at,id').bind(row.id).all()).results,latest={};
    for(const item of decisions)latest[item.criterion_id]=item.decision;
    latest[criterion.id]=body.decision;
    const status=body.decision==='changes_requested'?'changes_requested':criteria.filter(item=>item.required).every(item=>latest[item.id]==='approved')?'approved':'submitted',now=Date.now(),decisionID=sid('criterion_decision');
@@ -131,7 +144,7 @@ export async function routeProfessional(request,env,url){
    // only lands while the assignment is still at the assessed version, and
    // the status update only lands if that decision row exists.
    const results=await env.DB.batch([
-    env.DB.prepare("INSERT INTO professional_criterion_decisions(id,assignment_id,criterion_id,decision,notes,reviewer_id,assignment_version,created_at) SELECT ?,?,?,?,?,?,?,? WHERE EXISTS(SELECT 1 FROM professional_assignments WHERE id=? AND status='submitted' AND version=?)").bind(decisionID,row.id,criterion.id,body.decision,notes,user.id,row.version,now,row.id,row.version),
+    env.DB.prepare("INSERT INTO professional_criterion_decisions(id,assignment_id,criterion_id,decision,notes,reviewer_id,assignment_version,created_at) SELECT ?,?,?,?,?,?,?,? WHERE EXISTS(SELECT 1 FROM professional_assignments WHERE id=? AND status='submitted' AND version=?) AND EXISTS(SELECT 1 FROM professional_enrollments WHERE id=? AND evidence_shared=1)").bind(decisionID,row.id,criterion.id,body.decision,notes,user.id,row.version,now,row.id,row.version,row.enrollment_id),
     env.DB.prepare('UPDATE professional_assignments SET status=?,version=version+1,updated_at=? WHERE id=? AND version=? AND EXISTS(SELECT 1 FROM professional_criterion_decisions WHERE id=?)').bind(status,now,row.id,row.version,decisionID)
    ]);
    if(!changed(results[0])||!changed(results[1]))throw new AppError('assignment_conflict','The assignment changed. Reload before assessing.',409);
@@ -185,6 +198,8 @@ export async function routeProfessional(request,env,url){
   const body=await bodyJSON(request),course=proCourse(row.course_id);
   if(!course.lesson_ids.includes(body.lesson_id))throw new AppError('lesson_not_in_course','Choose a lesson from this course.');
   const at=course.lesson_ids.indexOf(body.lesson_id),detail=await proDetail(env,row);
+  const startAssignment=await env.DB.prepare('SELECT prep_json,prep_done_json FROM professional_assignments WHERE enrollment_id=?').bind(row.id).first();
+  if(startAssignment){const startDone=new Set(JSON.parse(startAssignment.prep_done_json||'[]')),missing=JSON.parse(startAssignment.prep_json).filter(item=>item.required&&!startDone.has(item.id));if(missing.length)throw new AppError('preparation_incomplete','Complete required preparation before starting assigned practice: '+missing.map(item=>item.label).join('; '),409);}
   if(at>0&&detail.lessons[at-1].completed_steps!==detail.lessons[at-1].total_steps)throw new AppError('prerequisite_incomplete','Finish the previous lesson practice first.',409);
   const sessionID=await proSessionID(user.id,course.id,body.lesson_id),lesson=PRO_CATALOGUE.lessons.find(item=>item.id===body.lesson_id),now=Date.now();
   await env.DB.prepare('INSERT OR IGNORE INTO practice_sessions(id,lesson_id,token_hash,created_at,updated_at,owner_id,total_steps) VALUES(?,?,?,?,?,?,?)').bind(sessionID,lesson.id,await digest(crypto.randomUUID()),now,now,user.id,lesson.steps.length).run();

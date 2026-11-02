@@ -1,6 +1,7 @@
 /* Copyright © 2026 Muhammad Hashir (https://github.com/mateir0). All rights reserved. See COPYRIGHT.md. */
 "use client";
 import {useEffect,useState} from 'react';
+import {useRouter} from 'next/navigation';
 import {VerdictChip} from '@/components/VerdictChip';
 import {origamiSample} from '@/lib/sample';
 import {proSampleLesson} from '@/lib/proSample';
@@ -10,9 +11,11 @@ type FState = 'checking'|'right'|'wrong'|'canttell';
 const banner='border border-site-border bg-white p-4 text-sm text-site-ink';
 
 export function SampleFixture({face,screen}:{face:'hobby'|'pro';screen:'play'|'live'}){
+ const router=useRouter();
+ const base=face==='pro'?'/professional/lesson/sample':'/lesson/sample';
  const sample=face==='pro'?proSampleLesson:origamiSample;
  const steps=sample.steps as {id:string;title:string;instructions:string;target:string;criterion:string;visual:string}[]|undefined;
- const [state,setState]=useState<FState>('checking');
+ const [state,setState]=useState<FState>('right');
  useEffect(()=>{const q=new URLSearchParams(window.location.search);const v=q.get('state');if(v==='right'||v==='wrong'||v==='canttell'||v==='check')setState(v==='check'?'checking':v as FState);},[]);
  const title=face==='pro'?proSampleLesson.lessonTitle:origamiSample.title;
  const category=face==='pro'?proSampleLesson.category:origamiSample.category;
@@ -26,6 +29,7 @@ export function SampleFixture({face,screen}:{face:'hobby'|'pro';screen:'play'|'l
   <div className={'mx-auto w-full '+(live?'max-w-[430px] px-4':'max-w-[720px] px-4 md:px-6 lg:max-w-[1120px] lg:px-8')+' '+ink}>
    <div className="pt-6 pb-24">
     <div className={banner} role="status"><strong>{s["fixture.banner"]}</strong> <span className="text-site-muted">{s["fixture.bannerSub"]}</span></div>
+    <p className="mt-3 text-small"><a className="font-semibold underline" href={base}>Start real free practice from the sample overview →</a></p>
     <header className="mt-6 lg:mt-8 lg:flex lg:items-start lg:justify-between lg:gap-8">
      <div className="min-w-0">
       <p className="text-small font-semibold uppercase tracking-[0.14em] text-site-muted">{category} · fixture</p>
@@ -62,13 +66,13 @@ export function SampleFixture({face,screen}:{face:'hobby'|'pro';screen:'play'|'l
         <h2 className="text-2xl font-bold text-site-ink">{s["fixture.wrongTitle"]}</h2>
         <p className="mt-2 text-site-ink">{s["fixture.wrongLine"]}</p>
         <VerdictChip variant="wrong" label={s["fixture.wrongChip"]}/>
-        <div className="mt-5 flex flex-wrap gap-3"><button type="button" className={actionBtn}>{s["fixture.retake"]}</button><button type="button" className={ghostBtn}>{s["fixture.continue"]}</button></div>
+        <div className="mt-5 flex flex-wrap gap-3"><button type="button" className={actionBtn} onClick={()=>router.push(base+'/play/camera')}>{s["fixture.retake"]}</button><button type="button" className={ghostBtn} onClick={()=>router.push(base+'/complete')}>{s["fixture.continue"]}</button></div>
        </>}
        {state==='canttell'&&<>
         <h2 className="text-2xl font-bold text-site-ink">{s["fixture.cantTellTitle"]}</h2>
         <p className="mt-2 text-site-ink">{s["fixture.cantTellLine"]}</p>
         <VerdictChip variant="canttell" label={s["fixture.cantTellChip"]}/>
-        <div className="mt-5"><button type="button" className={actionBtn}>{s["fixture.acknowledge"]}</button></div>
+        <div className="mt-5"><button type="button" className={actionBtn} onClick={()=>router.push(base+'/complete')}>{s["fixture.acknowledge"]}</button></div>
        </>}
        <p className="mt-6 border-t border-site-border pt-4 text-small text-site-muted">{s["fixture.persistNote"]}</p>
       </div>
@@ -77,4 +81,18 @@ export function SampleFixture({face,screen}:{face:'hobby'|'pro';screen:'play'|'l
    </div>
   </div>
  );
+}
+export function SampleComplete({face}:{face:'hobby'|'pro'}){
+ const pro=face==='pro';
+ const sample=pro?proSampleLesson:origamiSample;
+ const title=pro?proSampleLesson.lessonTitle:origamiSample.title;
+ const base=pro?'/professional/lesson/sample':'/lesson/sample';
+ const primary=pro?'inline-flex min-h-11 items-center justify-center text-center rounded-full bg-[#16A34A] px-6 py-3 font-semibold text-white':'inline-flex min-h-11 items-center justify-center text-center rounded-full bg-accent px-6 py-3 font-semibold text-[#16161A]';
+ const secondary='inline-flex min-h-11 items-center justify-center text-center rounded-full border border-site-border-2 bg-white px-5 py-3 font-semibold text-site-ink';
+ return <div className="mx-auto w-full max-w-[720px] px-4 pb-24 md:px-6"><div className="pt-6">
+  <div className={banner} role="status"><strong>{s["fixture.banner"]}</strong> <span className="text-site-muted">{s["fixture.bannerSub"]}</span></div>
+  <h1 className="mt-8 font-body-ui text-[2rem] font-bold tracking-[-0.02em] text-site-ink">{s.completeHeading}</h1>
+  <p className="mt-3 font-body-ui text-body text-site-muted">{title} · {sample.steps.length} steps — this preview saves nothing.</p>
+  <div className="mt-8 flex flex-wrap gap-3"><a className={primary} href={base}>Back to the sample overview</a><a className={secondary} href={base+'/play'}>Open the sample player</a></div>
+ </div></div>;
 }

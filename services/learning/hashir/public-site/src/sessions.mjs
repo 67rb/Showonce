@@ -40,12 +40,27 @@ export async function createPracticeSession(env,body,origin,user=null){
 function idem(value){if(typeof value!=='string'||value.length<1||value.length>128)throw new AppError('invalid_idempotency_key','Idempotency-Key must contain 1–128 characters.');return value;}
 
 async function submissionResponse(env,row,session,origin,replayed){return {submission:submissionData(row),progress:await sessionProgress(env,session,origin),replayed};}
+async function assignmentPrepBlock(env,session){
+ if(!session?.owner_id)return null;
+ try{
+  const rows=(await env.DB.prepare('SELECT a.prep_json,a.prep_done_json,e.course_id FROM professional_assignments a JOIN professional_enrollments e ON e.id=a.enrollment_id WHERE e.owner_id=?').bind(session.owner_id).all()).results;
+  for(const row of rows){
+   const course=PRO_CATALOGUE.courses.find(item=>item.id===row.course_id);
+   if(!course||!course.lesson_ids.includes(session.lesson_id))continue;
+   const done=new Set(JSON.parse(row.prep_done_json||'[]')),missing=JSON.parse(row.prep_json).filter(item=>item.required&&!done.has(item.id));
+   if(missing.length)return missing;
+  }
+ }catch(error){if(error instanceof AppError)throw error;throw new AppError('preparation_check_failed','Required preparation could not be checked. Try again before continuing assigned practice.',503);}
+ return null;
+}
 export async function submitPractice(env,session,body,key,origin,assessor=assessPhoto){
  idem(key);if('mock_result'in body)throw new AppError('invalid_mock_result','Caller-selected mock results are disabled.');
  if(typeof body.step_id!=='string')throw new AppError('invalid_step','Choose a lesson step.');
  const bytes=imageBytes(body),hash=await digest(JSON.stringify([body.step_id,body.mime_type,body.image_base64]));
  const previous=await env.DB.prepare('SELECT * FROM practice_submissions WHERE session_id=? AND idem_key=?').bind(session.id,key).first();
  if(previous){if(previous.request_hash!==hash)throw new AppError('idempotency_conflict','This key was used for a different photo.',409);return submissionResponse(env,previous,await getSession(env,session.id),origin,true);}
+ const prepMissingPhoto=await assignmentPrepBlock(env,session);
+ if(prepMissingPhoto)throw new AppError('preparation_incomplete','Complete required preparation before submitting practice photos: '+prepMissingPhoto.map(item=>item.label).join('; '),409);
  const lesson=await getLesson(env,session.lesson_id,origin),step=lesson.steps[session.current_index];
  if(!step||step.id!==body.step_id)throw new AppError('step_not_current','Submit only for the current checkpoint. Refresh saved progress.',409);
  if(step.photo_assessable===false)throw new AppError('not_visually_assessable','Use a self-practice acknowledgement for this checkpoint.');
@@ -128,6 +143,8 @@ export async function acknowledgePractice(env,session,body,key,origin){
  const requestHash=await digest(JSON.stringify([body.step_id,observations]));
  const replay=async()=>{const existing=await env.DB.prepare('SELECT step_id,request_hash FROM practice_acknowledgements WHERE session_id=? AND idem_key=?').bind(session.id,key).first();if(!existing)return null;if(existing.step_id!==body.step_id)throw new AppError('idempotency_conflict','This key was used for another checkpoint.',409);if(existing.request_hash&&existing.request_hash!==requestHash)throw new AppError('idempotency_conflict','This key was used for different observations.',409);return {progress:await sessionProgress(env,await getSession(env,session.id),origin),replayed:true};};
  const previous=await replay();if(previous)return previous;
+ const prepMissingAck=await assignmentPrepBlock(env,session);
+ if(prepMissingAck)throw new AppError('preparation_incomplete','Complete required preparation before continuing assigned practice: '+prepMissingAck.map(item=>item.label).join('; '),409);
  const lesson=await getLesson(env,session.lesson_id,origin),step=lesson.steps[session.current_index];
  if(!step||step.id!==body.step_id)throw new AppError('step_not_current','Acknowledge only the current checkpoint.',409);
  const id=sid('ack'),now=Date.now();
@@ -164,7 +181,7 @@ export async function routeMaster(request,env,url){
  if(match||image){
   const id=(match||image)[1],token=(request.headers.get('authorization')||'').replace(/^Bearer /,'');await authorizeSession(env,id,token,user);await recoverSession(env,id);const session=await getSession(env,id);
   if(image){const row=await env.DB.prepare('SELECT image_key,mime_type,status FROM practice_submissions WHERE id=? AND session_id=?').bind(image[2],id).first();
-   if(method==='DELETE'){if(row?.status==='processing')throw new AppError('assessment_in_progress','Wait until the photo upload finishes before deleting it.',409);if(row?.image_key){await env.BUCKET.delete(row.image_key);await env.DB.prepare('UPDATE practice_submissions SET image_key=NULL WHERE id=? AND session_id=?').bind(image[2],id).run();}return new Response(null,{status:204});}
+   if(method==='DELETE'){if(row?.status==='processing')throw new AppError('assessment_in_progress','Wait until the photo upload finishes before deleting it.',409);if(row?.image_key){await env.DB.prepare('UPDATE practice_submissions SET image_key=NULL WHERE id=? AND session_id=?').bind(image[2],id).run();try{await env.BUCKET.delete(row.image_key);}catch{/* Record already cleared; an orphaned photo is preferable to a live record without one. */}}return new Response(null,{status:204});}
    if(method==='GET'){const object=row?.image_key?await env.BUCKET?.get(row.image_key):null;if(!object)throw new AppError('image_not_found','Photo is unavailable or deleted.',404);return new Response(object.body,{headers:{'Content-Type':row.mime_type,'Cache-Control':'no-store','X-Content-Type-Options':'nosniff'}});}
   }else{
    const resource=match[2];

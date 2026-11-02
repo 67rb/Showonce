@@ -30,7 +30,7 @@ async function routeProRequests(request,env,url,user){
  if(!action&&method==='GET')return json(proRequestRecord(row));
  if(action==='photo'){
   if(method==='GET'){const photo=row.image_key?await env.BUCKET.get(row.image_key):null;if(!photo)throw new AppError('image_not_found','Photo is unavailable.',404);return new Response(photo.body,{headers:{'Content-Type':row.mime_type,'Cache-Control':'no-store','X-Content-Type-Options':'nosniff'}});}
-  if(method==='DELETE'){if(row.status==='processing')throw new AppError('request_busy','Wait for the current request to finish before removing the photo.',409);if(row.image_key)await env.BUCKET.delete(row.image_key);await env.DB.prepare('UPDATE professional_requests SET image_key=NULL WHERE id=?').bind(row.id).run();return new Response(null,{status:204});}
+  if(method==='DELETE'){if(row.status==='processing')throw new AppError('request_busy','Wait for the current request to finish before removing the photo.',409);await env.DB.prepare('UPDATE professional_requests SET image_key=NULL WHERE id=?').bind(row.id).run();if(row.image_key)try{await env.BUCKET.delete(row.image_key);}catch{/* Record already cleared; an orphaned photo is preferable to a live record without one. */}return new Response(null,{status:204});}
  }
  if(action==='plan'&&method==='POST'){
   const body=await bodyJSON(request);if(body.ai_consent!==true)throw new AppError('ai_consent_required','Confirm this request will send your inputs to AI and use the shared allowance.');

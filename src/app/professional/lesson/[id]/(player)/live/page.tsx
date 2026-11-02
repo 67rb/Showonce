@@ -11,7 +11,8 @@ export function generateStaticParams() {
   return [{ id: "runtime" }, { id: "sample" }];
 }
 
-export default function ProfessionalLivePage({ params }: { params: { id: string } }) {
-  if (params.id === "sample") return <SampleFixture face="pro" screen="live" />;
+export default async function ProfessionalLivePage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  if (id === "sample") return <SampleFixture face="pro" screen="live" />;
   return <LessonFlow screen="live" />;
 }

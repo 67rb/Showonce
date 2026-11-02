@@ -743,7 +743,7 @@ function StudioBody({ view }: { view: "create" | "library" | "instructor" }) {
           )}
         </div>
       )}
-      {identity.account?.is_admin && (
+      {view === "instructor" && identity.account?.is_admin && (
         <InstructorAssignments
           assignments={assignments}
           busy={busy}
@@ -1901,6 +1901,18 @@ function InstructorAssignments({
   );
 }
 
+const evidenceInFlight = new Map<
+  string,
+  Promise<{
+    evidence: {
+      id: string;
+      notes: string;
+      has_photo: boolean;
+      criterion_id?: string | null;
+    }[];
+  }>
+>();
+
 function CriterionEvidence({
   enrollmentID,
   criterionID,
@@ -1924,8 +1936,9 @@ function CriterionEvidence({
   useEffect(() => {
     const controller = new AbortController();
     setState("loading");
-    void identity
-      .request<{
+    let shared = evidenceInFlight.get(enrollmentID);
+    if (!shared) {
+      shared = identity.request<{
         evidence: {
           id: string;
           notes: string;
@@ -1935,8 +1948,16 @@ function CriterionEvidence({
       }>(
         "/v1/professional/enrollments/" + enrollmentID + "/evidence",
         undefined,
-        { signal: controller.signal },
-      )
+        {},
+      );
+      evidenceInFlight.set(enrollmentID, shared);
+      const clear = () => {
+        if (evidenceInFlight.get(enrollmentID) === shared)
+          evidenceInFlight.delete(enrollmentID);
+      };
+      shared.then(clear, clear);
+    }
+    void shared
       .then((value) => {
         if (!controller.signal.aborted) {
           setItems(

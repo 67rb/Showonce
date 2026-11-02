@@ -38,8 +38,33 @@ test('transcribes every supported platform through the same server-only adapter'
 test('free-only guard prevents all metadata/transcript calls on paid, unknown or exhausted accounts',async()=>{
  for(const account of [{...free,plan:'Pro'},{...free,plan:'Trial'},{...free,maxCredits:1000},{...free,usedCredits:100},{...free,usedCredits:-1}]){
   const e=env(),p=provider('youtube',{account});
-  try{await assert.rejects(()=>resolveTutorial(e,'https://youtu.be/aAxGTnVNJiE',p.fetcher),error=>['source_paid_usage_disabled','source_free_quota_exhausted'].includes(error.code));assert.deepEqual(p.calls,['/v1/me']);}finally{e.DB.close();}
+  try{await assert.rejects(()=>resolveTutorial(e,'https://youtu.be/aAxGTnVNJiE',p.fetcher),error=>['source_paid_usage_disabled','source_free_quota_exhausted'].includes(error.code));assert.deepEqual(p.calls.filter(path=>path.startsWith('/v1/')),['/v1/me']);}finally{e.DB.close();}
  }
+});
+test('exhausted Supadata falls back to public YouTube captions with no provider spend',async()=>{
+ const e=env();const calls=[];
+ const fetcher=async(input)=>{
+  const url=new URL(input);calls.push(url.origin+url.pathname);
+  if(url.origin==='https://api.supadata.ai'){assert.equal(url.pathname,'/v1/me');return Response.json({plan:'Free',maxCredits:100,usedCredits:100});}
+  if(url.href.startsWith('https://www.youtube.com/watch'))return new Response('<html><script>{"captionTracks":[{"baseUrl":"https://www.youtube.com/api/timedtext?v=aAxGTnVNJiE&lang=en","languageCode":"en","kind":"asr"}]}</script></html>',{headers:{'content-type':'text/html'}});
+  if(url.href.startsWith('https://www.youtube.com/api/timedtext'))return Response.json({events:[{segs:[{utf8:'Draw a circle with a pencil on paper. '}]},{segs:[{utf8:'Shade the lower edge gradually and blend it gently with a finger.'}]}]});
+  throw new Error('Unexpected fetch '+url.href);
+ };
+ try{
+  const source=await resolveTutorial(e,'https://youtu.be/aAxGTnVNJiE',fetcher);
+  assert.equal(source.origin,'social_transcript');assert.match(source.text,/Draw a circle/);assert.match(source.limitations.at(-1),/free source-processing allowance is unavailable/);
+  assert.deepEqual(calls.filter(path=>path.includes('api.supadata.ai')),['https://api.supadata.ai/v1/me']);
+  const cached=await resolveTutorial(e,'https://youtu.be/aAxGTnVNJiE',fetcher);assert.equal(cached.origin,'social_transcript');
+ }finally{e.DB.close();}
+});
+test('exhausted Supadata without public captions keeps the quota error',async()=>{
+ const e=env();
+ const fetcher=async(input)=>{
+  const url=new URL(input);
+  if(url.origin==='https://api.supadata.ai')return Response.json({plan:'Free',maxCredits:100,usedCredits:100});
+  return new Response('<html><body>No captions here.</body></html>',{headers:{'content-type':'text/html'}});
+ };
+ try{await assert.rejects(()=>resolveTutorial(e,'https://youtu.be/aAxGTnVNJiE',fetcher),error=>error.code==='source_free_quota_exhausted');}finally{e.DB.close();}
 });
 test('simultaneous duplicate links create one extraction and use the cached result',async()=>{
  const e=env(),p=provider();try{

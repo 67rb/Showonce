@@ -11,7 +11,8 @@ export function generateStaticParams() {
   return [{ id: "runtime" }, { id: "sample" }];
 }
 
-export default function ProfessionalPlayPage({ params }: { params: { id: string } }) {
-  if (params.id === "sample") return <SampleFixture face="pro" screen="play" />;
+export default async function ProfessionalPlayPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  if (id === "sample") return <SampleFixture face="pro" screen="play" />;
   return <LessonFlow screen="play" />;
 }

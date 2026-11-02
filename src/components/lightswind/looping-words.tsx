@@ -2,7 +2,7 @@
 "use client";
 
 import React, { useEffect, useState, useRef } from "react";
-import { motion, useAnimationControls } from "framer-motion";
+import { motion, useAnimationControls, useReducedMotion } from "framer-motion";
 import { cn } from "@/lib/utils";
 
 interface LoopingWordsProps {
@@ -12,6 +12,7 @@ interface LoopingWordsProps {
 
 export function LoopingWords({ words, className }: LoopingWordsProps) {
   const controls = useAnimationControls();
+  const reducedMotion = useReducedMotion();
   const wordsRef = useRef<(HTMLLIElement | null)[]>([]);
   const [selectorWidth, setSelectorWidth] = useState(0);
   // 5.12.5 — ghost fix. Steps are measured in exact pixels (the same one-line
@@ -27,6 +28,7 @@ export function LoopingWords({ words, className }: LoopingWordsProps) {
   useEffect(() => {
     // Initial width setup
     updateWidth(0);
+    if (reducedMotion) return;
 
     let index = 0;
     const interval = setInterval(async () => {
@@ -43,7 +45,7 @@ export function LoopingWords({ words, className }: LoopingWordsProps) {
     }, 2200);
 
     return () => clearInterval(interval);
-  }, [controls, totalOriginal, duplicatedWords.length]);
+  }, [controls, totalOriginal, duplicatedWords.length, reducedMotion]);
 
   const updateWidth = (index: number) => {
     const el = wordsRef.current[index];

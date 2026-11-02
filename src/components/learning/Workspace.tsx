@@ -13,7 +13,7 @@ import s from "@/lib/strings";
 import { SavedLessonCover } from "./SavedLessonCover";
 import { Magnetic } from "@/components/Magnetic";
 import { AccountBar, useIdentity } from "./Identity";
-import { StepIllustration } from "./StepIllustration";
+import { StepIllustration, StepIllustrationPrefetch } from "./StepIllustration";
 import { LiveCamera } from "./LiveCamera";
 import { StepQuestions, StepQuestionToggle } from "./StepQuestions";
 import { ConfirmDialog } from "@/components/ConfirmDialog";
@@ -338,6 +338,10 @@ function CreatePanel() {
       setFieldError(s.importErrorInvalidEmpty);
       return false;
     }
+    if (draft.mode === "topic" && draft.text.trim().length < 100) {
+      setFieldError(s["topic.tooShort"]);
+      return false;
+    }
     setFieldError("");
     return true;
   }
@@ -350,7 +354,9 @@ function CreatePanel() {
       stepsReference: draft.mode === "link" ? draft.url : draft.reference,
       stepsText:
         draft.stepsText ||
-        (draft.mode === "text" ? draft.text : draft.linkTranscript),
+        (draft.mode === "text" || draft.mode === "topic"
+          ? draft.text
+          : draft.linkTranscript),
     });
   };
   const textKey = draft.mode === "steps" ? "stepsText" : "text",
@@ -382,7 +388,9 @@ function CreatePanel() {
           source_text: sourceText,
           processing_mode: draft.mode === "steps" ? "structured_text" : "ai",
           learning_mode: draft.learningMode,
-          learning_goal: draft.goal,
+          learning_goal:
+            draft.goal ||
+            (draft.mode === "topic" ? draft.text.trim().slice(0, 300) : ""),
           save_to_account: !!identity.account?.user,
         };
     try {
@@ -633,19 +641,29 @@ function CreatePanel() {
                 <label className="block font-semibold text-site-ink">
                   {draft.mode === "steps"
                     ? "2–18 numbered instructions"
-                    : "Instructions or transcript"}
+                    : draft.mode === "topic"
+                      ? s["topic.heading"]
+                      : "Instructions or transcript"}
                   <textarea
                     aria-invalid={fieldError ? true : undefined}
                     maxLength={24000}
                     rows={7}
                     value={draft[textKey]}
                     disabled={busy}
+                    placeholder={
+                      draft.mode === "topic" ? s["topic.placeholder"] : undefined
+                    }
                     onChange={(e) => {
                       update(textKey, e.target.value);
                       if (fieldError) setFieldError("");
                     }}
                     className={field}
                   />
+                  {draft.mode === "topic" && (
+                    <span className="mt-2 block text-small font-normal text-site-muted">
+                      {s["topic.hint"]}
+                    </span>
+                  )}
                   {fieldError && (
                     <p role="alert" className="mt-3 text-small text-danger">
                       {fieldError}
@@ -795,6 +813,7 @@ function CreatePanel() {
           <div className="flex flex-col gap-3">
             {[
               ["link", "Tutorial link"],
+              ["topic", s["topic.mode"]],
               ["text", "Paste instructions"],
               ["steps", "Free numbered steps"],
             ].map(([mode, label]) => (
@@ -1310,18 +1329,35 @@ function LessonPanel({ screen }: { screen: string }) {
       camera_feedback_id: string | null;
       observations: string[];
     } | null>(null),
-    mediaStop = useRef<() => void>(() => {}),
+    mediaStop = useRef<(preserve?: boolean) => void>(() => {}),
     objectURLs = useRef(new Set<string>()),
     observations = useRef<string[]>([]);
   useEffect(
     () => () => {
-      for (const url of [photoURL, historyURL, localPhoto])
-        if (url) {
-          URL.revokeObjectURL(url);
-          objectURLs.current.delete(url);
-        }
+      if (photoURL) {
+        URL.revokeObjectURL(photoURL);
+        objectURLs.current.delete(photoURL);
+      }
     },
-    [photoURL, historyURL, localPhoto],
+    [photoURL],
+  );
+  useEffect(
+    () => () => {
+      if (historyURL) {
+        URL.revokeObjectURL(historyURL);
+        objectURLs.current.delete(historyURL);
+      }
+    },
+    [historyURL],
+  );
+  useEffect(
+    () => () => {
+      if (localPhoto) {
+        URL.revokeObjectURL(localPhoto);
+        objectURLs.current.delete(localPhoto);
+      }
+    },
+    [localPhoto],
   );
   const objectURL = useCallback((blob: Blob) => {
     const url = URL.createObjectURL(blob);
@@ -1470,7 +1506,7 @@ function LessonPanel({ screen }: { screen: string }) {
   }
   async function checkPhoto() {
     if (!photo || !step || !current || !progress || !lesson || busy) return;
-    mediaStop.current();
+    mediaStop.current(true);
     setBusy(true);
     setError(null);
     setFeedback(null);
@@ -2038,6 +2074,14 @@ function LessonPanel({ screen }: { screen: string }) {
                   disabled={busy}
                   onPrepare={() => mediaStop.current()}
                 />
+                {lesson.steps[index + 1] && (
+                  <StepIllustrationPrefetch
+                    key={"prefetch:" + lesson.steps[index + 1].id}
+                    lessonID={lesson.id}
+                    step={lesson.steps[index + 1]}
+                    token={token}
+                  />
+                )}
               </div>
               <ul className="space-y-2 text-site-ink">
                 {step.assessment_criteria?.map((item) => (

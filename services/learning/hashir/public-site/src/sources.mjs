@@ -53,6 +53,57 @@ async function sourceFailure(env,id,error){
  await env.DB.prepare("UPDATE source_extractions SET status='failed',error_code=?,error_message=?,error_status=?,updated_at=? WHERE id=?").bind(safe.code,safe.message,safe.status,Date.now(),id).run();
  throw safe;
 }
+const QUOTA_FALLBACK_CODES=new Set(['source_free_quota_exhausted','source_paid_usage_disabled','source_rate_limited','source_provider_setup','source_visual_quota']);
+function youtubeVideoID(url){
+ const host=url.hostname.replace(/^www\.|^m\./,'');
+ let id=null;
+ if(host==='youtu.be')id=url.pathname.split('/')[1];
+ else if(host==='youtube.com'||host==='music.youtube.com'){
+  if(url.pathname==='/watch')id=url.searchParams.get('v');
+  else{const match=url.pathname.match(/^\/(?:shorts|embed|live)\/([\w-]+)/);id=match?.[1];}
+ }
+ return typeof id==='string'&&/^[A-Za-z0-9_-]{6,}$/.test(id)?id:null;
+}
+function captionTracksFromHTML(html){
+ const marker='"captionTracks":';const at=html.indexOf(marker);if(at<0)return [];
+ let depth=0,inString=false,escaped=false;
+ for(let i=at+marker.length;i<html.length;i++){
+  const ch=html[i];
+  if(inString){if(escaped)escaped=false;else if(ch==='\\')escaped=true;else if(ch==='"')inString=false;continue;}
+  if(ch==='"')inString=true;
+  else if(ch==='[')depth++;
+  else if(ch===']'){depth--;if(depth===0){try{const parsed=JSON.parse(html.slice(at+marker.length,i+1));return Array.isArray(parsed)?parsed:[];}catch{return[];}}}
+ }
+ return [];
+}
+function captionTextFromJSON3(value){
+ if(!value||!Array.isArray(value.events))return '';
+ return value.events.map(event=>(event.segs||[]).map(seg=>typeof seg.utf8==='string'?seg.utf8:'').join('')).map(line=>line.replace(/\s+/g,' ').trim()).filter(Boolean).join('\n');
+}
+/* Keyless fallback when the free Supadata allowance is gone: YouTube serves
+ * its own caption tracks publicly, so an existing caption track can still
+ * become a lesson with no provider account and no charge. Returns a stored
+ * source, or null when no usable captions exist (callers then surface the
+ * original quota error and the paste-instructions path). */
+async function youtubeCaptionFallback(env,rowID,url,fetcher){
+ try{
+  const videoID=youtubeVideoID(url);if(!videoID)return null;
+  const page=await fetcher('https://www.youtube.com/watch?v='+videoID,{redirect:'follow',signal:AbortSignal.timeout(12000),headers:{Accept:'text/html','User-Agent':'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124 Safari/537.36','Accept-Language':'en'}});
+  if(!page.ok)return null;
+  const html=(await page.text()).slice(0,3000000);
+  const tracks=captionTracksFromHTML(html).filter(track=>typeof track?.baseUrl==='string');
+  if(!tracks.length)return null;
+  const pick=tracks.find(track=>String(track.languageCode||'').startsWith('en')&&track.kind!=='asr')||tracks.find(track=>String(track.languageCode||'').startsWith('en'))||tracks[0];
+  const timed=await fetcher(pick.baseUrl+(pick.baseUrl.includes('?')?'&':'?')+'fmt=json3',{redirect:'follow',signal:AbortSignal.timeout(12000),headers:{Accept:'application/json'}});
+  if(!timed.ok)return null;
+  let text='';try{text=captionTextFromJSON3(await timed.json());}catch{text='';}
+  if(text.length<100)return null;
+  const source=sourceFromData(url.href,'',text);
+  source.limitations=[...source.limitations,'Captions were read directly from the public video because the free source-processing allowance is unavailable.'];
+  await env.DB.prepare("UPDATE source_extractions SET status='ready',source_json=?,updated_at=? WHERE id=?").bind(JSON.stringify(source),Date.now(),rowID).run();
+  return source;
+ }catch{return null;}
+}
 export async function resolveTutorial(env,input,fetcher=fetch,{visualOnly=false}={}){
  const url=sourceURL(input),platform=socialPlatform(url);
  if(!platform||!socialExtractionEnabled(env))return fetchTutorial(url.href,fetcher);
@@ -66,7 +117,10 @@ export async function resolveTutorial(env,input,fetcher=fetch,{visualOnly=false}
  const row=await env.DB.prepare('SELECT * FROM source_extractions WHERE id=?').bind(id).first();
  if(visualOnly&&row.job_kind!=='video_analysis'&&['ready','failed'].includes(row.status)&&(platform==='YouTube'||row.metadata_json&&JSON.parse(row.metadata_json).type==='video'))return resolveVideoDemonstration(env,input,fetcher);
  if(row.status==='ready')return JSON.parse(row.source_json);
- if(row.status==='failed')throw new AppError(row.error_code,row.error_message,row.error_status);
+ if(row.status==='failed'){
+  if(!visualOnly&&platform==='YouTube'&&QUOTA_FALLBACK_CODES.has(row.error_code)){const rescued=await youtubeCaptionFallback(env,id,url,fetcher);if(rescued)return rescued;}
+  throw new AppError(row.error_code,row.error_message,row.error_status);
+ }
  if(row.claim!==claim){
   if(row.status==='starting'){
    if(now-row.created_at>90000)throw new AppError('source_start_unconfirmed','This extraction has not confirmed its start. It has not been restarted automatically; paste instructions or try after the cache expires.',503);
@@ -112,7 +166,10 @@ export async function resolveTutorial(env,input,fetcher=fetch,{visualOnly=false}
    return {...SOURCE_PENDING};
   }
   return await finishSource(env,id,url.href,description,result.value?.content);
- }catch(error){return sourceFailure(env,id,error);}
+ }catch(error){
+  if(!visualOnly&&platform==='YouTube'&&error instanceof AppError&&QUOTA_FALLBACK_CODES.has(error.code)){const rescued=await youtubeCaptionFallback(env,id,url,fetcher);if(rescued)return rescued;}
+  return sourceFailure(env,id,error);
+ }
 }
 
 export function videoObservationSchema(duration){

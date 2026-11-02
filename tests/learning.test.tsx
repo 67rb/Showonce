@@ -118,6 +118,34 @@ describe('working frontend with the actual learning Worker',()=>{
   fireEvent.click(screen.getAllByRole('button',{name:'I’ve practiced this step · self-review'})[0]);await screen.findByRole('heading',{name:lesson.steps[1].title||'Try this step'});
   expect(screen.queryByRole('button',{name:'Open camera'})).toBeNull();expect(calls.filter(call=>call.path==='/api/assess')).toHaveLength(0);expect((await env.DB.prepare('SELECT calls FROM ai_budget WHERE id=1').first())?.calls).toBe(0);
  });
+ it('typing what you want to learn sends your own words to AI lesson creation',async()=>{
+  const typed='I want to learn how to draw a simple circle and shade its lower edge. I can hold the pencil lightly, but my circles come out uneven and I do not know how to shade smoothly yet.';
+  const original=globalThis.fetch;let sentBody:any=null;
+  vi.stubGlobal('fetch',async(...args:Parameters<typeof fetch>)=>{
+   const body=typeof args[1]?.body==='string'?JSON.parse(args[1].body):null;
+   if(String(args[0])==='/v1/lessons'&&body?.processing_mode==='ai'){sentBody=body;return Response.json({id:'lesson_topic',title:'Draw and shade a circle',category:'Drawing',difficulty:null,materials:['Paper','Pencil'],source_url:null,source_attribution:null,safety_notice:'',steps:[{id:'s1',position:1,title:'Draw a light circle',instructions:'Lightly sketch one circle on the paper.',expected_visual_result:'One light circular outline is visible.',assessment_criteria:['A circular outline is visible'],photo_assessable:true,visual_limits:[]}]});}
+   if(String(args[0])==='/v1/sessions'&&body)return Response.json({session_id:'session_topic',lesson_id:'lesson_topic',account_owned:false,status:'active',current_step_id:'s1',completed_step_ids:[],completed_checkpoints:[],total_steps:1,updated_at:new Date().toISOString(),access_token:'topic-token'});
+   if(String(args[0])==='/api/config'){const response=await original(...args);const value=await response.json();return Response.json({...value,ai_available:true,budget:{...(value.budget||{}),remaining_usd:4,paused:false}});}
+   return original(...args);
+  });
+  show();await screen.findByRole('button',{name:'Type what you want to learn'});
+  fireEvent.click(screen.getByRole('button',{name:'Type what you want to learn'}));
+  const box=screen.getByRole('textbox',{name:/What do you want to learn/});
+  fireEvent.change(box,{target:{value:'Too short.'}});
+  fireEvent.click(screen.getByRole('button',{name:'Get the steps'}));
+  expect(screen.getByRole('alert').textContent).toContain('Add a little more detail');
+  expect(calls.find(call=>call.path==='/v1/lessons')).toBeUndefined();
+  fireEvent.change(box,{target:{value:typed}});
+  fireEvent.click(screen.getByRole('button',{name:'Get the steps'}));
+  fireEvent.click(await screen.findByRole('button',{name:'3 · Start practicing'}));
+  await waitFor(()=>expect(push).toHaveBeenCalled());
+  expect(sentBody?.processing_mode).toBe('ai');
+  expect(sentBody?.source_text).toBe(typed);
+  expect(sentBody?.learning_goal).toBe(typed.slice(0,300));
+  expect(push.mock.calls[0][0]).toContain('lesson_id=lesson_topic');
+  expect(screen.queryByRole('alert')).toBeNull();
+ });
+
  it('an exhausted allowance explains the blocked action and still creates free practice',async()=>{
   const original=globalThis.fetch;vi.stubGlobal('fetch',async(...args:Parameters<typeof fetch>)=>{const response=await original(...args);if(String(args[0])==='/api/config'){const value=await response.json();return Response.json({...value,ai_available:true,budget:{remaining_usd:0,paused:false}});}return response;});
   show();await screen.findByText('Free practice is ready.');expect((screen.getByRole('button',{name:'Get the steps'}) as HTMLButtonElement).disabled).toBe(true);fireEvent.click(screen.getByRole('button',{name:'Start free'}));fireEvent.change(screen.getByRole('textbox',{name:'2–18 numbered instructions'}),{target:{value:'1. Draw a circle on paper.\n2. Shade its lower edge.'}});fireEvent.click(screen.getByRole('button',{name:'Create free practice'}));fireEvent.click(await screen.findByRole('button',{name:'3 · Start practicing'}));await waitFor(()=>expect(push).toHaveBeenCalled());expect((await env.DB.prepare('SELECT calls FROM ai_budget WHERE id=1').first())?.calls).toBe(0);
@@ -246,6 +274,20 @@ it('retains the classroom scope and Professional return link in the actual Profe
  expect(screen.getByRole('link',{name:'← Professional courses'}).getAttribute('href')).toBe('/professional/lessons/');
  expect(screen.getByText(/Classroom training only/)).toBeTruthy();
  await waitFor(()=>expect(screen.queryByText('Checking your account…')).toBeNull());
+});
+
+it('starts the professional sample as real free practice and keeps its reference visual',async()=>{
+ const {ProSampleStart}=await import('@/components/professional/ProSampleStart');
+ render(<IdentityProvider><ProSampleStart className="sample-test"/></IdentityProvider>);
+ const start=await screen.findByRole('button',{name:'Start this sample · free'});
+ fireEvent.click(start);await waitFor(()=>expect(push).toHaveBeenCalled());
+ const url=new URL(push.mock.calls[0][0],'https://test.example');
+ expect(url.searchParams.get('lesson_id')).toBeTruthy();
+ expect(calls.find(call=>call.path==='/v1/lessons')?.body?.processing_mode).toBe('structured_text');
+ expect(calls.find(call=>call.path==='/v1/lessons')?.body?.source_text).toContain('point to the vertical drain pipe');
+ cleanup();window.history.replaceState(null,'',url.pathname+url.search);show('play');
+ expect((await screen.findByAltText('A labelled line diagram showing the vertical drain pipe running from the fixture downward.')).getAttribute('src')).toBe('/samples/plumbing/step-1.svg');
+ expect((await(await worker.fetch(new Request('https://test.example/api/config'),env)).json()).budget.charged_or_reserved_usd).toBe(0);
 });
 
 it('shows only the return action when reading ahead to a self-review checkpoint',async()=>{

@@ -1,6 +1,7 @@
 /* Copyright © 2026 Muhammad Hashir (https://github.com/mateir0). All rights reserved. See COPYRIGHT.md. */
 import type { Metadata } from "next";
 import { LessonFlow } from "@/components/professional/LessonFlow";
+import { SampleFixture } from "@/components/learning/SampleFixture";
 
 export const metadata: Metadata = {
   title: "SHOW ONCE · Professional · Camera",
@@ -10,6 +11,8 @@ export function generateStaticParams() {
   return [{ id: "runtime" }, { id: "sample" }];
 }
 
-export default function ProfessionalCameraPage() {
+export default async function ProfessionalCameraPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  if (id === "sample") return <SampleFixture face="pro" screen="live" />;
   return <LessonFlow screen="camera" />;
 }

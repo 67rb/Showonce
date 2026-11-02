@@ -17,7 +17,7 @@ export function StepQuestions({sessionID,step,token,disabled=false}:Props){
  const load=useCallback(async()=>{
   const id=++sequence.current;read.current?.abort();const controller=new AbortController();read.current=controller;setLoading(true);setError(null);
   try{const result=await identity.request<{questions:QuestionRecord[]}>(path+'?step_id='+encodeURIComponent(step.id),undefined,{token,signal:controller.signal});if(!mounted.current||id!==sequence.current)return;setRecords(result.questions);
-   if(pending.current){const saved=result.questions.find(item=>item.request_key===pending.current?.key&&item.step_id===step.id&&item.status!=='processing');if(saved){pending.current=null;setRetrying(false);setQuestion('');}}
+   if(pending.current){const saved=result.questions.find(item=>item.request_key===pending.current?.key&&item.step_id===step.id&&item.status!=='processing');if(saved){pending.current=null;setRetrying(false);if(saved.status==='answered')setQuestion('');}}
   }catch(e){if(mounted.current&&!controller.signal.aborted)setError(e instanceof Error?e.message:'Saved answers could not be loaded.');}
   finally{if(mounted.current&&id===sequence.current)setLoading(false);}
  },[identity.request,path,step.id,token]);
@@ -27,7 +27,7 @@ export function StepQuestions({sessionID,step,token,disabled=false}:Props){
   pending.current||={key:crypto.randomUUID(),body:{step_id:step.id,question:question.trim()}};setRetrying(true);setBusy(true);setError(null);const controller=new AbortController();write.current=controller;
   try{const result=await identity.request<{record:QuestionRecord}>(path,pending.current.body,{token,key:pending.current.key,signal:controller.signal});if(!mounted.current||controller.signal.aborted)return;
    setRecords(previous=>[...previous.filter(item=>item.id!==result.record.id),result.record]);
-   if(result.record.status!=='processing'){pending.current=null;setRetrying(false);setQuestion('');}
+   if(result.record.status!=='processing'){pending.current=null;setRetrying(false);if(result.record.status==='answered')setQuestion('');}
    if(result.record.status==='failed')setError('That request did not produce an answer. A sent AI request may still use allowance. You can type a new question.');
   }catch(e){if(mounted.current){setError(controller.signal.aborted?'Stopped waiting. The answer may still finish. Refresh saved answers or retry the same question to retrieve it.':e instanceof Error?e.message:'The answer could not be retrieved. Retry the same question.');}}
   finally{if(mounted.current)setBusy(false);}

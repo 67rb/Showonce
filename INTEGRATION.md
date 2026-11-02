@@ -41,8 +41,11 @@ preview has no production authentication bypass route or model key.
 Only static Next pages receive the CSP required for generated inline hydration
 scripts/styles; the earlier interface retains its policy. Camera access is limited
 to the same origin. No key, runtime database or learner photo is copied into source
-or the downloadable project. New illustrations require a deliberate button press
-and are labelled AI-generated. Submitted photos remain privately stored and
+or the downloadable project. Step illustrations are labelled AI-generated; the
+current step's image generates automatically when none is saved, and the
+next step's image prefetches in the background while the learner works, so
+targets are ready before they advance (the server claim keeps each image a
+single purchase from the shared allowance). Submitted photos remain privately stored and
 removable; camera frames are not saved. Landing privacy copy now matches this.
 
 The configured source adapter, asynchronous extraction, video observation,

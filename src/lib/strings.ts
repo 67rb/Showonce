@@ -446,6 +446,11 @@ export const strings = {
   "lessonsDelete.cancel": "Keep lesson",
   "lessonsContinue": "Continue",
   /* 5.1b (B4) — Free numbered steps: practice name becomes the lesson title */
+  "topic.mode": "Type what you want to learn",
+  "topic.heading": "What do you want to learn?",
+  "topic.placeholder": "e.g. I want to learn how to fold a paper crane. I can make a square base, but I get stuck after that. I want to be able to finish one without help.",
+  "topic.hint": "Write a few sentences in your own words - what you want to be able to do, and any steps you already know. AI builds checkpoints only from what you write, so one short sentence is not enough yet.",
+  "topic.tooShort": "Add a little more detail (about 100 characters): what you want to be able to do, and any steps you already know.",
   "freeSteps.nameLabel": "Lesson name",
   "freeSteps.nameHint": "Leave blank to use a default name for this practice.",
   "freeSteps.localCompareTitle": "Compare your work on your device",

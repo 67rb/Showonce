@@ -17,7 +17,7 @@ export function ProSampleStart({className}:{className:string}){
   try{
    const lesson=await identity.request<Lesson>('/v1/lessons',{
     processing_mode:'structured_text',
-    source_text:proSampleLesson.steps.map(step=>`${step.position}. ${step.title} — ${step.instructions}`).join('\n'),
+    source_text:proSampleLesson.steps.map(step=>`${step.position}. ${step.instructions}`).join('\n'),
     save_to_account:!!identity.account?.user,
    });
    const progress=await identity.request<Progress>('/v1/sessions',{lesson_id:lesson.id,save_to_account:!!identity.account?.user});

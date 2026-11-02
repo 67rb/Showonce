@@ -6,6 +6,10 @@ async function evidenceAccess(env,id,user){
  if(!enrollment||enrollment.owner_id!==user.id&&(!isAdmin(env,user)||!enrollment.evidence_shared))throw new AppError('evidence_not_found','This evidence is not shared with your account.',404);
  return enrollment;
 }
+async function assignmentEvidenceLocked(env,enrollmentID){
+ const assignment=await env.DB.prepare('SELECT status FROM professional_assignments WHERE enrollment_id=?').bind(enrollmentID).first();
+ return !!assignment&&['submitted','approved'].includes(assignment.status);
+}
 async function routeProEvidence(request,env,url,user){
  const path=url.pathname.replace(/\/$/,''),method=request.method;
  const listing=path.match(/^\/v1\/professional\/enrollments\/([\w-]+)\/evidence$/),sharing=path.match(/^\/v1\/professional\/enrollments\/([\w-]+)\/evidence-sharing$/),item=path.match(/^\/v1\/professional\/evidence\/([\w-]+)(?:\/(photo))?$/);
@@ -20,6 +24,7 @@ async function routeProEvidence(request,env,url,user){
   if(method==='GET'){const rows=await env.DB.prepare("SELECT * FROM professional_evidence WHERE enrollment_id=? AND status!='deleted' ORDER BY created_at,id LIMIT 50").bind(enrollment.id).all();return json({shared:!!enrollment.evidence_shared,evidence:rows.results.map(evidenceRecord)});}
   if(method==='POST'){
    if(enrollment.owner_id!==user.id)throw new AppError('evidence_not_found','Only the learner can add evidence.',404);
+   if(await assignmentEvidenceLocked(env,enrollment.id))throw new AppError('evidence_locked','Evidence cannot change while this assignment is submitted or approved. Wait for the instructor decision.',409);
    const body=await bodyJSON(request),key=idem(request.headers.get('idempotency-key')),notes=shortText(body.notes??'','evidence_notes',2000,false);
    if(!proCourse(enrollment.course_id).lesson_ids.includes(body.lesson_id))throw new AppError('lesson_not_in_course','Attach evidence to a lesson in this course.');
    const photo=body.image_base64!==undefined||body.mime_type!==undefined,bytes=photo?imageBytes(body):null;
@@ -56,7 +61,7 @@ async function routeProEvidence(request,env,url,user){
     const retry=await env.DB.prepare("UPDATE professional_evidence SET status='uploading' WHERE id=? AND status='failed' AND EXISTS(SELECT 1 FROM professional_enrollments WHERE id=? AND status IN ('learning','changes_requested'))").bind(row.id,enrollment.id).run();
     if(!changed(retry))throw new AppError('evidence_busy','This evidence is already being saved or the course is locked. Wait a moment, then retry with the same save key.',409);
    }
-   try{if(bytes)await env.BUCKET.put(row.image_key,bytes,{httpMetadata:{contentType:row.mime_type}});await env.DB.prepare("UPDATE professional_evidence SET status='ready' WHERE id=? AND status!='deleted'").bind(row.id).run();}
+   try{if(bytes)await env.BUCKET.put(row.image_key,bytes,{httpMetadata:{contentType:row.mime_type}});const finished=await env.DB.prepare("UPDATE professional_evidence SET status='ready' WHERE id=? AND status!='deleted' AND NOT EXISTS(SELECT 1 FROM professional_assignments WHERE enrollment_id=? AND status IN ('submitted','approved'))").bind(row.id,enrollment.id).run();if(!changed(finished))throw new AppError('evidence_locked','Evidence cannot change while this assignment is submitted or approved. Wait for the instructor decision.',409);}
    catch{await env.DB.prepare("UPDATE professional_evidence SET status='failed' WHERE id=? AND status!='deleted'").bind(row.id).run();throw new AppError('evidence_save_failed','Could not finish the photo upload. Retry the same evidence with the same save key.',503);}
    return json(evidenceRecord(await env.DB.prepare('SELECT * FROM professional_evidence WHERE id=?').bind(row.id).first()),201);
   }
@@ -68,8 +73,14 @@ async function routeProEvidence(request,env,url,user){
   if(!item[2]&&method==='DELETE'){
    if(row.owner_id!==user.id)throw new AppError('evidence_not_found','Only the learner can remove evidence.',404);
    if(row.status==='uploading')throw new AppError('evidence_busy','Wait for the upload to finish before removing it.',409);
-   if(row.image_key)await env.BUCKET.delete(row.image_key);
-   await env.DB.batch([env.DB.prepare("UPDATE professional_evidence SET status='deleted',notes='',image_key=NULL WHERE id=?").bind(row.id),env.DB.prepare('UPDATE professional_enrollments SET version=version+1,updated_at=? WHERE id=?').bind(Date.now(),row.enrollment_id)]);return new Response(null,{status:204});
+   if(await assignmentEvidenceLocked(env,row.enrollment_id))throw new AppError('evidence_locked','Evidence cannot change while this assignment is submitted or approved. Wait for the instructor decision.',409);
+   const deleted=await env.DB.batch([
+    env.DB.prepare("UPDATE professional_evidence SET status='deleted',notes='',image_key=NULL WHERE id=? AND NOT EXISTS(SELECT 1 FROM professional_assignments WHERE enrollment_id=? AND status IN ('submitted','approved'))").bind(row.id,row.enrollment_id),
+    env.DB.prepare("UPDATE professional_enrollments SET version=version+1,updated_at=? WHERE id=? AND EXISTS(SELECT 1 FROM professional_evidence WHERE id=? AND status='deleted')").bind(Date.now(),row.enrollment_id,row.id)
+   ]);
+   if(!changed(deleted[0]))throw new AppError('evidence_locked','Evidence cannot change while this assignment is submitted or approved. Wait for the instructor decision.',409);
+   if(row.image_key)try{await env.BUCKET.delete(row.image_key);}catch{/* Record is already deleted; an orphaned photo is preferable to a live record without one. */}
+   return new Response(null,{status:204});
   }
  }
  throw new AppError('method_not_allowed','Use an available evidence action.',405);

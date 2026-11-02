@@ -16,7 +16,7 @@ function saveStoredCamera(id:string){try{if(id&&typeof window!=='undefined')wind
 function clearStoredCamera(){try{if(typeof window!=='undefined')window.localStorage.removeItem(CAMERA_KEY);}catch{}}
 function loadStoredRes():ResolutionKey{try{return typeof window!=='undefined'&&window.localStorage.getItem(RES_KEY)==='1080'?'1080':'720';}catch{return '720';}}
 function saveStoredRes(value:ResolutionKey){try{if(typeof window!=='undefined')window.localStorage.setItem(RES_KEY,value);}catch{}}
-type Props={lesson:Lesson;step:Step;progress:Progress;token:string|null;disabled:boolean;stopRef:{current:()=>void};initialLive:boolean;onFeedback:(value:Assessment)=>void;onClearFeedback?:()=>void;onError:(value:string|null)=>void;onChecksChange?:(observations:string[])=>void};
+type Props={lesson:Lesson;step:Step;progress:Progress;token:string|null;disabled:boolean;stopRef:{current:(preserve?:boolean)=>void};initialLive:boolean;onFeedback:(value:Assessment)=>void;onClearFeedback?:()=>void;onError:(value:string|null)=>void;onChecksChange?:(observations:string[])=>void};
 
 /** Local previews stay free. One selected picture or camera frame is sent only after explicit opt-in and a check click. */
 export function LiveCamera({lesson,step,progress,token,disabled,stopRef,initialLive,onFeedback,onClearFeedback,onError,onChecksChange}:Props){

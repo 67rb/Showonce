@@ -153,6 +153,115 @@ test('assignment lifecycle: preparation gates submission, revision loop, criteri
   const enrollment=await(await f.call('/v1/professional/enrollments/'+entry.id)).json();assert.equal(enrollment.qualification,false);assert.notEqual(enrollment.status,'instructor_approved');
  }finally{f.close();}
 });
+test('submitted assignment evidence is locked, assessment requires sharing, and reviewed enrollments cannot be assigned',async()=>{
+ const f=fixture();try{const entry=await enroll(f),assignment=await createAssignment(f,entry),base='/v1/professional/assignments/'+assignment.id;
+  await f.call(base+'/preparation',{expected_version:1,done:['worksheet','rig']});await finish(f,entry);
+  const saved=await saveEvidence(f,entry,{lesson_id:entry.lessons[0].id,criterion_id:'fittings',notes:'Labelled diagram'},'lock-evidence');assert.equal(saved.status,201);const item=await saved.json();
+  const current=await(await f.call(base+'/submit',{expected_version:2,share_evidence:true})).json();assert.equal(current.status,'submitted');
+  assert.equal((await saveEvidence(f,entry,{lesson_id:entry.lessons[0].id,criterion_id:'fittings',notes:'Late change'},'lock-evidence-late')).status,409);
+  assert.equal((await f.call('/v1/professional/evidence/'+item.id,undefined,'learner','DELETE')).status,409);
+  assert.equal((await f.call('/v1/professional/enrollments/'+entry.id+'/evidence-sharing',{shared:false})).status,200);
+  assert.equal((await f.call(base+'/assess',{criterion_id:'fittings',decision:'approved',notes:'Clear',expected_version:3},'teacher')).status,409);
+  const reviewed=await requestReview(f,await finish(f,await enroll(f,'trainee2'),'trainee2'),'trainee2');assert.equal(reviewed.status,'pending_review');
+  assert.equal((await f.call('/v1/professional/assignments',{enrollment_id:reviewed.id,...demoBrief},'teacher')).status,409);
+ }finally{f.close();}
+});
+test('required preparation gates lesson start and acknowledgements, optional preparation does not',async()=>{
+ const f=fixture();try{const entry=await enroll(f);
+  const started=await(await f.call('/v1/professional/enrollments/'+entry.id+'/start',{lesson_id:entry.lessons[0].id})).json();
+  const assignment=await createAssignment(f,entry),base='/v1/professional/assignments/'+assignment.id;
+  assert.equal((await f.call('/v1/professional/enrollments/'+entry.id+'/start',{lesson_id:entry.lessons[0].id})).status,409);
+  const lesson=await(await f.call('/v1/lessons/'+entry.lessons[0].id)).json();
+  const ack=await f.call('/v1/sessions/'+started.session_id+'/acknowledgements',{step_id:lesson.steps[0].id,observations:['Practised']});
+  assert.equal(ack.status,409);assert.equal((await ack.json()).error.code,'preparation_incomplete');
+  await f.call(base+'/preparation',{expected_version:1,done:['worksheet','rig']});
+  const ack2=await f.call('/v1/sessions/'+started.session_id+'/acknowledgements',{step_id:lesson.steps[0].id,observations:['Practised']});
+  assert.equal(ack2.status,200);
+  const entry2=await enroll(f,'trainee3'),optional=await f.call('/v1/professional/assignments',{enrollment_id:entry2.id,...demoBrief,prep_checks:[{id:'tour',label:'Optional workshop tour',required:false}]},'teacher');assert.equal(optional.status,201);
+  assert.equal((await f.call('/v1/professional/enrollments/'+entry2.id+'/start',{lesson_id:entry2.lessons[0].id},'trainee3')).status,200);
+ }finally{f.close();}
+});
+/* Deterministic interleaving: wrap the fixture DB so `act` commits (through
+   the raw DB) exactly once, after the handler read matched by `when` and
+   before its write commits. This models a concurrent request winning the
+   race without threads or timing sleeps. */
+function barrier(f,{onFirst,onRun,onBatch}={}){
+ const raw=f.env.DB;let fired=false;
+ const fire=async(kind,sql)=>{if(fired)return;const hit=kind==='first'?onFirst?.(sql):kind==='run'?onRun?.(sql):onBatch?.(sql);if(hit){fired=true;await hit(raw);}};
+ const wrap=(stmt,sql)=>({...stmt,bind(...args){const bound=stmt.bind(...args);const wrapped={...bound,
+   first:async()=>{const row=await bound.first();await fire('first',sql);return row;},
+   run:async()=>{await fire('run',sql);return bound.run();},
+   all:async()=>{const out=await bound.all();await fire('first',sql);return out;}};
+  return wrapped;}});
+ f.env.DB={prepare(sql){return wrap(raw.prepare(sql),sql);},
+  async batch(statements){await fire('batch',statements.map(s=>s.sql).join('\n'));return raw.batch(statements);},
+  close(){return raw.close();}};
+ return raw;
+}
+test('revocation committed after the assess precheck cannot produce a decision',async()=>{
+ const f=fixture();try{const entry=await enroll(f),assignment=await createAssignment(f,entry),base='/v1/professional/assignments/'+assignment.id;
+  await f.call(base+'/preparation',{expected_version:1,done:['worksheet','rig']});await finish(f,entry);
+  await saveEvidence(f,entry,{lesson_id:entry.lessons[0].id,criterion_id:'fittings',notes:'Labelled diagram'},'race-evidence');
+  const current=await(await f.call(base+'/submit',{expected_version:2,share_evidence:true})).json();assert.equal(current.status,'submitted');
+  barrier(f,{onFirst:sql=>sql.includes('SELECT evidence_shared FROM professional_enrollments')?async raw=>{await raw.prepare('UPDATE professional_enrollments SET evidence_shared=0,version=version+1 WHERE id=?').bind(entry.id).run();}:null});
+  const response=await f.call(base+'/assess',{criterion_id:'fittings',decision:'approved',notes:'Clear',expected_version:3},'teacher');
+  assert.equal(response.status,409);
+  const after=await f.env.DB.prepare('SELECT status,version FROM professional_assignments WHERE id=?').bind(assignment.id).first();
+  assert.equal(after.status,'submitted');assert.equal(after.version,3);
+  assert.equal((await f.env.DB.prepare('SELECT COUNT(*) AS n FROM professional_criterion_decisions WHERE assignment_id=?').bind(assignment.id).first()).n,0);
+ }finally{f.close();}
+});
+test('submission committed after the evidence delete check keeps the evidence inspectable',async()=>{
+ const f=fixture();try{const entry=await enroll(f),assignment=await createAssignment(f,entry),base='/v1/professional/assignments/'+assignment.id;
+  await f.call(base+'/preparation',{expected_version:1,done:['worksheet','rig']});await finish(f,entry);
+  const saved=await saveEvidence(f,entry,{lesson_id:entry.lessons[0].id,criterion_id:'fittings',notes:'Labelled diagram',mime_type:'image/png',image_base64:intakePhoto.toString('base64')},'race-delete-evidence');assert.equal(saved.status,201);const item=await saved.json();
+  barrier(f,{onFirst:sql=>sql.includes('SELECT status FROM professional_assignments')?async raw=>{await raw.prepare("UPDATE professional_assignments SET status='submitted',version=version+1 WHERE id=?").bind(assignment.id).run();}:null});
+  const response=await f.call('/v1/professional/evidence/'+item.id,undefined,'learner','DELETE');
+  assert.equal(response.status,409);
+  const listed=await(await f.call('/v1/professional/enrollments/'+entry.id+'/evidence')).json();assert.equal(listed.evidence.length,1);assert.equal(listed.evidence[0].notes,'Labelled diagram');
+  assert.equal((await f.call('/v1/professional/evidence/'+item.id+'/photo')).status,200);
+ }finally{f.close();}
+});
+test('a stale losing submit cannot restore revoked sharing and a 409 changes nothing',async()=>{
+ const f=fixture();try{const entry=await enroll(f),assignment=await createAssignment(f,entry),base='/v1/professional/assignments/'+assignment.id;
+  await f.call(base+'/preparation',{expected_version:1,done:['worksheet','rig']});await finish(f,entry);
+  const before=await f.env.DB.prepare('SELECT version FROM professional_enrollments WHERE id=?').bind(entry.id).first();
+  barrier(f,{onBatch:sql=>sql.includes("UPDATE professional_assignments SET status='submitted'")?async raw=>{
+   await raw.prepare("UPDATE professional_assignments SET status='submitted',version=3 WHERE id=?").bind(assignment.id).run();
+   await raw.prepare('UPDATE professional_enrollments SET evidence_shared=1,version=version+1 WHERE id=?').bind(entry.id).run();
+   await raw.prepare('UPDATE professional_enrollments SET evidence_shared=0,version=version+1 WHERE id=?').bind(entry.id).run();
+  }:null});
+  const response=await f.call(base+'/submit',{expected_version:2,share_evidence:true});
+  assert.equal(response.status,409);
+  const enrollRow=await f.env.DB.prepare('SELECT evidence_shared,version FROM professional_enrollments WHERE id=?').bind(entry.id).first();
+  assert.equal(enrollRow.evidence_shared,0);assert.equal(enrollRow.version,before.version+2);
+  const assignRow=await f.env.DB.prepare('SELECT status,version FROM professional_assignments WHERE id=?').bind(assignment.id).first();
+  assert.equal(assignRow.status,'submitted');assert.equal(assignRow.version,3);
+ }finally{f.close();}
+});
+test('an upload starting after the submit precheck blocks the commit and changes nothing',async()=>{
+ const f=fixture();try{const entry=await enroll(f),assignment=await createAssignment(f,entry),base='/v1/professional/assignments/'+assignment.id;
+  await f.call(base+'/preparation',{expected_version:1,done:['worksheet','rig']});await finish(f,entry);
+  const before=await f.env.DB.prepare('SELECT evidence_shared,version FROM professional_enrollments WHERE id=?').bind(entry.id).first();
+  barrier(f,{onBatch:sql=>sql.includes("UPDATE professional_assignments SET status='submitted'")?async raw=>{
+   await raw.prepare("INSERT INTO professional_evidence(id,enrollment_id,owner_id,lesson_id,notes,image_key,mime_type,request_key,request_hash,status,created_at,criterion_id) VALUES('evidence_race',?,?,?,?,?,NULL,'race-key','race-hash','uploading',?,NULL)").bind(entry.id,entry.owner_id||'learner',entry.lessons[0].id,'Race upload','professional-evidence/evidence_race',Date.now()).run();
+  }:null});
+  const response=await f.call(base+'/submit',{expected_version:2,share_evidence:true});
+  assert.equal(response.status,409);
+  const enrollRow=await f.env.DB.prepare('SELECT evidence_shared,version FROM professional_enrollments WHERE id=?').bind(entry.id).first();
+  assert.deepEqual([enrollRow.evidence_shared,enrollRow.version],[before.evidence_shared,before.version]);
+  const assignRow=await f.env.DB.prepare('SELECT status,version FROM professional_assignments WHERE id=?').bind(assignment.id).first();
+  assert.deepEqual([assignRow.status,assignRow.version],['practice',2]);
+ }finally{f.close();}
+});
+test('review committed between assignment eligibility check and insert blocks creation',async()=>{
+ const f=fixture();try{const entry=await enroll(f);
+  barrier(f,{onRun:sql=>sql.startsWith('INSERT INTO professional_assignments')?async raw=>{await raw.prepare("UPDATE professional_enrollments SET status='pending_review',version=version+1 WHERE id=?").bind(entry.id).run();}:null});
+  const response=await f.call('/v1/professional/assignments',{enrollment_id:entry.id,...demoBrief},'teacher');
+  assert.equal(response.status,409);
+  assert.equal((await f.env.DB.prepare('SELECT COUNT(*) AS n FROM professional_assignments WHERE enrollment_id=?').bind(entry.id).first()).n,0);
+ }finally{f.close();}
+});
 test('the same lesson explores freely in Hobby but stays gated inside a Professional assignment',async()=>{
  const f=fixture();try{
   const lesson=await(await f.call('/v1/lessons/pro_plumbing_parts',undefined,'explorer')).json();
@@ -162,10 +271,12 @@ test('the same lesson explores freely in Hobby but stays gated inside a Professi
   const hobby=await(await hobbyCall('/v1/sessions/'+session.session_id)).json();assert.equal(hobby.completed_step_ids.length,lesson.steps.length);assert.equal(hobby.current_step_id,null);
   assert.deepEqual((await(await f.call('/v1/professional/assignments',undefined,'explorer')).json()).assignments,[]);
   const entry=await enroll(f,'trainee'),assignment=await createAssignment(f,entry);
+  assert.equal((await f.call('/v1/professional/enrollments/'+entry.id+'/start',{lesson_id:lesson.id},'trainee')).status,409);
+  await f.call('/v1/professional/assignments/'+assignment.id+'/preparation',{expected_version:1,done:['worksheet','rig']},'trainee');
   const started=await(await f.call('/v1/professional/enrollments/'+entry.id+'/start',{lesson_id:lesson.id},'trainee')).json();
   for(const step of lesson.steps){assert.equal((await f.call('/v1/sessions/'+started.session_id+'/acknowledgements',{step_id:step.id,observations:['Practised']},'trainee')).status,200);}
-  const gated=await(await f.call('/v1/professional/assignments/'+assignment.id,undefined,'trainee')).json();assert.equal(gated.status,'preparation');assert.equal(gated.criteria.every(item=>item.latest_decision===null),true);
-  assert.equal((await f.call('/v1/professional/assignments/'+assignment.id+'/submit',{expected_version:1,share_evidence:true},'trainee')).status,409);
+  const gated=await(await f.call('/v1/professional/assignments/'+assignment.id,undefined,'trainee')).json();assert.equal(gated.status,'practice');assert.equal(gated.criteria.every(item=>item.latest_decision===null),true);
+  assert.equal((await f.call('/v1/professional/assignments/'+assignment.id+'/submit',{expected_version:2,share_evidence:true},'trainee')).status,409);
  }finally{f.close();}
 });
 test('an instructor cannot assign or assess their own training',async()=>{
@@ -189,8 +300,7 @@ test('a failed decision save leaves the assignment unapproved and retryable',asy
  }finally{f.close();}
 });
 test('submission rechecks required preparation even if status says practice',async()=>{
- const f=fixture();try{const entry=await enroll(f),assignment=await createAssignment(f,entry),base='/v1/professional/assignments/'+assignment.id;
-  await finish(f,entry);
+ const f=fixture();try{const entry=await enroll(f);await finish(f,entry);const assignment=await createAssignment(f,entry),base='/v1/professional/assignments/'+assignment.id;
   await f.env.DB.prepare("UPDATE professional_assignments SET status='practice',prep_done_json='[]' WHERE id=?").bind(assignment.id).run();
   const blocked=await f.call(base+'/submit',{expected_version:1,share_evidence:true});assert.equal(blocked.status,409);assert.equal((await blocked.json()).error.code,'preparation_incomplete');
   const after=await(await f.call(base)).json();assert.equal(after.status,'practice');
