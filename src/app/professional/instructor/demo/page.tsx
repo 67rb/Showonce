@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 
 type Decision = "approved" | "changes requested";
@@ -9,6 +9,17 @@ export default function InstructorDemoPage() {
   const [feedback, setFeedback] = useState("");
   const [decision, setDecision] = useState<Decision>();
   const [error, setError] = useState("");
+
+  const statusRef = useRef<HTMLParagraphElement>(null);
+  const feedbackRef = useRef<HTMLTextAreaElement>(null);
+  const previousDecision = useRef(decision);
+
+  useEffect(() => {
+    if (previousDecision.current === decision) return;
+    previousDecision.current = decision;
+    if (decision) statusRef.current?.focus();
+    else feedbackRef.current?.focus();
+  }, [decision]);
 
   function review(next: Decision) {
     if (next === "changes requested" && !feedback.trim()) {
@@ -39,7 +50,7 @@ export default function InstructorDemoPage() {
         </blockquote>
         {decision ? (
           <div className="space-y-3">
-            <p role="status" className="font-semibold">Demo decision: {decision}.</p>
+            <p ref={statusRef} role="status" tabIndex={-1} className="font-semibold">Demo decision: {decision}.</p>
             {feedback.trim() && <p className="break-words whitespace-pre-wrap">{feedback.trim()}</p>}
             <button type="button" className="min-h-11 underline" onClick={() => {
               setDecision(undefined);
@@ -49,7 +60,7 @@ export default function InstructorDemoPage() {
         ) : (
           <div className="space-y-3">
             <label htmlFor="demo-feedback" className="block font-semibold">Feedback to the learner</label>
-            <textarea id="demo-feedback" rows={3} maxLength={500} value={feedback}
+            <textarea ref={feedbackRef} id="demo-feedback" rows={3} maxLength={500} value={feedback}
               aria-describedby={error ? "demo-feedback-error" : undefined}
               onChange={(event) => { setFeedback(event.target.value); setError(""); }}
               className="block w-full rounded-xl border border-site-border p-3"
