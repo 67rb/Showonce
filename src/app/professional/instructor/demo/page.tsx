@@ -6,6 +6,7 @@ import Link from "next/link";
 type Decision = "approved" | "changes requested";
 
 export default function InstructorDemoPage() {
+  const [isRevised, setIsRevised] = useState(false);
   const [feedback, setFeedback] = useState("");
   const [decision, setDecision] = useState<Decision>();
   const [error, setError] = useState("");
@@ -30,6 +31,13 @@ export default function InstructorDemoPage() {
     setDecision(next);
   }
 
+  function openRevisedSample() {
+    setIsRevised(true);
+    setFeedback("");
+    setError("");
+    setDecision(undefined);
+  }
+
   return (
     <div className="mx-auto w-full max-w-3xl space-y-6 px-4 py-10 sm:py-16">
       <header>
@@ -45,17 +53,26 @@ export default function InstructorDemoPage() {
         <h2 id="sample-title" className="text-2xl font-bold text-site-ink">Identify fittings on a worksheet</h2>
         <p><strong>Criterion:</strong> Label the elbow, tee and coupling on a classroom diagram.</p>
         <blockquote className="rounded-xl bg-site-page p-4">
-          <p className="font-semibold">Sample learner evidence</p>
-          <p className="mt-1">I labelled the 90-degree elbow and the tee. The third fitting is still blank.</p>
+          <p className="font-semibold">{isRevised ? "Revised learner evidence · scripted sample" : "Sample learner evidence"}</p>
+          <p className="mt-1">{isRevised
+            ? "I updated the worksheet. The elbow, tee and coupling are now labelled."
+            : "I labelled the 90-degree elbow and the tee. The third fitting is still blank."}</p>
         </blockquote>
         {decision ? (
           <div className="space-y-3">
             <p ref={statusRef} role="status" tabIndex={-1} className="font-semibold">Demo decision: {decision}.</p>
             {feedback.trim() && <p className="break-words whitespace-pre-wrap">{feedback.trim()}</p>}
-            <button type="button" className="min-h-11 underline" onClick={() => {
-              setDecision(undefined);
-              setFeedback("");
-            }}>Reset sample review</button>
+            <div className="flex flex-wrap gap-3">
+              {decision === "changes requested" && !isRevised && (
+                <button type="button" className="min-h-11 rounded-full bg-site-ink px-5 py-2 font-semibold text-white"
+                  onClick={openRevisedSample}>Open revised sample</button>
+              )}
+              <button type="button" className="min-h-11 underline" onClick={() => {
+                setIsRevised(false);
+                setDecision(undefined);
+                setFeedback("");
+              }}>Reset sample review</button>
+            </div>
           </div>
         ) : (
           <div className="space-y-3">
