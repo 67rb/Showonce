@@ -761,7 +761,9 @@ function StudioBody({ view }: { view: "create" | "library" | "instructor" }) {
                 {s["proInstructor.EmptyTitle"]}
               </h2>
               <p className="mx-auto mt-3 max-w-[448px] text-small text-site-muted">
-                {s["proInstructor.EmptyLine"]}
+                {signedIn
+                  ? s["proInstructor.NoAccessLine"]
+                  : s["proInstructor.EmptyLine"]}
               </p>
               <a className={secondary + " mt-4"} href="/professional/lessons">
                 {s["proInstructor.EmptyAction"]}

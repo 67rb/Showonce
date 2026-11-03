@@ -411,6 +411,7 @@ export const strings = {
   /* 5.9 — instructor empty state + processing/review empty states */
   "proInstructor.EmptyTitle": "Instructor review",
   "proInstructor.EmptyLine": "Only authorised instructors can review saved practice evidence and decide a classroom outcome.",
+  "proInstructor.NoAccessLine": "Your signed-in account does not have instructor access. Ask your ShowOnce administrator to enable it for your verified GitHub email.",
   "proInstructor.EmptyAction": "Back to the Training hub",
   "proRequest.EmptyTitle": "No saved request yet",
   "proRequest.EmptyLine": "Nothing has been saved for you to review on this screen.",

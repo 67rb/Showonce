@@ -392,6 +392,37 @@ test('AI assigns course practice with a saved rubric and leaves approval to the 
   assert.equal(saved.preparation[0].label, project.preparation[0]);
   assert.equal(saved.status, 'preparation');
   assert.equal(saved.criteria[0].latest_decision, null);
+  const assignmentPath = path + '/' + saved.id;
+  const prepared = await f.call(assignmentPath + '/preparation', {
+   expected_version: saved.version,
+   done: saved.preparation.map(item => item.id),
+  });
+  assert.equal(prepared.status, 200);
+  const preparedAssignment = await prepared.json();
+  await finish(f, enrollment);
+  const evidence = await saveEvidence(f, enrollment, {
+   lesson_id: enrollment.lessons[0].id,
+   criterion_id: saved.criteria[0].id,
+   notes: 'Fitting names are labelled on the classroom worksheet.',
+  }, 'ai-assignment-evidence');
+  assert.equal(evidence.status, 201);
+  const submission = await f.call(assignmentPath + '/submit', {
+   expected_version: preparedAssignment.version,
+   share_evidence: true,
+  });
+  assert.equal(submission.status, 200);
+  const submitted = await submission.json();
+  assert.equal(submitted.status, 'submitted');
+  const decision = {
+   expected_version: submitted.version,
+   criterion_id: saved.criteria[0].id,
+   decision: 'approved',
+   notes: 'The worksheet shows the fitting names.',
+  };
+  assert.equal((await f.call(assignmentPath + '/assess', decision)).status, 403);
+  const reviewed = await f.call(assignmentPath + '/assess', decision, 'teacher');
+  assert.equal(reviewed.status, 200);
+  assert.equal((await reviewed.json()).status, 'approved');
   assert.equal((await f.call(path, body, 'teacher')).status, 409);
   assert.equal(calls, 1);
  } finally {
