@@ -93,6 +93,6 @@ export function SampleComplete({face}:{face:'hobby'|'pro'}){
   <div className={banner} role="status"><strong>{s["fixture.banner"]}</strong> <span className="text-site-muted">{s["fixture.bannerSub"]}</span></div>
   <h1 className="mt-8 font-body-ui text-[2rem] font-bold tracking-[-0.02em] text-site-ink">{s.completeHeading}</h1>
   <p className="mt-3 font-body-ui text-body text-site-muted">{title} · {sample.steps.length} steps — this preview saves nothing.</p>
-  <div className="mt-8 flex flex-wrap gap-3"><a className={primary} href={base}>Back to the sample overview</a><a className={secondary} href={base+'/play'}>Open the sample player</a></div>
+  <div className="mt-8 flex flex-wrap gap-3"><a className={primary} href={base}>Back to the sample overview</a><a className={secondary} href={base+'/play'}>Open the sample player</a>{pro&&<a className={secondary} href="/professional/instructor/demo/">Try the instructor review demo</a>}</div>
  </div></div>;
 }
