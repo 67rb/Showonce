@@ -765,6 +765,9 @@ function StudioBody({ view }: { view: "create" | "library" | "instructor" }) {
                   ? s["proInstructor.NoAccessLine"]
                   : s["proInstructor.EmptyLine"]}
               </p>
+              <a className={primary + " mt-4 mr-2"} href="/professional/instructor/demo/">
+                Try the public instructor demo
+              </a>
               <a className={secondary + " mt-4"} href="/professional/lessons">
                 {s["proInstructor.EmptyAction"]}
               </a>

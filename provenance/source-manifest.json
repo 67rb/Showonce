@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "created_at": "2026-11-03T15:49:57.045Z",
+  "created_at": "2026-11-03T18:13:13.503Z",
   "owners": {
     "application": "Robé Berry",
     "ui": "Muhammad Hashir (https://github.com/mateir0)"
@@ -1444,6 +1444,11 @@
       "sha256": "5e83d2c4f491bc627b27a398b7bbd3fb60cc82e9e92d214dc79886dba4c3689e"
     },
     {
+      "path": "src/app/professional/instructor/demo/page.tsx",
+      "bytes": 3515,
+      "sha256": "0764e84300b0e602e07e7b95027a920aef46aa4372383547577fc5f5b38d2c9f"
+    },
+    {
       "path": "src/app/professional/instructor/page.tsx",
       "bytes": 408,
       "sha256": "110ca86f378a7dbafa5a2778ba8d065cff9404ad4342483a5eea6318299ac21e"
@@ -1860,8 +1865,8 @@
     },
     {
       "path": "src/components/professional/ProfessionalStudio.tsx",
-      "bytes": 77376,
-      "sha256": "faa2d0833696f92ef039e0d1fd74338e1a690f7410699578de429e787100c522"
+      "bytes": 77533,
+      "sha256": "c72113024443acbb294174393d0a9366d962a36e4abd5197511c22ecc3dc59ae"
     },
     {
       "path": "src/components/ui/resizable-navbar.tsx",
