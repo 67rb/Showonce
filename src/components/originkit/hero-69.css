@@ -185,6 +185,19 @@
   width: 24vw;
   text-align: right;
 }
+/* The moving debris can pass behind both copy blocks. Keep those areas legible. */
+.hero-69 .intro::before,
+.hero-69 .cta::before {
+  content: "";
+  position: absolute;
+  inset: -8px;
+  z-index: -1;
+  border-radius: 12px;
+  background: var(--paper);
+  box-shadow: 0 0 12px 8px var(--paper);
+  pointer-events: none;
+}
+
 .hero-69 .cta-actions {
   display: flex;
   justify-content: flex-end;

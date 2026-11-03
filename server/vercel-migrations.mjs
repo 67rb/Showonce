@@ -64,19 +64,19 @@ export const MIGRATIONS = [
  {
   "name": "0007_step_illustrations",
   "statements": [
-   "CREATE TABLE step_illustrations (\r\n id TEXT PRIMARY KEY,\r\n lesson_id TEXT NOT NULL,\r\n step_id TEXT NOT NULL,\r\n claim_nonce TEXT NOT NULL,\r\n status TEXT NOT NULL CHECK(status IN ('processing','ready','failed')),\r\n image_key TEXT,\r\n mime_type TEXT,\r\n created_at INTEGER NOT NULL,\r\n UNIQUE(lesson_id,step_id)\r\n)"
+   "CREATE TABLE step_illustrations (\n id TEXT PRIMARY KEY,\n lesson_id TEXT NOT NULL,\n step_id TEXT NOT NULL,\n claim_nonce TEXT NOT NULL,\n status TEXT NOT NULL CHECK(status IN ('processing','ready','failed')),\n image_key TEXT,\n mime_type TEXT,\n created_at INTEGER NOT NULL,\n UNIQUE(lesson_id,step_id)\n)"
   ]
  },
  {
   "name": "0008_illustration_quality",
   "statements": [
-   "CREATE TABLE illustration_candidates (\r\n id TEXT PRIMARY KEY,\r\n lesson_id TEXT NOT NULL,\r\n step_id TEXT NOT NULL,\r\n claim_nonce TEXT NOT NULL,\r\n status TEXT NOT NULL CHECK(status IN ('processing','ready','failed')),\r\n image_key TEXT,\r\n mime_type TEXT,\r\n review_json TEXT,\r\n created_at INTEGER NOT NULL,\r\n UNIQUE(lesson_id,step_id)\r\n)"
+   "CREATE TABLE illustration_candidates (\n id TEXT PRIMARY KEY,\n lesson_id TEXT NOT NULL,\n step_id TEXT NOT NULL,\n claim_nonce TEXT NOT NULL,\n status TEXT NOT NULL CHECK(status IN ('processing','ready','failed')),\n image_key TEXT,\n mime_type TEXT,\n review_json TEXT,\n created_at INTEGER NOT NULL,\n UNIQUE(lesson_id,step_id)\n)"
   ]
  },
  {
   "name": "0009_step_questions",
   "statements": [
-   "CREATE TABLE practice_questions (\r\n id TEXT PRIMARY KEY NOT NULL,\r\n session_id TEXT NOT NULL REFERENCES practice_sessions(id),\r\n step_id TEXT NOT NULL,\r\n idem_key TEXT NOT NULL,\r\n request_hash TEXT NOT NULL,\r\n question TEXT NOT NULL,\r\n status TEXT NOT NULL CHECK(status IN ('processing','answered','failed','deleted')),\r\n answer_json TEXT,\r\n error_code TEXT,\r\n created_at INTEGER NOT NULL,\r\n finished_at INTEGER,\r\n UNIQUE(session_id,idem_key)\r\n)",
+   "CREATE TABLE practice_questions (\n id TEXT PRIMARY KEY NOT NULL,\n session_id TEXT NOT NULL REFERENCES practice_sessions(id),\n step_id TEXT NOT NULL,\n idem_key TEXT NOT NULL,\n request_hash TEXT NOT NULL,\n question TEXT NOT NULL,\n status TEXT NOT NULL CHECK(status IN ('processing','answered','failed','deleted')),\n answer_json TEXT,\n error_code TEXT,\n created_at INTEGER NOT NULL,\n finished_at INTEGER,\n UNIQUE(session_id,idem_key)\n)",
    "CREATE INDEX practice_questions_session_step ON practice_questions(session_id,step_id,created_at)"
   ]
  },
@@ -95,15 +95,15 @@ export const MIGRATIONS = [
  {
   "name": "0012_professional_courses",
   "statements": [
-   "CREATE TABLE professional_enrollments (\r\n id TEXT PRIMARY KEY,\r\n owner_id TEXT NOT NULL REFERENCES learner_accounts(id),\r\n course_id TEXT NOT NULL,\r\n status TEXT NOT NULL DEFAULT 'learning' CHECK(status IN ('learning','pending_review','changes_requested','instructor_approved')),\r\n version INTEGER NOT NULL DEFAULT 1,\r\n created_at INTEGER NOT NULL,\r\n updated_at INTEGER NOT NULL,\r\n UNIQUE(owner_id,course_id)\r\n)",
+   "CREATE TABLE professional_enrollments (\n id TEXT PRIMARY KEY,\n owner_id TEXT NOT NULL REFERENCES learner_accounts(id),\n course_id TEXT NOT NULL,\n status TEXT NOT NULL DEFAULT 'learning' CHECK(status IN ('learning','pending_review','changes_requested','instructor_approved')),\n version INTEGER NOT NULL DEFAULT 1,\n created_at INTEGER NOT NULL,\n updated_at INTEGER NOT NULL,\n UNIQUE(owner_id,course_id)\n)",
    "CREATE INDEX professional_enrollments_owner ON professional_enrollments(owner_id,updated_at)",
-   "CREATE TABLE professional_reviews (\r\n id TEXT PRIMARY KEY,\r\n enrollment_id TEXT NOT NULL REFERENCES professional_enrollments(id),\r\n reviewer_id TEXT NOT NULL REFERENCES learner_accounts(id),\r\n decision TEXT NOT NULL CHECK(decision IN ('changes_requested','instructor_approved')),\r\n notes TEXT NOT NULL,\r\n reviewed_version INTEGER NOT NULL,\r\n created_at INTEGER NOT NULL,\r\n UNIQUE(enrollment_id,reviewed_version)\r\n)"
+   "CREATE TABLE professional_reviews (\n id TEXT PRIMARY KEY,\n enrollment_id TEXT NOT NULL REFERENCES professional_enrollments(id),\n reviewer_id TEXT NOT NULL REFERENCES learner_accounts(id),\n decision TEXT NOT NULL CHECK(decision IN ('changes_requested','instructor_approved')),\n notes TEXT NOT NULL,\n reviewed_version INTEGER NOT NULL,\n created_at INTEGER NOT NULL,\n UNIQUE(enrollment_id,reviewed_version)\n)"
   ]
  },
  {
   "name": "0013_professional_requests",
   "statements": [
-   "CREATE TABLE professional_requests (\r\n id TEXT PRIMARY KEY,\r\n owner_id TEXT NOT NULL REFERENCES learner_accounts(id),\r\n request_key TEXT NOT NULL,\r\n request_hash TEXT NOT NULL,\r\n goal TEXT NOT NULL,\r\n source_url TEXT,\r\n image_key TEXT,\r\n mime_type TEXT,\r\n status TEXT NOT NULL DEFAULT 'draft' CHECK(status IN ('draft','processing','ready','failed')),\r\n lesson_id TEXT,\r\n session_id TEXT,\r\n error_code TEXT,\r\n created_at INTEGER NOT NULL,\r\n updated_at INTEGER NOT NULL,\r\n UNIQUE(owner_id,request_key)\r\n)",
+   "CREATE TABLE professional_requests (\n id TEXT PRIMARY KEY,\n owner_id TEXT NOT NULL REFERENCES learner_accounts(id),\n request_key TEXT NOT NULL,\n request_hash TEXT NOT NULL,\n goal TEXT NOT NULL,\n source_url TEXT,\n image_key TEXT,\n mime_type TEXT,\n status TEXT NOT NULL DEFAULT 'draft' CHECK(status IN ('draft','processing','ready','failed')),\n lesson_id TEXT,\n session_id TEXT,\n error_code TEXT,\n created_at INTEGER NOT NULL,\n updated_at INTEGER NOT NULL,\n UNIQUE(owner_id,request_key)\n)",
    "CREATE INDEX professional_requests_owner ON professional_requests(owner_id,created_at)"
   ]
  },
@@ -114,18 +114,24 @@ export const MIGRATIONS = [
    "ALTER TABLE professional_requests ADD COLUMN experience_level TEXT NOT NULL DEFAULT 'beginner'",
    "ALTER TABLE professional_requests ADD COLUMN success_criteria TEXT NOT NULL DEFAULT ''",
    "ALTER TABLE professional_enrollments ADD COLUMN evidence_shared INTEGER NOT NULL DEFAULT 0",
-   "CREATE TABLE professional_evidence (\r\n id TEXT PRIMARY KEY,\r\n enrollment_id TEXT NOT NULL REFERENCES professional_enrollments(id),\r\n owner_id TEXT NOT NULL REFERENCES learner_accounts(id),\r\n lesson_id TEXT NOT NULL,\r\n notes TEXT NOT NULL,\r\n image_key TEXT,\r\n mime_type TEXT,\r\n request_key TEXT NOT NULL,\r\n request_hash TEXT NOT NULL,\r\n status TEXT NOT NULL CHECK(status IN ('uploading','ready','failed','deleted')),\r\n created_at INTEGER NOT NULL,\r\n UNIQUE(enrollment_id,request_key)\r\n)",
+   "CREATE TABLE professional_evidence (\n id TEXT PRIMARY KEY,\n enrollment_id TEXT NOT NULL REFERENCES professional_enrollments(id),\n owner_id TEXT NOT NULL REFERENCES learner_accounts(id),\n lesson_id TEXT NOT NULL,\n notes TEXT NOT NULL,\n image_key TEXT,\n mime_type TEXT,\n request_key TEXT NOT NULL,\n request_hash TEXT NOT NULL,\n status TEXT NOT NULL CHECK(status IN ('uploading','ready','failed','deleted')),\n created_at INTEGER NOT NULL,\n UNIQUE(enrollment_id,request_key)\n)",
    "CREATE INDEX professional_evidence_enrollment ON professional_evidence(enrollment_id,created_at)"
   ]
  },
  {
   "name": "0015_professional_assignments",
   "statements": [
-   "CREATE TABLE professional_assignments (\r\n id TEXT PRIMARY KEY,\r\n enrollment_id TEXT NOT NULL UNIQUE REFERENCES professional_enrollments(id),\r\n owner_id TEXT NOT NULL REFERENCES learner_accounts(id),\r\n created_by TEXT NOT NULL REFERENCES learner_accounts(id),\r\n brief_title TEXT NOT NULL,\r\n brief_outcome TEXT NOT NULL,\r\n materials_json TEXT NOT NULL,\r\n criteria_json TEXT NOT NULL,\r\n prep_json TEXT NOT NULL,\r\n prep_done_json TEXT NOT NULL DEFAULT '[]',\r\n status TEXT NOT NULL DEFAULT 'preparation' CHECK(status IN ('preparation','practice','submitted','changes_requested','approved')),\r\n version INTEGER NOT NULL DEFAULT 1,\r\n created_at INTEGER NOT NULL,\r\n updated_at INTEGER NOT NULL\r\n)",
+   "CREATE TABLE professional_assignments (\n id TEXT PRIMARY KEY,\n enrollment_id TEXT NOT NULL UNIQUE REFERENCES professional_enrollments(id),\n owner_id TEXT NOT NULL REFERENCES learner_accounts(id),\n created_by TEXT NOT NULL REFERENCES learner_accounts(id),\n brief_title TEXT NOT NULL,\n brief_outcome TEXT NOT NULL,\n materials_json TEXT NOT NULL,\n criteria_json TEXT NOT NULL,\n prep_json TEXT NOT NULL,\n prep_done_json TEXT NOT NULL DEFAULT '[]',\n status TEXT NOT NULL DEFAULT 'preparation' CHECK(status IN ('preparation','practice','submitted','changes_requested','approved')),\n version INTEGER NOT NULL DEFAULT 1,\n created_at INTEGER NOT NULL,\n updated_at INTEGER NOT NULL\n)",
    "CREATE INDEX professional_assignments_owner ON professional_assignments(owner_id,updated_at)",
-   "CREATE TABLE professional_criterion_decisions (\r\n id TEXT PRIMARY KEY,\r\n assignment_id TEXT NOT NULL REFERENCES professional_assignments(id),\r\n criterion_id TEXT NOT NULL,\r\n decision TEXT NOT NULL CHECK(decision IN ('approved','changes_requested')),\r\n notes TEXT NOT NULL DEFAULT '',\r\n reviewer_id TEXT NOT NULL REFERENCES learner_accounts(id),\r\n assignment_version INTEGER NOT NULL,\r\n created_at INTEGER NOT NULL\r\n)",
+   "CREATE TABLE professional_criterion_decisions (\n id TEXT PRIMARY KEY,\n assignment_id TEXT NOT NULL REFERENCES professional_assignments(id),\n criterion_id TEXT NOT NULL,\n decision TEXT NOT NULL CHECK(decision IN ('approved','changes_requested')),\n notes TEXT NOT NULL DEFAULT '',\n reviewer_id TEXT NOT NULL REFERENCES learner_accounts(id),\n assignment_version INTEGER NOT NULL,\n created_at INTEGER NOT NULL\n)",
    "CREATE INDEX professional_criterion_decisions_assignment ON professional_criterion_decisions(assignment_id,created_at)",
    "ALTER TABLE professional_evidence ADD COLUMN criterion_id TEXT"
+  ]
+ },
+ {
+  "name": "0016_professional_assignment_leases",
+  "statements": [
+   "CREATE TABLE professional_assignment_leases (\n enrollment_id TEXT PRIMARY KEY REFERENCES professional_enrollments(id) ON DELETE CASCADE,\n nonce TEXT NOT NULL,\n expires_at INTEGER NOT NULL\n)"
   ]
  }
 ];

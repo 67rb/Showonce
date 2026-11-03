@@ -88,22 +88,38 @@ export async function routeProfessional(request,env,url){
   if(enrollment.owner_id===user.id)throw new AppError('self_assignment_denied','An instructor cannot assign their own training.',403);
   if(['pending_review','instructor_approved'].includes(enrollment.status))throw new AppError('enrollment_in_review','This enrollment is already awaiting or has received an instructor review, so it cannot be assigned.',409);
   if(await env.DB.prepare('SELECT id FROM professional_assignments WHERE enrollment_id=?').bind(enrollment.id).first())throw new AppError('assignment_exists','This enrollment already has an assignment.',409);
-  let brief=body;
-  if(body.generate_with_ai===true){
-   if(body.ai_consent!==true)throw new AppError('ai_consent_required','Confirm AI generation will use the shared allowance.');
-   brief=await generateAssignment(env,proCourse(enrollment.course_id));
+  const useAI=body.generate_with_ai===true;
+  if(useAI&&body.ai_consent!==true)throw new AppError('ai_consent_required','Confirm AI generation will use the shared allowance.');
+  const nonce=crypto.randomUUID(),started=Date.now();
+  // Meta can make two sequential requests with a 35-second deadline each.
+  // Give an interrupted attempt time to finish before another one can start.
+  const lease=await env.DB.prepare(`
+   INSERT INTO professional_assignment_leases(enrollment_id,nonce,expires_at)
+   SELECT id,?,? FROM professional_enrollments
+   WHERE id=? AND owner_id=? AND status NOT IN ('pending_review','instructor_approved')
+     AND NOT EXISTS(SELECT 1 FROM professional_assignments WHERE enrollment_id=?)
+   ON CONFLICT(enrollment_id) DO UPDATE SET nonce=excluded.nonce,expires_at=excluded.expires_at
+   WHERE professional_assignment_leases.expires_at<=?
+  `).bind(nonce,started+120000,enrollment.id,enrollment.owner_id,enrollment.id,started).run();
+  if(!changed(lease))throw new AppError('assignment_busy','An assignment is being created or the enrollment changed. Refresh before trying again.',409);
+  try{
+   const brief=useAI?await generateAssignment(env,proCourse(enrollment.course_id)):body;
+   const title=shortText(brief.brief_title||'','brief_title',200),outcome=shortText(brief.brief_outcome||'','brief_outcome',1200),materials=materialList(brief.materials),criteria=rubricList(brief.criteria,'criteria'),prep=rubricList(brief.prep_checks,'prep_checks');
+   const id=sid('assignment'),now=Date.now();
+   const inserted=await env.DB.prepare("INSERT INTO professional_assignments(id,enrollment_id,owner_id,created_by,brief_title,brief_outcome,materials_json,criteria_json,prep_json,created_at,updated_at) SELECT ?,?,?,?,?,?,?,?,?,?,? WHERE EXISTS(SELECT 1 FROM professional_enrollments WHERE id=? AND owner_id=? AND owner_id<>? AND status NOT IN ('pending_review','instructor_approved')) AND NOT EXISTS(SELECT 1 FROM professional_assignments WHERE enrollment_id=?) AND EXISTS(SELECT 1 FROM professional_assignment_leases WHERE enrollment_id=? AND nonce=? AND expires_at>?)").bind(id,enrollment.id,enrollment.owner_id,user.id,title,outcome,JSON.stringify(materials),JSON.stringify(criteria),JSON.stringify(prep),now,now,enrollment.id,enrollment.owner_id,user.id,enrollment.id,enrollment.id,nonce,now).run();
+   if(!changed(inserted)){
+    const fresh=await env.DB.prepare('SELECT * FROM professional_enrollments WHERE id=?').bind(enrollment.id).first();
+    if(await env.DB.prepare('SELECT id FROM professional_assignments WHERE enrollment_id=?').bind(enrollment.id).first())throw new AppError('assignment_exists','This enrollment already has an assignment.',409);
+    if(fresh&&['pending_review','instructor_approved'].includes(fresh.status))throw new AppError('enrollment_in_review','This enrollment is already awaiting or has received an instructor review, so it cannot be assigned.',409);
+    if(!fresh)throw new AppError('enrollment_not_found','Choose a learner enrollment.',404);
+    throw new AppError('assignment_conflict','This enrollment changed. Refresh before creating the assignment.',409);
+   }
+   return json(await assignmentDetail(env,await env.DB.prepare('SELECT * FROM professional_assignments WHERE id=?').bind(id).first()),201);
+  }finally{
+   // The nonce prevents an old attempt from releasing a newer attempt's lease.
+   await env.DB.prepare('DELETE FROM professional_assignment_leases WHERE enrollment_id=? AND nonce=?')
+    .bind(enrollment.id,nonce).run().catch(()=>{});
   }
-  const title=shortText(brief.brief_title||'','brief_title',200),outcome=shortText(brief.brief_outcome||'','brief_outcome',1200),materials=materialList(brief.materials),criteria=rubricList(brief.criteria,'criteria'),prep=rubricList(brief.prep_checks,'prep_checks');
-  const id=sid('assignment'),now=Date.now();
-  const inserted=await env.DB.prepare("INSERT INTO professional_assignments(id,enrollment_id,owner_id,created_by,brief_title,brief_outcome,materials_json,criteria_json,prep_json,created_at,updated_at) SELECT ?,?,?,?,?,?,?,?,?,?,? WHERE EXISTS(SELECT 1 FROM professional_enrollments WHERE id=? AND owner_id=? AND owner_id<>? AND status NOT IN ('pending_review','instructor_approved')) AND NOT EXISTS(SELECT 1 FROM professional_assignments WHERE enrollment_id=?)").bind(id,enrollment.id,enrollment.owner_id,user.id,title,outcome,JSON.stringify(materials),JSON.stringify(criteria),JSON.stringify(prep),now,now,enrollment.id,enrollment.owner_id,user.id,enrollment.id).run();
-  if(!changed(inserted)){
-   const fresh=await env.DB.prepare('SELECT * FROM professional_enrollments WHERE id=?').bind(enrollment.id).first();
-   if(await env.DB.prepare('SELECT id FROM professional_assignments WHERE enrollment_id=?').bind(enrollment.id).first())throw new AppError('assignment_exists','This enrollment already has an assignment.',409);
-   if(fresh&&['pending_review','instructor_approved'].includes(fresh.status))throw new AppError('enrollment_in_review','This enrollment is already awaiting or has received an instructor review, so it cannot be assigned.',409);
-   if(!fresh)throw new AppError('enrollment_not_found','Choose a learner enrollment.',404);
-   throw new AppError('assignment_conflict','This enrollment changed. Refresh before creating the assignment.',409);
-  }
-  return json(await assignmentDetail(env,await env.DB.prepare('SELECT * FROM professional_assignments WHERE id=?').bind(id).first()),201);
  }
  const assignmentMatch=path.match(/^\/v1\/professional\/assignments\/([\w-]+)(?:\/(preparation|submit|assess))?$/);
  if(assignmentMatch){

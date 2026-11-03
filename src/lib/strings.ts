@@ -115,17 +115,17 @@ export const strings = {
 
   /* Gallery capability showcase (v2.20 Task C) */
   galleryLineTower:
-    "Layer-by-layer block builds, checked from a single photo. Hobby builds at home, model work in the studio — a wrong brick is flagged the moment it lands.",
+    "Build one layer at a time. Submit a photo for feedback on visible details such as brick colour and placement.",
   galleryLineMosaic:
-    "Bead and tile patterns, checked colour by colour. Craft projects and professional mosaic work alike — every row is verified before you move to the next.",
+    "Follow a bead or tile pattern one row at a time. A clear photo can help you spot visible colour and layout differences.",
   galleryLineWall:
-    "Staggered brickwork, checked row by row. Practice walls and site training alike — each course is lined up against the step, so the finished wall matches the plan.",
+    "Practise staggered brickwork on a training model. Submit a photo for feedback on visible alignment and spacing.",
   galleryTitleTower: "Block builds",
   galleryTitleMosaic: "Bead & tile patterns",
   galleryTitleWall: "Brickwork",
   galleryMoreTitle: "And more it can check",
   galleryMoreLine:
-    "Board setups. Packed kits. Geometry constructions. For kitchen-table hobbies and professional training alike — if a photo from above can judge it, SHOW ONCE can check it.",
+    "Try a board setup, packed kit, or geometry construction. Use a clear photo to get feedback on details visible from that angle.",
   /* v2.28 — bottom-anchored examples line per capability card (Task B) */
   galleryExamplesTower: "Bricks · blocks · STEM kits",
   galleryExamplesMosaic: "Bead boards · mosaics · tile art",

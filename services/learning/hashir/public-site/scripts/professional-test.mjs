@@ -348,10 +348,15 @@ test('AI assigns course practice with a saved rubric and leaves approval to the 
   preparation: ['Use a paper diagram.'],
  };
  let calls = 0;
+ let markStarted, releaseProvider;
+ const started = new Promise(resolve => { markStarted = resolve; });
+ const providerGate = new Promise(resolve => { releaseProvider = resolve; });
  f.env.MODEL_API_KEY = 'TEST_ONLY';
  globalThis.fetch = async (url, options) => {
   if (String(url).endsWith('/input_tokens')) return Response.json({input_tokens: 100});
   calls++;
+  markStarted();
+  await providerGate;
   const input = JSON.parse(options.body).input[1].content[0].text;
   assert.ok(input.includes('pro_plumbing_parts'));
   assert.ok(!input.includes('learner@example.test'));
@@ -367,7 +372,18 @@ test('AI assigns course practice with a saved rubric and leaves approval to the 
   assert.equal((await f.call(path, body)).status, 403);
   assert.equal((await f.call(path, {...body, ai_consent: false}, 'teacher')).status, 422);
   assert.equal(calls, 0);
-  const response = await f.call(path, body, 'teacher');
+  const pending = f.call(path, body, 'teacher');
+  await Promise.race([started, pending.then(response => {
+   throw new Error('AI generation did not start: HTTP ' + response.status);
+  })]);
+  const duplicate = await f.call(path, body, 'teacher');
+  assert.equal(duplicate.status, 409);
+  assert.equal((await duplicate.json()).error.code, 'assignment_busy');
+  const manual = await f.call(path, {enrollment_id: enrollment.id, ...demoBrief}, 'teacher');
+  assert.equal(manual.status, 409);
+  assert.equal(calls, 1);
+  releaseProvider();
+  const response = await pending;
   assert.equal(response.status, 201);
   const saved = (await (await f.call(path)).json()).assignments[0];
   assert.equal(saved.brief.title, project.title);
@@ -379,6 +395,7 @@ test('AI assigns course practice with a saved rubric and leaves approval to the 
   assert.equal((await f.call(path, body, 'teacher')).status, 409);
   assert.equal(calls, 1);
  } finally {
+  releaseProvider();
   globalThis.fetch = original;
   f.close();
  }

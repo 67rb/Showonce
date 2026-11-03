@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "created_at": "2026-11-03T11:37:46.711Z",
+  "created_at": "2026-11-03T15:45:44.103Z",
   "owners": {
     "application": "Robé Berry",
     "ui": "Muhammad Hashir (https://github.com/mateir0)"
@@ -445,8 +445,8 @@
     },
     {
       "path": "server/vercel-migrations.mjs",
-      "bytes": 11579,
-      "sha256": "4abb324c6afe3ef99078626799f74a8a6da20142d16f66f72b28a1eefe53608c"
+      "bytes": 11646,
+      "sha256": "529edb888bcb5dd36de88c8b0d0b41cc170a54cd4c4037311750259a73c483da"
     },
     {
       "path": "services/learning/.gitignore",
@@ -874,6 +874,11 @@
       "sha256": "8bb47d7f40e9c58188f39b73e4add28f0915331c6c93735b1f6c50dad890f96f"
     },
     {
+      "path": "services/learning/hashir/public-site/drizzle/0016_professional_assignment_leases.sql",
+      "bytes": 264,
+      "sha256": "ae1f579c16f581cba1e5c68bdaf6a60f1461a2561f5ecef9435423e43d742f44"
+    },
+    {
       "path": "services/learning/hashir/public-site/drizzle/meta/_journal.json",
       "bytes": 2389,
       "sha256": "3087fa74ac64ea9eb2a815ca5b388558d92e047acd4d85c43a14a90f6369d064"
@@ -970,8 +975,8 @@
     },
     {
       "path": "services/learning/hashir/public-site/scripts/professional-test.mjs",
-      "bytes": 51886,
-      "sha256": "00e6cad0059b1bc60471684ac84d7c3413b16abcd43c064db9d6a898939e386e"
+      "bytes": 52642,
+      "sha256": "8a9b0fb83d8fcfb5683c45a68e25b4fcc75ab8b45f4b4f82a47eb21dbbb29b4e"
     },
     {
       "path": "services/learning/hashir/public-site/scripts/public-api-test.mjs",
@@ -1050,8 +1055,8 @@
     },
     {
       "path": "services/learning/hashir/public-site/src/professional.mjs",
-      "bytes": 26958,
-      "sha256": "fef915f01ab467fcba4c7fcad6d658f016d06036f0cda1d93c7685ffe57c8dce"
+      "bytes": 28306,
+      "sha256": "300334bc4cefa4243ec81e1859d4401d2d31ee4692270a2535de0b589ea8a47b"
     },
     {
       "path": "services/learning/hashir/public-site/src/questions.mjs",
@@ -1065,8 +1070,8 @@
     },
     {
       "path": "services/learning/hashir/public-site/src/sessions.mjs",
-      "bytes": 24442,
-      "sha256": "8c795cacd299c849a53ec13374797895440b112ede33fa6934059dbe522ded03"
+      "bytes": 24545,
+      "sha256": "a8a3e9cbb423c5800b4002bbeb3a272ad0a76401509b7cde954f5f4c778e14e5"
     },
     {
       "path": "services/learning/hashir/public-site/src/sources.mjs",
@@ -1780,8 +1785,8 @@
     },
     {
       "path": "src/components/originkit/hero-69.css",
-      "bytes": 5488,
-      "sha256": "0a2d8da9c5d0524e7dcf232890f5adc910bccf1997cf720baa24cce1d6c28196"
+      "bytes": 5807,
+      "sha256": "dba0e667977bda4cf4bec02c047aade5dad1a366cfd12efd69232d8e58b5d0c2"
     },
     {
       "path": "src/components/originkit/hero-69.tsx",
@@ -1905,8 +1910,8 @@
     },
     {
       "path": "src/lib/strings.ts",
-      "bytes": 28985,
-      "sha256": "35f255848e374bf36ed74f501a8ac121c4d5cf395f12c9901fb3f661f663b84b"
+      "bytes": 28806,
+      "sha256": "ea4eb331220d7721b9603ef6d13398fe66fb004330008aac8a41c176dae74283"
     },
     {
       "path": "src/lib/utils.ts",
