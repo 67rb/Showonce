@@ -78,7 +78,7 @@ type Assignment = {
     required: boolean;
     latest_decision: { decision: string; notes: string } | null;
   }[];
-  preparation: { id: string; label: string; done: boolean }[];
+  preparation: { id: string; label: string; done: boolean; required?: boolean }[];
   status: string;
   version: number;
   practice_complete: boolean;
@@ -170,20 +170,20 @@ function StudioBody({ view }: { view: "create" | "library" | "instructor" }) {
     try {
       if (view === "instructor") {
         if (identity.account?.is_admin) {
-          const result = await identity.request<{ enrollments: Enrollment[] }>(
+          const [result, assigned] = await Promise.all([identity.request<{ enrollments: Enrollment[] }>(
             "/v1/professional/review-queue",
             undefined,
             { signal: life.current?.signal },
-          );
-          if (active.current) setQueue(result.enrollments);
-          const assigned = await identity
+          ), identity
             .request<{ assignments: Assignment[] }>(
               "/v1/professional/assignments",
               undefined,
               { signal: life.current?.signal },
-            )
-            .catch(() => ({ assignments: [] as Assignment[] }));
-          if (active.current) setAssignments(assigned.assignments);
+            )]);
+          if (active.current) {
+            setQueue(result.enrollments);
+            setAssignments(assigned.assignments);
+          }
         }
       } else {
         const [catalogue, progress, saved, library, assigned] =
@@ -221,7 +221,6 @@ function StudioBody({ view }: { view: "create" | "library" | "instructor" }) {
                     undefined,
                     { signal: life.current?.signal },
                   )
-                  .catch(() => ({ assignments: [] as Assignment[] }))
               : Promise.resolve({ assignments: [] as Assignment[] }),
           ]);
         if (active.current) {
@@ -831,34 +830,38 @@ function RequestForm({
     [trade, setTrade] = useState("Plumbing"),
     [experience, setExperience] = useState("beginner"),
     [outcome, setOutcome] = useState(""),
-    [fileError, setFileError] = useState("");
+    [fileError, setFileError] = useState(""),
+    [loadedDraftKey, setLoadedDraftKey] = useState<string | null>(null);
   const pending = useRef<{ body: string; key: string } | null>(null);
-  const DRAFT_KEY = "showonce-pro-brief-draft-v5";
+  const draftKey = "showonce-pro-brief-draft-v5:" + (identity.account?.user?.id || "guest");
   // Leaving and returning restores the filled draft (5.7). The restore runs on a
   // deferred tick so state is not set synchronously inside the effect (lint).
   useEffect(() => {
     const tick = setTimeout(() => {
       try {
-        const raw = sessionStorage.getItem(DRAFT_KEY);
-        if (raw) {
-          const d = JSON.parse(raw);
-          if (d && typeof d === "object") {
-            if (typeof d.goal === "string") setGoal(d.goal);
-            if (typeof d.link === "string") setLink(d.link);
-            if (typeof d.scope === "boolean") setScope(d.scope);
-            if (typeof d.trade === "string") setTrade(d.trade);
-            if (typeof d.experience === "string") setExperience(d.experience);
-            if (typeof d.outcome === "string") setOutcome(d.outcome);
-          }
-        }
+        const raw = sessionStorage.getItem(draftKey);
+        const d = raw ? JSON.parse(raw) : null;
+        setGoal(typeof d?.goal === "string" ? d.goal : "");
+        setLink(typeof d?.link === "string" ? d.link : "");
+        setScope(typeof d?.scope === "boolean" ? d.scope : false);
+        setTrade(typeof d?.trade === "string" ? d.trade : "Plumbing");
+        setExperience(typeof d?.experience === "string" ? d.experience : "beginner");
+        setOutcome(typeof d?.outcome === "string" ? d.outcome : "");
+        // Older drafts carry no owner. Preserve the original rather than
+        // guessing which account it belongs to on a shared device.
       } catch {}
+      setLoadedDraftKey(draftKey);
     }, 0);
     return () => clearTimeout(tick);
-  }, []);
+  }, [draftKey]);
   useEffect(() => {
+    // Do not replace a returning learner's saved draft with the initial empty
+    // fields before restoration finishes. Account-scoped keys also keep a
+    // different signed-in learner from inheriting this private draft.
+    if (loadedDraftKey !== draftKey) return;
     try {
       sessionStorage.setItem(
-        DRAFT_KEY,
+        draftKey,
         JSON.stringify({
           goal,
           link,
@@ -870,7 +873,7 @@ function RequestForm({
         }),
       );
     } catch {}
-  }, [goal, link, scope, trade, experience, outcome, file]);
+  }, [loadedDraftKey, draftKey, goal, link, scope, trade, experience, outcome, file]);
   useEffect(() => {
     if (!file) {
       setPreview(null);
@@ -1308,7 +1311,9 @@ function EnrollmentCard({
     done = entry.lessons.reduce((n, item) => n + item.completed_steps, 0),
     total = entry.lessons.reduce((n, item) => n + item.total_steps, 0),
     next = entry.lessons.find((l) => l.completed_steps < l.total_steps),
-    locked = ["pending_review", "instructor_approved"].includes(entry.status);
+    locked = ["pending_review", "instructor_approved"].includes(entry.status),
+    assignmentLocked = !!assignment && ["submitted", "approved"].includes(assignment.status),
+    preparationMissing = !!assignment?.preparation.some((item) => item.required !== false && !item.done);
   return (
     <Panel>
       <p className="pro-kicker">
@@ -1333,11 +1338,16 @@ function EnrollmentCard({
       {next && (
         <button
           className={primary + " mt-4"}
-          disabled={busy}
+          disabled={busy || preparationMissing}
           onClick={() => start(next.id)}
         >
           Continue training: {next.title}
         </button>
+      )}
+      {preparationMissing && (
+        <p className="mt-3 text-small text-site-muted">
+          Complete and save the required preparation checks below before opening practice.
+        </p>
       )}
       <details className="mt-5">
         <summary className="cursor-pointer py-2 text-small font-semibold">
@@ -1356,7 +1366,7 @@ function EnrollmentCard({
                 </p>
                 <button
                   className={secondary}
-                  disabled={busy || prerequisite}
+                  disabled={busy || prerequisite || preparationMissing}
                   onClick={() => start(lesson.id)}
                 >
                   {prerequisite
@@ -1384,7 +1394,8 @@ function EnrollmentCard({
         enrollmentID={entry.id}
         lessons={entry.lessons}
         criteria={assignment?.criteria}
-        locked={locked}
+        locked={locked || assignmentLocked}
+        preventDeletion={assignmentLocked}
         shared={!!entry.evidence_shared}
         busy={busy}
         run={run}
@@ -1398,7 +1409,7 @@ function EnrollmentCard({
           {statusName(item.decision)}: {item.notes}
         </p>
       ))}
-      <div className="mt-5 border-t border-site-border pt-5">
+      {!assignment && <div className="mt-5 border-t border-site-border pt-5">
         {!locked && (
           <label className="mb-4 flex items-start gap-3 text-small">
             <input
@@ -1425,7 +1436,7 @@ function EnrollmentCard({
             Complete all lesson checkpoints before requesting review.
           </p>
         )}
-      </div>
+      </div>}
     </Panel>
   );
 }
@@ -1529,6 +1540,10 @@ function AssignmentPanel({
     ),
     [share, setShare] = useState(false);
   const base = "/v1/professional/assignments/" + assignment.id;
+  const requiredPreparation = assignment.preparation.filter((item) => item.required !== false);
+  const preparationComplete = requiredPreparation.every((item) => prepDone.includes(item.id));
+  const preparationSaved = requiredPreparation.every((item) => item.done);
+  const preparationChanged = requiredPreparation.some((item) => item.done !== prepDone.includes(item.id));
   const nextAction =
     assignment.status === "approved"
       ? "Instructor assessment complete."
@@ -1536,8 +1551,10 @@ function AssignmentPanel({
         ? "Waiting for your instructor to assess each criterion."
         : assignment.status === "changes_requested"
           ? "Read the instructor feedback, add revised evidence, then resubmit."
-          : assignment.preparation.some((item) => !prepDone.includes(item.id))
+          : !preparationComplete
             ? "Next: complete every preparation check."
+            : preparationChanged || !preparationSaved
+              ? "Next: save your preparation checks."
             : !practiceComplete
               ? "Next: finish all course practice, then submit your evidence."
               : "Next: submit your evidence for instructor assessment.";
@@ -1593,7 +1610,7 @@ function AssignmentPanel({
                 )
               }
             />
-            <span>{item.label}</span>
+            <span>{item.label}{item.required === false ? " · optional" : ""}</span>
           </label>
         ))}
       </div>
@@ -1663,7 +1680,7 @@ function AssignmentPanel({
           </label>
           <button
             className={primary}
-            disabled={busy || !share || !practiceComplete}
+            disabled={busy || !share || !practiceComplete || !preparationComplete || !preparationSaved || preparationChanged}
             onClick={() =>
               void run(async () => {
                 await identity.request(
@@ -1685,6 +1702,11 @@ function AssignmentPanel({
           {!practiceComplete && (
             <p className="text-small text-site-muted">
               Finish all course practice before submitting.
+            </p>
+          )}
+          {(!preparationComplete || !preparationSaved || preparationChanged) && (
+            <p className="text-small text-site-muted">
+              Complete and save required preparation before submitting evidence.
             </p>
           )}
         </div>

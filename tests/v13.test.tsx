@@ -9,6 +9,7 @@ import { SkyGate } from "@/components/SkyGate";
 import { HeroParticleHeadline } from "@/components/HeroParticleHeadline";
 import LandingPage from "@/app/(public)/page";
 import { IdentityProvider } from "@/components/learning/Identity";
+import { PublicNavbar } from "@/components/PublicNavbar";
 import s from "@/lib/strings";
 
 // v1.3 new assertions:
@@ -522,7 +523,7 @@ describe("v2.3 — Aceternity Resizable Navbar as the public header (Tasks A & B
     expect(navSource).toContain("onItemClick={close}");
     // same face-aware CTA in mobile menu (Hobby: Start; Professional: New training brief)
     expect(navSource).toContain("{isProfessional ? s.proNavBrief : s.importStart}");
-    expect(navSource).toContain("useState(false)");
+    expect(renderToStaticMarkup(<PublicNavbar />)).toContain('aria-expanded="false"');
   });
 
   it("the installed component keeps the owner animation values (threshold, width, y, blur) unchanged", () => {

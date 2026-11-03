@@ -339,10 +339,15 @@ function CreatePanel() {
   // 5.3 — inline validation under the field, no native-only behaviour: empty
   // submits and links that are not YouTube/Instagram show importErrorInvalidEmpty
   // / importErrorInvalid under the field and never navigate.
-  const validLink = (value: string) =>
-    /^https?:\/\/(www\.)?(youtube\.com\/|youtu\.be\/|instagram\.com\/)/i.test(
-      value.trim(),
-    );
+  const validLink = (value: string) => {
+    try {
+      const url = new URL(value.trim());
+      return url.protocol === "https:" && !url.username && !url.password && !url.port &&
+        ["youtube.com", "www.youtube.com", "m.youtube.com", "youtu.be", "instagram.com", "www.instagram.com"].includes(url.hostname);
+    } catch {
+      return false;
+    }
+  };
   function validate(): boolean {
     if (draft.mode === "link") {
       if (!draft.url.trim()) {

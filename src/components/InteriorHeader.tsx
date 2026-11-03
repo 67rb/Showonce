@@ -46,20 +46,22 @@ export function InteriorHeader() {
     ? "rounded-[0.65rem] border border-[#c0d6c7] bg-white px-4 py-2 font-body-ui text-small font-semibold text-[#244a32] transition-colors hover:bg-[#edf7f0]"
     : "rounded-full border border-black/15 bg-transparent px-4 py-2 font-body-ui text-small font-semibold text-site-ink transition-colors hover:bg-black/5";
 
-  const [open, setOpen] = useState(false);
+  const [openPath, setOpenPath] = useState<string | null>(null);
+  const open = openPath !== null && openPath === pathname;
   const menuButton = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (!open) return;
     const escape = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
-        setOpen(false);
+        setOpenPath(null);
         menuButton.current?.querySelector<HTMLButtonElement>("button")?.focus();
       }
     };
     document.addEventListener("keydown", escape);
     return () => document.removeEventListener("keydown", escape);
   }, [open]);
-  const close = () => setOpen(false);
+  const close = () => setOpenPath(null);
+  const isCurrent = (href: string) => pathname?.replace(/\/$/, "") === href;
 
   return (
     <header
@@ -72,7 +74,7 @@ export function InteriorHeader() {
           href={isProfessional ? "/professional" : "/"}
           onClick={close}
           aria-label="Show Once — home"
-          className="wordmark pointer-events-auto select-none whitespace-nowrap text-xl leading-none"
+          className="wordmark pointer-events-auto shrink-0 select-none whitespace-nowrap text-xl leading-none"
         >
           <span className="text-site-ink">{s.wordmarkShow}</span>{" "}
           <span className={isProfessional ? "text-[#16A34A]" : "text-accent-deep"}>
@@ -80,12 +82,14 @@ export function InteriorHeader() {
           </span>
         </Link>
 
-        {/* Desktop links (same labels/destinations as the face's navbar). */}
-        <nav aria-label="Primary" className="hidden items-center gap-1 md:flex">
+        {/* Keep the links and menu on the same breakpoint so tablet widths
+            always have navigation and the Professional labels fit. */}
+        <nav aria-label="Primary" className="hidden items-center gap-1 lg:flex">
           {navItems.map((item) => (
             <Link
               key={item.link}
               href={item.link}
+              aria-current={isCurrent(item.link) ? "page" : undefined}
               className={`rounded-full px-3 py-2 font-body-ui text-small font-medium transition-colors ${
                 isProfessional
                   ? "text-[#244a32] hover:bg-[#edf7f0]"
@@ -99,17 +103,18 @@ export function InteriorHeader() {
 
         <div className="flex shrink-0 items-center gap-2 sm:gap-3">
           <ModeToggle showDestination />
-          <Link href={ctaHref} className={`${startClass} hidden whitespace-nowrap sm:inline-flex`}>
+          <Link href={ctaHref} className={`${startClass} hidden whitespace-nowrap lg:inline-flex`}>
             {isProfessional ? s.proNavBrief : s.importStart}
           </Link>
           {/* Mobile: the Start action and links collapse into a menu; the
               header stays in flow and single-column. */}
-          <div ref={menuButton} className="sm:hidden">
+          <div ref={menuButton} className="lg:hidden">
             <button
               type="button"
               aria-expanded={open}
-              aria-label={s.navMenu}
-              onClick={() => setOpen((o) => !o)}
+              aria-controls="interior-navigation"
+              aria-label={open ? "Close menu" : "Open menu"}
+              onClick={() => setOpenPath(open ? null : pathname)}
               className={`inline-flex h-10 w-10 items-center justify-center rounded-full border transition-colors ${
                 isProfessional
                   ? "border-[#c0d6c7] text-[#244a32] hover:bg-[#edf7f0]"
@@ -139,8 +144,9 @@ export function InteriorHeader() {
 
       {open ? (
         <nav
+          id="interior-navigation"
           aria-label="Primary"
-          className={`border-t bg-white px-4 pb-4 pt-2 sm:hidden ${
+          className={`max-h-[calc(100dvh-4rem)] overflow-y-auto overscroll-contain border-t bg-white px-4 pb-4 pt-2 lg:hidden ${
             isProfessional ? "border-[#d5e2da]" : "border-site-border"
           }`}
         >
@@ -149,6 +155,7 @@ export function InteriorHeader() {
               <li key={item.link}>
                 <Link
                   href={item.link}
+                  aria-current={isCurrent(item.link) ? "page" : undefined}
                   onClick={close}
                   className={`block rounded-[0.65rem] px-4 py-3 font-body-ui text-body font-medium ${
                     isProfessional

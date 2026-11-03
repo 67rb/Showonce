@@ -495,6 +495,40 @@ describe('free live camera practice',()=>{
   expect((screen.getByRole('checkbox',{name:/Send anyway/}) as HTMLInputElement).checked).toBe(false);
   expect(request).not.toHaveBeenCalled();
  });
+ it('clears an older still’s feedback and consent when selecting another capture',async()=>{
+  request.mockResolvedValue({result:'pass',feedback:'This capture matches.'});
+  show();await open();frame();
+  const capture=screen.getByRole('button',{name:'Capture still · free'});
+  fireEvent.click(capture);fireEvent.click(capture);
+  fireEvent.click(screen.getByRole('checkbox',{name:'Allow one-frame AI checks using the shared allowance'}));
+  fireEvent.click(screen.getByRole('button',{name:'Check still · uses AI allowance'}));
+  await waitFor(()=>expect(feedback).toHaveBeenCalledOnce());clearFeedback.mockClear();
+  fireEvent.click(screen.getByRole('button',{name:'Still 1'}));
+  expect(clearFeedback).toHaveBeenCalledOnce();
+  expect((screen.getByRole('checkbox',{name:'Allow one-frame AI checks using the shared allowance'}) as HTMLInputElement).checked).toBe(false);
+  expect((screen.getByRole('button',{name:'Check still · uses AI allowance'}) as HTMLButtonElement).disabled).toBe(true);
+  expect(request).toHaveBeenCalledOnce();
+ });
+ it.each(['select','discard'])('discards queued image bytes when the selected still changes by %s',async(action)=>{
+  const toDataURL=HTMLCanvasElement.prototype.toDataURL as unknown as ReturnType<typeof vi.fn>;
+  toDataURL.mockReturnValueOnce('data:image/jpeg;base64,Zmlyc3Q=').mockReturnValue('data:image/jpeg;base64,c2Vjb25k');
+  request.mockResolvedValue({result:'uncertain',feedback:'Current capture checked.'});
+  show();await open();frame();
+  const capture=screen.getByRole('button',{name:'Capture still · free'});
+  fireEvent.click(capture);fireEvent.click(capture);
+  Object.defineProperty(navigator,'onLine',{configurable:true,value:false});fireEvent(window,new Event('offline'));
+  fireEvent.click(screen.getByRole('checkbox',{name:'Allow one-frame AI checks using the shared allowance'}));
+  fireEvent.click(screen.getByRole('button',{name:'Queue frame check · sends when online'}));
+  expect(await screen.findByText(/Queued camera still/)).toBeTruthy();
+  fireEvent.click(screen.getByRole('button',{name:action==='select'?'Still 1':'Discard still'}));
+  expect(screen.queryByText(/Queued camera still/)).toBeNull();
+  expect((screen.getByRole('checkbox',{name:'Allow one-frame AI checks using the shared allowance'}) as HTMLInputElement).checked).toBe(false);
+  Object.defineProperty(navigator,'onLine',{configurable:true,value:true});fireEvent(window,new Event('online'));
+  fireEvent.click(screen.getByRole('checkbox',{name:'Allow one-frame AI checks using the shared allowance'}));
+  fireEvent.click(screen.getByRole('button',{name:'Check still · uses AI allowance'}));
+  await waitFor(()=>expect(request).toHaveBeenCalledOnce());
+  expect(request.mock.calls[0][1].image_base64).toBe('Zmlyc3Q=');
+ });
  it('keeps the paid check disabled with no preview and no still',async()=>{
   show();
   fireEvent.click(screen.getByRole('checkbox',{name:'Allow one-frame AI checks using the shared allowance'}));

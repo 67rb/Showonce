@@ -67,7 +67,15 @@ async function routeProEvidence(request,env,url,user){
   }
  }
  if(item){
-  const row=await env.DB.prepare('SELECT * FROM professional_evidence WHERE id=?').bind(item[1]).first();if(!row||row.status==='deleted')throw new AppError('evidence_not_found','Evidence unavailable.',404);
+  const row=await env.DB.prepare('SELECT * FROM professional_evidence WHERE id=?').bind(item[1]).first();
+  if(!row)throw new AppError('evidence_not_found','Evidence unavailable.',404);
+  // A retained tombstone keeps cleanup retryable without restoring evidence
+  // access or changing a subsequently submitted assignment.
+  if(row.status==='deleted'){
+   if(item[2]||method!=='DELETE'||row.owner_id!==user.id)throw new AppError('evidence_not_found','Evidence unavailable.',404);
+   if(row.mime_type)await deletePrivatePhoto(env,'professional-evidence/'+row.id);
+   return new Response(null,{status:204});
+  }
   await evidenceAccess(env,row.enrollment_id,user);
   if(item[2]==='photo'&&method==='GET'){const photo=row.status==='ready'&&row.image_key?await env.BUCKET.get(row.image_key):null;if(!photo)throw new AppError('image_not_found','Photo unavailable.',404);return new Response(photo.body,{headers:{'Content-Type':row.mime_type,'Cache-Control':'no-store','X-Content-Type-Options':'nosniff'}});}
   if(!item[2]&&method==='DELETE'){
@@ -79,7 +87,7 @@ async function routeProEvidence(request,env,url,user){
     env.DB.prepare("UPDATE professional_enrollments SET version=version+1,updated_at=? WHERE id=? AND EXISTS(SELECT 1 FROM professional_evidence WHERE id=? AND status='deleted')").bind(Date.now(),row.enrollment_id,row.id)
    ]);
    if(!changed(deleted[0]))throw new AppError('evidence_locked','Evidence cannot change while this assignment is submitted or approved. Wait for the instructor decision.',409);
-   if(row.image_key)try{await env.BUCKET.delete(row.image_key);}catch{/* Record is already deleted; an orphaned photo is preferable to a live record without one. */}
+   if(row.image_key)await deletePrivatePhoto(env,row.image_key);
    return new Response(null,{status:204});
   }
  }

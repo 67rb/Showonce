@@ -4,6 +4,10 @@
 const sid=prefix=>prefix+'_'+crypto.randomUUID().replaceAll('-','');
 const changed=r=>Number(r?.meta?.changes??r?.changes??0);
 const timestamp=n=>new Date(n).toISOString();
+async function deletePrivatePhoto(env,key){
+ try{await env.BUCKET.delete(key);}
+ catch{throw new AppError('photo_delete_failed','Photo access has been removed, but storage cleanup could not finish. Retry this delete action to finish removing the stored photo.',503);}
+}
 const submissionData=row=>({id:row.id,session_id:row.session_id,step_id:row.step_id,status:row.status,created_at:timestamp(row.created_at),assessment:row.assessment?JSON.parse(row.assessment):null,image_available:!!row.image_key&&row.status!=='processing'});
 export async function authorizeSession(env,id,token,user=null){
  const row=await env.DB.prepare('SELECT * FROM practice_sessions WHERE id=?').bind(id).first();
@@ -164,7 +168,7 @@ export async function routeMaster(request,env,url){
   // Compile a bounded read against every new runtime table, even when empty.
   // A process being alive must not conceal missing migrations or a database outage.
   await env.DB.prepare('SELECT (SELECT paused FROM ai_budget WHERE id=1) AS paused,(SELECT id FROM ai_reservations LIMIT 1) AS reservation,(SELECT session_id FROM practice_live_leases LIMIT 1) AS lease,(SELECT id FROM learner_accounts LIMIT 1) AS account,(SELECT owner_id FROM ai_lessons LIMIT 1) AS lesson_owner,(SELECT total_steps FROM practice_sessions LIMIT 1) AS steps,(SELECT draft_lesson_id FROM catalogue_entries LIMIT 1) AS catalogue,(SELECT lesson_id FROM catalogue_revisions LIMIT 1) AS revision,(SELECT context FROM learner_reports LIMIT 1) AS report,(SELECT id FROM practice_questions LIMIT 1) AS question,(SELECT observations FROM practice_acknowledgements LIMIT 1) AS ack_observations,(SELECT request_hash FROM practice_acknowledgements LIMIT 1) AS ack_request_hash').first();
-  await env.DB.prepare('SELECT (SELECT id FROM professional_enrollments LIMIT 1) AS enrollment,(SELECT id FROM professional_reviews LIMIT 1) AS review,(SELECT id FROM professional_requests LIMIT 1) AS learning_request,(SELECT id FROM professional_evidence LIMIT 1) AS evidence').first();
+  await env.DB.prepare('SELECT (SELECT evidence_shared FROM professional_enrollments LIMIT 1) AS sharing,(SELECT id FROM professional_reviews LIMIT 1) AS review,(SELECT success_criteria FROM professional_requests LIMIT 1) AS learning_request,(SELECT criterion_id FROM professional_evidence LIMIT 1) AS evidence,(SELECT prep_done_json FROM professional_assignments LIMIT 1) AS assignment,(SELECT assignment_version FROM professional_criterion_decisions LIMIT 1) AS criterion_decision').first();
   if(socialExtractionEnabled(env))await env.DB.prepare('SELECT id,job_kind,metadata_json FROM source_extractions LIMIT 1').first();
   return json({status:'ok',api_version:'v1',runtime:'worker-d1',mock_mode:false,storage:'ready'});
  }
@@ -181,7 +185,16 @@ export async function routeMaster(request,env,url){
  if(match||image){
   const id=(match||image)[1],token=(request.headers.get('authorization')||'').replace(/^Bearer /,'');await authorizeSession(env,id,token,user);await recoverSession(env,id);const session=await getSession(env,id);
   if(image){const row=await env.DB.prepare('SELECT image_key,mime_type,status FROM practice_submissions WHERE id=? AND session_id=?').bind(image[2],id).first();
-   if(method==='DELETE'){if(row?.status==='processing')throw new AppError('assessment_in_progress','Wait until the photo upload finishes before deleting it.',409);if(row?.image_key){await env.DB.prepare('UPDATE practice_submissions SET image_key=NULL WHERE id=? AND session_id=?').bind(image[2],id).run();try{await env.BUCKET.delete(row.image_key);}catch{/* Record already cleared; an orphaned photo is preferable to a live record without one. */}}return new Response(null,{status:204});}
+   if(method==='DELETE'){
+    if(row?.status==='processing')throw new AppError('assessment_in_progress','Wait until the photo upload finishes before deleting it.',409);
+    if(row){
+     await env.DB.prepare('UPDATE practice_submissions SET image_key=NULL WHERE id=? AND session_id=?').bind(image[2],id).run();
+     // The retained submission ID names the same private object on retries,
+     // including after access was revoked but storage deletion failed.
+     await deletePrivatePhoto(env,row.image_key||'practice/'+id+'/'+image[2]);
+    }
+    return new Response(null,{status:204});
+   }
    if(method==='GET'){const object=row?.image_key?await env.BUCKET?.get(row.image_key):null;if(!object)throw new AppError('image_not_found','Photo is unavailable or deleted.',404);return new Response(object.body,{headers:{'Content-Type':row.mime_type,'Cache-Control':'no-store','X-Content-Type-Options':'nosniff'}});}
   }else{
    const resource=match[2];

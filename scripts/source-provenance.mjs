@@ -10,7 +10,7 @@ async function files(dir=''){
  const out=[];
  for(const e of await readdir(path.join(root,dir),{withFileTypes:true})){
   const p=path.posix.join(dir,e.name);
-  if(excluded.has(e.name)||['.DS_Store','next-env.d.ts'].includes(e.name)||/\.(?:tsbuildinfo|pyc|log|sqlite(?:-.*)?|zip)$/.test(e.name)||/^(?:\.env|\.dev\.vars)/.test(e.name)||/\.(?:pem|key)$/.test(e.name)&&p!=='provenance/signing-public.pem'||[manifestPath,signaturePath].includes(p))continue;
+  if(excluded.has(e.name)||['.DS_Store','next-env.d.ts'].includes(e.name)||/\.(?:tsbuildinfo|pyc|log|sqlite(?:-.*)?|zip)$/.test(e.name)||/^(?:\.env|\.dev\.vars)/.test(e.name)||/\.(?:pem|key)$/.test(e.name)&&p!=='provenance/signing-public.pem'||[manifestPath,signaturePath,'server/vercel-worker.mjs'].includes(p))continue;
   if(e.isSymbolicLink())throw new Error(`Unexpected symlink: ${p}`);
   if(e.isDirectory())out.push(...await files(p));
   else if(e.isFile())out.push(p);

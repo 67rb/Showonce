@@ -8,7 +8,7 @@ vi.mock('@/components/learning/Identity',()=>({useIdentity:()=>identity,AccountB
 vi.mock('@/components/Reveal',()=>({SerifAccent:({text}:{text:string})=><>{text}</>}));
 vi.mock('@/components/lightswind/border-beam',()=>({BorderBeam:()=>null}));
 const course={id:'plumbing',title:'Plumbing foundations',trade:'Plumbing',level:'Foundation',content_status:'Starter curriculum',description:'Identify common fittings and plan supervised, disconnected practice.',prerequisites:['Classroom only.'],lessons:[{id:'first',title:'Identify components',steps:3},{id:'second',title:'Plan supervised work',steps:3}]};
-beforeEach(()=>{request.mockReset();identity.config.ai_available=true;identity.account.authenticated=true;vi.stubGlobal('URL',class extends URL{static createObjectURL=vi.fn(()=> 'blob:work-photo');static revokeObjectURL=vi.fn();});request.mockImplementation(async(path:string,body?:unknown)=>{if(path==='/v1/professional/courses')return {courses:[course]};if(path==='/v1/professional/enrollments')return {enrollments:[]};if(path==='/v1/professional/requests')return body?{id:'request',status:'draft'}:{requests:[]};if(path==='/v1/library')return {entries:[]};throw Error('Unexpected request '+path);});});
+beforeEach(()=>{sessionStorage.clear();request.mockReset();identity.config.ai_available=true;identity.account.authenticated=true;vi.stubGlobal('URL',class extends URL{static createObjectURL=vi.fn(()=> 'blob:work-photo');static revokeObjectURL=vi.fn();});request.mockImplementation(async(path:string,body?:unknown)=>{if(path==='/v1/professional/courses')return {courses:[course]};if(path==='/v1/professional/enrollments')return {enrollments:[]};if(path==='/v1/professional/requests')return body?{id:'request',status:'draft'}:{requests:[]};if(path==='/v1/library')return {entries:[]};if(path==='/v1/professional/assignments')return {assignments:[]};throw Error('Unexpected request '+path);});});
 afterEach(()=>{cleanup();vi.unstubAllGlobals();});
 it('saves a goal, photo and tutorial link with one free idempotent request and never starts AI',async()=>{
  render(<ProfessionalStudio/>);await screen.findByText('No learning requests saved yet.');
@@ -127,4 +127,134 @@ it('changes-requested assignments show instructor feedback and a resubmit action
  expect(await screen.findByText('Label the stop valve too.')).toBeTruthy();
  expect(screen.getByRole('button',{name:'Resubmit for assessment'})).toBeTruthy();
  expect(screen.queryByText(/Passed/)).toBeNull();
+});
+
+it('restores an unfinished professional brief before writing defaults to session storage', async () => {
+ sessionStorage.setItem('showonce-pro-brief-draft-v5:learner', JSON.stringify({goal:'Identify the pipe fittings on my worksheet',link:'https://example.com/training',trade:'Electrical',experience:'some_experience',outcome:'Explain the symbols',scope:true}));
+ render(<ProfessionalStudio/>);
+ await waitFor(()=>expect((screen.getByLabelText('What do you want to learn?') as HTMLTextAreaElement).value).toBe('Identify the pipe fittings on my worksheet'));
+ expect((screen.getByLabelText('Tutorial link (optional)') as HTMLInputElement).value).toBe('https://example.com/training');
+ expect((screen.getByLabelText('Your trade') as HTMLSelectElement).value).toBe('Electrical');
+});
+
+it('routes assigned learners through their assignment and blocks submission until required preparation is saved', async () => {
+ assignmentMocks(assignmentFixture());render(<ProfessionalStudio view="library"/>);
+ const submit=await screen.findByRole('button',{name:'Submit evidence for assessment'});
+ expect(screen.queryByRole('button',{name:'Request instructor review'})).toBeNull();
+ fireEvent.click(screen.getByRole('checkbox',{name:/Share my course evidence with instructors for this assessment/}));
+ expect((submit as HTMLButtonElement).disabled).toBe(true);
+ fireEvent.click(screen.getByRole('checkbox',{name:'Disconnected rig confirmed'}));
+ expect((submit as HTMLButtonElement).disabled).toBe(true);
+});
+
+it('lets optional preparation stay unchecked without blocking an otherwise ready assignment', async () => {
+ assignmentMocks(assignmentFixture({preparation:[{id:'required',label:'Disconnected rig confirmed',done:true,required:true},{id:'optional',label:'Optional extra worksheet',done:false,required:false}]}));
+ render(<ProfessionalStudio view="library"/>);
+ await screen.findByText('Mock rig brief');
+ expect(screen.queryByText(/Next: complete every preparation check/)).toBeNull();
+ expect(screen.getByText('Optional extra worksheet · optional')).toBeTruthy();
+ fireEvent.click(screen.getByRole('checkbox',{name:/Share my course evidence with instructors for this assessment/}));
+ expect((screen.getByRole('button',{name:'Submit evidence for assessment'}) as HTMLButtonElement).disabled).toBe(false);
+});
+
+it('keeps a different learner’s unfinished professional brief private', async () => {
+ sessionStorage.setItem('showonce-pro-brief-draft-v5:another-learner', JSON.stringify({goal:'Private notes from another learner',scope:true}));
+ render(<ProfessionalStudio/>);
+ await screen.findByText('No learning requests saved yet.');
+ await waitFor(()=>expect(sessionStorage.getItem('showonce-pro-brief-draft-v5:learner')).not.toBeNull());
+ expect((screen.getByLabelText('What do you want to learn?') as HTMLTextAreaElement).value).toBe('');
+ expect(JSON.parse(sessionStorage.getItem('showonce-pro-brief-draft-v5:another-learner')!).goal).toBe('Private notes from another learner');
+});
+
+it('disables practice until required assignment preparation has been saved', async () => {
+ assignmentMocks(assignmentFixture());
+ const base=request.getMockImplementation()!;
+ request.mockImplementation(async(path,body,options)=>path==='/v1/professional/enrollments'?{enrollments:[{...completedEntry,practice_complete:false,lessons:[{id:'first',title:'Identify components',total_steps:3,completed_steps:1,session_id:'session'}]}]}:base(path,body,options));
+ render(<ProfessionalStudio view="library"/>);
+ expect((await screen.findByRole('button',{name:'Continue training: Identify components'}) as HTMLButtonElement).disabled).toBe(true);
+ fireEvent.click(screen.getByRole('checkbox',{name:'Disconnected rig confirmed'}));
+ expect((screen.getByRole('button',{name:'Continue training: Identify components'}) as HTMLButtonElement).disabled).toBe(true);
+ expect(request.mock.calls.some(([path])=>path.endsWith('/start'))).toBe(false);
+});
+
+it('locks evidence editing and deletion while an assignment is submitted', async () => {
+ assignmentMocks(assignmentFixture({status:'submitted'}));
+ const base=request.getMockImplementation()!;
+ request.mockImplementation(async(path,body,options)=>path.endsWith('/evidence')?{evidence:[{id:'evidence',lesson_id:'first',notes:'My submitted worksheet',has_photo:false,status:'ready',created_at:Date.now()}]}:base(path,body,options));
+ render(<ProfessionalStudio view="library"/>);
+ fireEvent.click(await screen.findByRole('button',{name:'Open work evidence journal'}));
+ await screen.findByText('My submitted worksheet');
+ expect(screen.queryByRole('button',{name:'Save evidence · free'})).toBeNull();
+ expect(screen.queryByRole('button',{name:'Delete evidence'})).toBeNull();
+ expect(screen.getByText(/Evidence is locked while this assignment is submitted or approved/)).toBeTruthy();
+});
+
+it('does not offer to save evidence twice when the save succeeds but refreshing the journal fails', async () => {
+ let saved=false;
+ const base=request.getMockImplementation()!;
+ request.mockImplementation(async(path,body,options)=>{
+  if(path==='/v1/professional/enrollments')return {enrollments:[completedEntry]};
+  if(path.endsWith('/evidence')){
+   if(body){saved=true;return {id:'evidence'};}
+   if(saved)throw Error('The connection dropped while refreshing the journal.');
+   return {evidence:[]};
+  }
+  return base(path,body,options);
+ });
+ render(<ProfessionalStudio view="library"/>);
+ fireEvent.click(await screen.findByRole('button',{name:'Open work evidence journal'}));
+ await screen.findByText('No evidence recorded yet.');
+ fireEvent.change(screen.getByLabelText('Evidence notes'),{target:{value:'Worksheet I only want to save once'}});
+ fireEvent.click(screen.getByRole('button',{name:'Save evidence · free'}));
+ await screen.findByText('The connection dropped while refreshing the journal.');
+ expect(screen.getByText('Evidence saved privately.')).toBeTruthy();
+ expect((screen.getByLabelText('Evidence notes') as HTMLTextAreaElement).value).toBe('');
+ expect((screen.getByRole('button',{name:'Save evidence · free'}) as HTMLButtonElement).disabled).toBe(true);
+ expect(request.mock.calls.filter(([path,body])=>path.endsWith('/evidence')&&body)).toHaveLength(1);
+});
+
+it('reports assignment loading failures instead of silently offering the legacy review workflow', async () => {
+ const base=request.getMockImplementation()!;
+ request.mockImplementation(async(path,body,options)=>{
+  if(path==='/v1/professional/enrollments')return {enrollments:[completedEntry]};
+  if(path==='/v1/professional/assignments')throw Error('Assignments could not be loaded. Please retry.');
+  return base(path,body,options);
+ });
+ render(<ProfessionalStudio view="library"/>);
+ expect(await screen.findByRole('alert')).toHaveProperty('textContent','Assignments could not be loaded. Please retry.');
+ expect(screen.queryByRole('button',{name:'Request instructor review'})).toBeNull();
+ expect((screen.getByRole('button',{name:'Refresh saved data · free'}) as HTMLButtonElement).disabled).toBe(false);
+});
+
+it('restores the next account’s own draft without overwriting either learner’s saved fields', async () => {
+ const firstKey='showonce-pro-brief-draft-v5:learner',secondKey='showonce-pro-brief-draft-v5:second-learner';
+ sessionStorage.setItem(firstKey,JSON.stringify({goal:'First learner private draft',trade:'Plumbing'}));
+ sessionStorage.setItem(secondKey,JSON.stringify({goal:'Second learner private draft',trade:'Electrical'}));
+ const view=render(<ProfessionalStudio/>);
+ await waitFor(()=>expect((screen.getByLabelText('What do you want to learn?') as HTMLTextAreaElement).value).toBe('First learner private draft'));
+ try {
+  identity.account.user.id='second-learner';view.rerender(<ProfessionalStudio/>);
+  await waitFor(()=>expect((screen.getByLabelText('What do you want to learn?') as HTMLTextAreaElement).value).toBe('Second learner private draft'));
+  expect((screen.getByLabelText('Your trade') as HTMLSelectElement).value).toBe('Electrical');
+  expect(JSON.parse(sessionStorage.getItem(firstKey)!).goal).toBe('First learner private draft');
+  expect(JSON.parse(sessionStorage.getItem(secondKey)!).goal).toBe('Second learner private draft');
+ } finally {identity.account.user.id='learner';}
+});
+
+it('preserves a legacy draft with unknown ownership without opening it in the current account', async () => {
+ const legacy=JSON.stringify({goal:'Draft from before accounts were separated',trade:'Electrical'});
+ sessionStorage.setItem('showonce-pro-brief-draft-v5',legacy);
+ render(<ProfessionalStudio/>);
+ await waitFor(()=>expect(sessionStorage.getItem('showonce-pro-brief-draft-v5:learner')).not.toBeNull());
+ expect((screen.getByLabelText('What do you want to learn?') as HTMLTextAreaElement).value).toBe('');
+ expect(sessionStorage.getItem('showonce-pro-brief-draft-v5')).toBe(legacy);
+});
+
+it('does not make an unsaved optional preparation checkbox block submission', async () => {
+ assignmentMocks(assignmentFixture({preparation:[{id:'required',label:'Disconnected rig confirmed',done:true,required:true},{id:'optional',label:'Optional extra worksheet',done:false,required:false}]}));
+ render(<ProfessionalStudio view="library"/>);
+ await screen.findByText('Mock rig brief');
+ fireEvent.click(screen.getByRole('checkbox',{name:/Share my course evidence with instructors for this assessment/}));
+ fireEvent.click(screen.getByRole('checkbox',{name:'Optional extra worksheet · optional'}));
+ expect((screen.getByRole('button',{name:'Submit evidence for assessment'}) as HTMLButtonElement).disabled).toBe(false);
 });

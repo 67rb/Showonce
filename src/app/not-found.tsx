@@ -19,7 +19,7 @@ export default function NotFound() {
   return (
     <div className="flex min-h-dvh flex-col">
       <InteriorHeader />
-      <main className="relative flex flex-1 flex-col items-center justify-center gap-4 overflow-hidden px-6 py-28 text-center">
+      <main id="main-content" tabIndex={-1} className="relative flex flex-1 flex-col items-center justify-center gap-4 overflow-hidden px-6 py-28 text-center">
         {/* 5.3 (L12) — the numeral renders at full ink strength (was pale
             grey on the pale ground). */}
         <p
@@ -44,7 +44,7 @@ export default function NotFound() {
         </Magnetic>
         {/* 5.4 (M2) — one useful onward link on the Hobby face. */}
         <Link
-          href="/lesson/sample"
+          href={home === "/professional" ? "/professional/lesson/sample" : "/lesson/sample"}
           className="font-body-ui text-small font-semibold underline text-site-ink"
         >
           {s.notFoundSampleAction}

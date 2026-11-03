@@ -29,4 +29,25 @@ describe('per-step question box',()=>{
  });
  it('deletes the selected saved question using protected session access',async()=>{request.mockResolvedValueOnce({questions:[record()]}).mockResolvedValueOnce(null);show();await ready();fireEvent.click(screen.getByRole('button',{name:'Delete question and answer'}));await waitFor(()=>expect(screen.queryByText('Use gentle pressure on the pencil.')).toBeNull());expect(request.mock.calls[1][0]).toBe('/v1/sessions/session_one/questions/question_one');expect(request.mock.calls[1][2]).toMatchObject({method:'DELETE',token:'private-session'});});
  it('does not submit before the initial history finishes loading',async()=>{let release!:(value:unknown)=>void;request.mockImplementation(()=>new Promise(resolve=>{release=resolve;}));show();typeQuestion();expect((screen.getByRole('button',{name:'Ask AI · uses allowance'}) as HTMLButtonElement).disabled).toBe(true);expect(request).toHaveBeenCalledOnce();await act(async()=>release({questions:[]}));await ready();expect((screen.getByRole('button',{name:'Ask AI · uses allowance'}) as HTMLButtonElement).disabled).toBe(false);});
+ it('retries a failed history read without sending the typed draft to AI',async()=>{
+  request.mockRejectedValueOnce(new Error('History connection lost')).mockImplementation(async(_path,body)=>body?{record:record()}:{questions:[record()]});
+  show();await ready();typeQuestion('Keep this unsent draft');
+  fireEvent.click(screen.getByRole('button',{name:/^Retry(?: loading saved answers)?$/}));
+  await screen.findByText('Use gentle pressure on the pencil.');
+  expect(request.mock.calls[1][0]).toBe('/v1/sessions/session_one/questions?step_id=step_1');
+  expect(request.mock.calls[1][1]).toBeUndefined();
+  expect((screen.getByRole('textbox',{name:'Your question'}) as HTMLTextAreaElement).value).toBe('Keep this unsent draft');
+ });
+ it('retries the failed delete rather than sending the unsent question draft',async()=>{
+  request.mockResolvedValueOnce({questions:[record()]}).mockRejectedValueOnce(new Error('Delete connection lost')).mockImplementationOnce(async(_path,body)=>body?{record:record()}:null);
+  show();await ready();typeQuestion('Do not send this');
+  fireEvent.click(screen.getByRole('button',{name:'Delete question and answer'}));
+  fireEvent.click(await screen.findByRole('button',{name:/^Retry(?: deleting question)?$/}));
+  await waitFor(()=>expect(request).toHaveBeenCalledTimes(3));
+  expect(request.mock.calls[2][0]).toBe('/v1/sessions/session_one/questions/question_one');
+  expect(request.mock.calls[2][1]).toBeUndefined();
+  expect(request.mock.calls[2][2].method).toBe('DELETE');
+  await waitFor(()=>expect(screen.queryByText('Use gentle pressure on the pencil.')).toBeNull());
+  expect((screen.getByRole('textbox',{name:'Your question'}) as HTMLTextAreaElement).value).toBe('Do not send this');
+ });
 });

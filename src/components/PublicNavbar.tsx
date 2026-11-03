@@ -76,7 +76,7 @@ function WordmarkAnchor({
 // simply omits them.
 const LIGHT_BODY =
   "!bg-white/65 border !border-white/60 backdrop-blur-xl backdrop-saturate-150";
-const LIGHT_LINKS = "[&_a]:!text-[#121212] [&_a]:hover:!text-white";
+const LIGHT_LINKS = "[&_a]:!text-[#121212] [&_a]:hover:!text-[#121212]";
 const LIGHT_MENU = "!bg-white !text-[#121212]";
 
 export function PublicNavbar() {
@@ -89,11 +89,12 @@ export function PublicNavbar() {
     ? "bg-[#16A34A] text-white hover:bg-[#15803D] rounded-full"
     : "bg-[#F59E0B] text-black hover:brightness-110 rounded-full";
 
-  const [open, setOpen] = useState(false);
+  const [openPath, setOpenPath] = useState<string | null>(null);
+  const open = openPath !== null && openPath === pathname;
   const menuButton = useRef<HTMLDivElement>(null);
-  useEffect(()=>{if(!open)return;const escape=(event:KeyboardEvent)=>{if(event.key==="Escape"){setOpen(false);menuButton.current?.querySelector<HTMLButtonElement>("button")?.focus();}};document.addEventListener("keydown",escape);return()=>document.removeEventListener("keydown",escape);},[open]);
-  const toggle = () => setOpen((o) => !o);
-  const close = () => setOpen(false);
+  useEffect(()=>{if(!open)return;const escape=(event:KeyboardEvent)=>{if(event.key==="Escape"){setOpenPath(null);menuButton.current?.querySelector<HTMLButtonElement>("button")?.focus();}};document.addEventListener("keydown",escape);return()=>document.removeEventListener("keydown",escape);},[open]);
+  const toggle = () => setOpenPath(open ? null : pathname);
+  const close = () => setOpenPath(null);
 
   return (
     <Navbar className="fixed inset-x-0 top-0 z-40 px-3 pt-3 sm:px-6 sm:pt-4">

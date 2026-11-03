@@ -335,3 +335,24 @@ it('offers an explicit caption retry when visual video credits are exhausted',as
  expect(sent.map(body=>body.learning_mode)).toEqual(['visual','auto']);
  expect((await env.DB.prepare('SELECT calls FROM ai_budget WHERE id=1').first())?.calls).toBe(0);
 });
+
+it('accepts supported mobile YouTube links while rejecting lookalike and credential URLs locally',async()=>{
+ const original=globalThis.fetch,sent:Record<string,unknown>[]=[];
+ vi.stubGlobal('fetch',async(...args:Parameters<typeof fetch>)=>{
+  const body=typeof args[1]?.body==='string'?JSON.parse(args[1].body):null;
+  if(String(args[0])==='/api/config'){const response=await original(...args);const value=await response.json();return Response.json({...value,ai_available:true,budget:{remaining_usd:4,paused:false}});}
+  if(String(args[0])==='/v1/lessons'&&body?.source_url){sent.push(body);return original(args[0],{...args[1],body:JSON.stringify({example_id:'example_draw-shading'})});}
+  return original(...args);
+ });
+ show();await screen.findByRole('button',{name:'Get the steps'});
+ for(const invalid of ['https://youtube.com.attacker.example/watch?v=aAxGTnVNJiE','https://user:secret@youtube.com/watch?v=aAxGTnVNJiE','http://youtube.com/watch?v=aAxGTnVNJiE']){
+  fireEvent.change(screen.getByRole('textbox',{name:'Tutorial link'}),{target:{value:invalid}});
+  fireEvent.click(screen.getByRole('button',{name:'Get the steps'}));
+  expect(screen.getByRole('alert')).toBeTruthy();expect(sent).toHaveLength(0);
+ }
+ fireEvent.change(screen.getByRole('textbox',{name:'Tutorial link'}),{target:{value:'https://m.youtube.com/watch?v=aAxGTnVNJiE'}});
+ fireEvent.click(screen.getByRole('button',{name:'Get the steps'}));
+ await screen.findByRole('textbox',{name:'Step 1'});
+ expect(sent).toHaveLength(1);expect(sent[0].source_url).toBe('https://m.youtube.com/watch?v=aAxGTnVNJiE');
+ expect((await env.DB.prepare('SELECT calls FROM ai_budget WHERE id=1').first())?.calls).toBe(0);
+});

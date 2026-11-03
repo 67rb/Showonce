@@ -2,7 +2,6 @@
 "use client";
 import {useCallback,useEffect,useRef,useState} from 'react';
 import {aiChecksAvailable,type Step} from '@/lib/learning';
-import s from '@/lib/strings';
 import {useIdentity} from './Identity';
 
 type Answer={answer:string;basis:'step_instructions'|'general_explanation'|'not_enough_context';source_quote:string;limitations:string[]};
@@ -12,19 +11,20 @@ const button='inline-flex min-h-11 items-center justify-center rounded-full bord
 
 export function StepQuestions({sessionID,step,token,disabled=false}:Props){
  const identity=useIdentity(),[question,setQuestion]=useState(''),[records,setRecords]=useState<QuestionRecord[]>([]),[busy,setBusy]=useState(false),[loading,setLoading]=useState(true),[error,setError]=useState<string|null>(null),[retrying,setRetrying]=useState(false);
+ const [recovery,setRecovery]=useState<'load'|QuestionRecord|null>(null);
  const mounted=useRef(true),pending=useRef<{key:string;body:{step_id:string;question:string}}|null>(null),write=useRef<AbortController|null>(null),read=useRef<AbortController|null>(null),sequence=useRef(0);
  const path='/v1/sessions/'+encodeURIComponent(sessionID)+'/questions';
  const load=useCallback(async()=>{
-  const id=++sequence.current;read.current?.abort();const controller=new AbortController();read.current=controller;setLoading(true);setError(null);
+  const id=++sequence.current;read.current?.abort();const controller=new AbortController();read.current=controller;setLoading(true);setError(null);setRecovery(null);
   try{const result=await identity.request<{questions:QuestionRecord[]}>(path+'?step_id='+encodeURIComponent(step.id),undefined,{token,signal:controller.signal});if(!mounted.current||id!==sequence.current)return;setRecords(result.questions);
    if(pending.current){const saved=result.questions.find(item=>item.request_key===pending.current?.key&&item.step_id===step.id&&item.status!=='processing');if(saved){pending.current=null;setRetrying(false);if(saved.status==='answered')setQuestion('');}}
-  }catch(e){if(mounted.current&&!controller.signal.aborted)setError(e instanceof Error?e.message:'Saved answers could not be loaded.');}
+  }catch(e){if(mounted.current&&!controller.signal.aborted){setError(e instanceof Error?e.message:'Saved answers could not be loaded.');setRecovery('load');}}
   finally{if(mounted.current&&id===sequence.current)setLoading(false);}
  },[identity.request,path,step.id,token]);
  useEffect(()=>{mounted.current=true;void load();return()=>{mounted.current=false;sequence.current++;read.current?.abort();write.current?.abort();};},[load]);
  async function ask(){
   if(disabled||loading||busy||!aiChecksAvailable(identity.config)||!question.trim())return;
-  pending.current||={key:crypto.randomUUID(),body:{step_id:step.id,question:question.trim()}};setRetrying(true);setBusy(true);setError(null);const controller=new AbortController();write.current=controller;
+  pending.current||={key:crypto.randomUUID(),body:{step_id:step.id,question:question.trim()}};setRetrying(true);setBusy(true);setError(null);setRecovery(null);const controller=new AbortController();write.current=controller;
   try{const result=await identity.request<{record:QuestionRecord}>(path,pending.current.body,{token,key:pending.current.key,signal:controller.signal});if(!mounted.current||controller.signal.aborted)return;
    setRecords(previous=>[...previous.filter(item=>item.id!==result.record.id),result.record]);
    if(result.record.status!=='processing'){pending.current=null;setRetrying(false);if(result.record.status==='answered')setQuestion('');}
@@ -33,9 +33,9 @@ export function StepQuestions({sessionID,step,token,disabled=false}:Props){
   finally{if(mounted.current)setBusy(false);}
  }
  async function remove(item:QuestionRecord){
-  if(loading||busy||item.status==='processing')return;setBusy(true);setError(null);const controller=new AbortController();write.current=controller;
+  if(disabled||loading||busy||item.status==='processing')return;setBusy(true);setError(null);setRecovery(null);const controller=new AbortController();write.current=controller;
   try{await identity.request(path+'/'+encodeURIComponent(item.id),undefined,{method:'DELETE',token,signal:controller.signal});if(mounted.current)setRecords(previous=>previous.filter(row=>row.id!==item.id));}
-  catch(e){if(mounted.current&&!controller.signal.aborted)setError(e instanceof Error?e.message:'The question could not be deleted.');}
+  catch(e){if(mounted.current&&!controller.signal.aborted){setError(e instanceof Error?e.message:'The question could not be deleted.');setRecovery(item);}}
   finally{if(mounted.current)setBusy(false);}
  }
  const waiting=records.some(item=>item.status==='processing'),available=aiChecksAvailable(identity.config);
@@ -49,7 +49,7 @@ export function StepQuestions({sessionID,step,token,disabled=false}:Props){
    {retrying&&!busy&&<button type="button" className="min-h-11 text-small underline" onClick={()=>{pending.current=null;setRetrying(false);setQuestion('');}}>Start a new question</button>}
    {!available&&<p className="text-small text-site-muted">AI answers are currently unavailable. You can still read the step and any saved answers.</p>}
   </form>
-  {error&&<div role="alert" className="rounded-xl border border-danger/30 bg-danger/10 p-3 text-small">{error}{!busy&&!loading&&<button type="button" className="mt-2 min-h-11 text-site-ink underline" disabled={!question.trim()} onClick={()=>void ask()}>{s.retry}</button>}</div>}
+  {error&&<div role="alert" className="rounded-xl border border-danger/30 bg-danger/10 p-3 text-small">{error}{recovery&&!busy&&!loading&&<button type="button" className="mt-2 min-h-11 text-site-ink underline" disabled={disabled} onClick={()=>void(recovery==='load'?load():remove(recovery))}>{recovery==='load'?'Retry loading saved answers':'Retry deleting question'}</button>}</div>}
   {loading&&<p role="status" className="text-small text-site-muted">Loading saved answers…</p>}
   <div aria-live="polite" aria-relevant="additions text" className="space-y-4">{records.map(item=><article key={item.id} className="rounded-2xl border border-site-border bg-site-page p-4">
    <p className="whitespace-pre-wrap text-small font-semibold">{item.question}</p>

@@ -34,6 +34,16 @@ test('learning goal, reference link and photo save privately without any paid ca
   assert.equal((await f.call(path+'/photo',undefined,'learner','DELETE')).status,204);assert.equal((await f.call(path+'/photo')).status,404);assert.equal((await(await f.call(path)).json()).has_photo,false);
  }finally{globalThis.fetch=original;f.close();}
 });
+test('deleted request photos remain private and storage cleanup can be retried after an outage',async()=>{
+ const f=fixture();try{
+  const item=await(await saveRequest(f,intakeBody)).json(),path='/v1/professional/requests/'+item.id+'/photo',key='professional-requests/'+item.id,remove=f.env.BUCKET.delete;
+  f.env.BUCKET.delete=async()=>{assert.equal((await f.call(path)).status,404);throw Error('Temporary storage outage');};
+  const failed=await f.call(path,undefined,'learner','DELETE');assert.equal(failed.status,503);assert.equal((await failed.json()).error.code,'photo_delete_failed');
+  assert.ok(await f.env.BUCKET.get(key));assert.equal((await f.call(path)).status,404);assert.equal((await f.call(path,undefined,'other','DELETE')).status,404);
+  f.env.BUCKET.delete=remove;assert.equal((await f.call(path,undefined,'learner','DELETE')).status,204);assert.equal(await f.env.BUCKET.get(key),null);
+  assert.equal((await f.call(path,undefined,'learner','DELETE')).status,204);assert.equal((await(await f.call('/api/config')).json()).budget.calls,0);
+ }finally{f.close();}
+});
 test('request validation rejects missing goals, bad links and corrupt photos before storage or AI',async()=>{
  const f=fixture();try{for(const patch of [{goal:''},{source_url:'javascript:alert(1)'},{source_url:'https://user:password@example.com/'},{image_base64:'invalid'},{mime_type:'text/plain'},{training_only:false}])assert.equal((await saveRequest(f,{...intakeBody,...patch})).status,422);assert.equal((await f.env.DB.prepare('SELECT COUNT(*) AS n FROM professional_requests').first()).n,0);}finally{f.close();}
 });
@@ -74,6 +84,18 @@ test('free evidence saves photos and notes once, is private, and deleted replay 
 });
 test('instructor evidence access requires explicit sharing, revocation invalidates stale decisions, and review locks new evidence',async()=>{
  const f=fixture();try{let entry=await enroll(f);const path='/v1/professional/enrollments/'+entry.id;await saveEvidence(f,entry,{lesson_id:entry.lessons[0].id,notes:'Worksheet notes'});entry=await finish(f,entry);let response=await f.call(path+'/request-review',{expected_version:entry.version,share_evidence:true});assert.equal(response.status,200);entry=await response.json();assert.equal((await f.call(path+'/evidence',undefined,'teacher')).status,200);assert.equal((await saveEvidence(f,entry,{lesson_id:entry.lessons[0].id,notes:'Late change'},'late')).status,409);assert.equal((await f.call(path+'/evidence-sharing',{shared:false})).status,200);assert.equal((await f.call(path+'/evidence',undefined,'teacher')).status,404);assert.equal((await f.call(path+'/review',{expected_version:entry.version,decision:'instructor_approved',notes:'Observed work'},'teacher')).status,409);}finally{f.close();}
+});
+test('deleted evidence revokes access and permits only its owner to retry failed photo cleanup',async()=>{
+ const f=fixture();try{
+  const entry=await enroll(f),item=await(await saveEvidence(f,entry,{lesson_id:entry.lessons[0].id,notes:'Remove this private photo',mime_type:'image/png',image_base64:intakePhoto.toString('base64')},'delete-outage')).json();
+  const path='/v1/professional/evidence/'+item.id,key='professional-evidence/'+item.id,remove=f.env.BUCKET.delete;
+  f.env.BUCKET.delete=async()=>{assert.equal((await f.call(path+'/photo')).status,404);throw Error('Temporary storage outage');};
+  const failed=await f.call(path,undefined,'learner','DELETE');assert.equal(failed.status,503);assert.equal((await failed.json()).error.code,'photo_delete_failed');
+  assert.ok(await f.env.BUCKET.get(key));assert.equal((await f.call(path+'/photo')).status,404);
+  for(const actor of ['other','teacher'])assert.equal((await f.call(path,undefined,actor,'DELETE')).status,404);
+  f.env.BUCKET.delete=remove;assert.equal((await f.call(path,undefined,'learner','DELETE')).status,204);assert.equal(await f.env.BUCKET.get(key),null);
+  assert.equal((await f.call(path,undefined,'learner','DELETE')).status,204);assert.equal((await(await f.call('/api/config')).json()).budget.calls,0);
+ }finally{f.close();}
 });
 test('failed evidence uploads retry with the original key and active uploads block review atomically',async()=>{
  const f=fixture();try{let entry=await enroll(f);const body={lesson_id:entry.lessons[0].id,notes:'Training record',mime_type:'image/png',image_base64:intakePhoto.toString('base64')},put=f.env.BUCKET.put;f.env.BUCKET.put=async()=>{throw Error('offline');};assert.equal((await saveEvidence(f,entry,body)).status,503);f.env.BUCKET.put=put;const response=await saveEvidence(f,entry,body);assert.equal(response.status,201);const item=await response.json();assert.equal(item.status,'ready');entry=await finish(f,entry);await f.env.DB.prepare("UPDATE professional_evidence SET status='uploading' WHERE id=?").bind(item.id).run();assert.equal((await f.call('/v1/professional/enrollments/'+entry.id+'/request-review',{expected_version:entry.version})).status,409);assert.equal((await f.call('/v1/professional/evidence/'+item.id,undefined,'learner','DELETE')).status,409);}finally{f.close();}

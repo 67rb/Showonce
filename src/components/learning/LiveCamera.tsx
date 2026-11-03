@@ -165,13 +165,15 @@ export function LiveCamera({lesson,step,progress,token,disabled,stopRef,initialL
  function discardStill(){
   const rest=stills.filter(still=>still.id!==selectedId),next=rest.length?rest[rest.length-1]:null;
   setStills(rest);setSelectedId(next?next.id:null);setQuality(next?next.quality:null);qualityRef.current=next?next.quality:null;
-  setQualityOverride(false);setConsent(false);setMessage(null);onClearFeedback?.();
+  setQualityOverride(false);setConsent(false);setQueued(null);setMessage(null);onError(null);onClearFeedback?.();
  }
  function selectStill(id:number){
   if(checking||inFlight.current)return;
   if(id===selectedId)return;
   const found=stills.find(still=>still.id===id);if(!found)return;
   setSelectedId(id);setQuality(found.quality);qualityRef.current=found.quality;setQualityOverride(false);
+  // Consent, queued bytes and feedback belong to the previous picture.
+  setConsent(false);setQueued(null);setMessage(null);onError(null);onClearFeedback?.();
  }
  function assessUpload(img:HTMLImageElement){
   try{const canvas=document.createElement('canvas'),ratio=Math.min(1,960/((img.naturalWidth||img.width||960)));canvas.width=Math.max(1,Math.round((img.naturalWidth||img.width||960)*ratio));canvas.height=Math.max(1,Math.round((img.naturalHeight||img.height||960)*ratio));const context=canvas.getContext('2d');if(!context)return;context.drawImage(img,0,0,canvas.width,canvas.height);const assessed=qualityFromCanvas(canvas);if(!assessed)return;qualityRef.current=assessed;setQuality(assessed);setQualityOverride(false);}catch{/* Quality gate is best-effort; upload still works. */}

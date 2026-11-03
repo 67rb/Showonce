@@ -1,7 +1,7 @@
 /* Copyright © 2026 Robé Berry. All rights reserved. See COPYRIGHT.md. */
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {readFile} from 'node:fs/promises';
+import {readFile,readdir} from 'node:fs/promises';
 import {DatabaseSync} from 'node:sqlite';
 import {localDB,localBucket} from './d1-local.mjs';
 import {AppError,assessPhoto,assessmentResult,budgetSummary,cost,groundedLesson,metaJSON,providerJSON,reserve,settle} from '../src/core.mjs';
@@ -115,6 +115,17 @@ test('readiness rejects the earlier schema until the new migration is present',a
 
 test('invalid token preflight is a provider error and cannot reserve generation credit',async()=>{
  const db=localDB(),original=globalThis.fetch;let calls=0;try{globalThis.fetch=async()=>{calls++;return Response.json({input_tokens:'not a count'});};await assert.rejects(()=>metaJSON({DB:db,MODEL_API_KEY:'TEST_ONLY'},modelOptions),code('invalid_provider_response',502));assert.equal(calls,1);assert.equal((await budgetSummary(db)).calls,0);}finally{globalThis.fetch=original;db.close();}
+});
+test('readiness rejects a database missing the assignment migration or its criterion tables',async()=>{
+ const migrations=new URL('../drizzle/',import.meta.url),files=(await readdir(migrations)).filter(name=>name.endsWith('.sql')).sort();
+ for(const missing of ['0015_professional_assignments.sql','professional_criterion_decisions']){
+  const db=new DatabaseSync(':memory:');try{
+   for(const file of files){if(file===missing)continue;db.exec(await readFile(new URL(file,migrations),'utf8'));}
+   if(!missing.endsWith('.sql'))db.exec('DROP TABLE '+missing);
+   const DB={prepare(sql){const statement=db.prepare(sql);return {first:async()=>statement.get()};}};
+   const result=await worker.fetch(new Request('https://test.example/health'),{DB,BUCKET:localBucket()});assert.equal(result.status,503);assert.equal((await result.json()).error.code,'service_unavailable');
+  }finally{db.close();}
+ }
 });
 test('rate limiting does not cause automatic retries and retains a post-reservation hold',async()=>{
  const db=localDB(),original=globalThis.fetch;let calls=0;try{globalThis.fetch=async url=>{calls++;return url.endsWith('input_tokens')?Response.json({input_tokens:100}):new Response('PRIVATE_RATE_DIAGNOSTIC',{status:429});};await assert.rejects(()=>metaJSON({DB:db,MODEL_API_KEY:'TEST_ONLY'},modelOptions),code('provider_rate_limited',429));assert.equal(calls,2);assert.equal((await budgetSummary(db)).unresolved_reservations_usd,cost(1124,100)/1e6);}finally{globalThis.fetch=original;db.close();}
