@@ -1748,7 +1748,8 @@ function InstructorAssignments({
     [materials, setMaterials] = useState(""),
     [criteriaText, setCriteriaText] = useState(""),
     [prepText, setPrepText] = useState(""),
-    [notes, setNotes] = useState<Record<string, string>>({});
+    [notes, setNotes] = useState<Record<string, string>>({}),
+    [aiError, setAiError] = useState("");
   const lines = (value: string) =>
     value
       .split("\n")
@@ -1799,7 +1800,10 @@ function InstructorAssignments({
             <input
               className={field}
               value={enrollmentID}
-              onChange={(e) => setEnrollmentID(e.target.value)}
+              onChange={(e) => {
+                setEnrollmentID(e.target.value);
+                setAiError("");
+              }}
               required
               disabled={busy}
               placeholder="enrollment_…"
@@ -1811,11 +1815,24 @@ function InstructorAssignments({
               className={primary}
               disabled={busy || !aiReady || !enrollmentID.trim()}
               onClick={() => void run(async () => {
-                await post("/v1/professional/assignments", {
-                  enrollment_id: enrollmentID.trim(),
-                  generate_with_ai: true,
-                  ai_consent: true,
-                });
+                setAiError("");
+                try {
+                  await post("/v1/professional/assignments", {
+                    enrollment_id: enrollmentID.trim(),
+                    generate_with_ai: true,
+                    ai_consent: true,
+                  });
+                } catch (e) {
+                  // Local to the AI action: this form can sit far below the
+                  // page-level alert, and a blind retry could pay again.
+                  // Keep the enrollment ID so the same button can retry.
+                  setAiError(
+                    e instanceof Error
+                      ? e.message
+                      : "AI assignment could not be created.",
+                  );
+                  return;
+                }
                 setEnrollmentID("");
                 await refresh();
               })}
@@ -1827,6 +1844,16 @@ function InstructorAssignments({
               The instructor reviews the submitted work.
             </p>
             {!aiReady && <p className="mt-2 text-small text-site-muted">AI is currently unavailable.</p>}
+            {aiError && (
+              <p
+                role="alert"
+                className="mt-2 rounded-xl border border-danger/30 bg-danger/10 p-3 text-small text-site-ink"
+              >
+                {aiError} Your enrollment ID is kept. Refresh saved data to
+                check whether an assignment was created before using the same
+                AI button to try again.
+              </p>
+            )}
           </div>
           <label className="block text-small font-semibold text-site-ink">
             Brief title
