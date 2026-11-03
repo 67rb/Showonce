@@ -20,12 +20,16 @@ export function IdentityProvider({children}:{children:ReactNode}){
   const epoch=version.current,subject=actor.current;
   if(path!=='/api/account'&&path!=='/api/config'&&!available.current)throw new LearningError('Check your account connection before continuing.','account_unchecked');
   const controller=new AbortController(),abort=()=>controller.abort();options.signal?.addEventListener('abort',abort,{once:true});if(options.signal?.aborted)abort();const timeout=setTimeout(abort,body===undefined?20000:300000);
+  const assertCurrent=()=>{if(epoch!==version.current&&path!=='/api/account')throw new LearningError('Your account changed. Open your practice again.','account_changed');if(controller.signal.aborted)throw new LearningError('This request was stopped. Refresh saved progress before retrying.','request_aborted');};
   try{const headers:Record<string,string>={};if(body!==undefined)headers['Content-Type']='application/json';if(subject&&path!=='/api/account'&&path!=='/api/config')headers['X-ShowOnce-Account']=subject;if(options.token)headers.Authorization='Bearer '+options.token;if(options.key)headers['Idempotency-Key']=options.key;
    let response;try{response=await fetch(path,{method:options.method||(body===undefined?'GET':'POST'),headers,body:body===undefined?undefined:JSON.stringify(body),signal:controller.signal,credentials:'same-origin',cache:'no-store'});}catch{throw new LearningError('Connection interrupted. Refresh saved progress or history before retrying a check.');}
-   if(epoch!==version.current&&path!=='/api/account')throw new LearningError('Your account changed. Open your practice again.','account_changed');
+   assertCurrent();
    if(response.status===204)return null as T;
-   if(options.image&&response.ok)return await response.blob() as T;
+   if(options.image&&response.ok){const image=await response.blob();assertCurrent();return image as T;}
    let value;try{value=await response.json();}catch{throw new LearningError('The service returned an unreadable response. Refresh saved progress before retrying.');}
+   // A streamed body can finish after sign-out or an account switch even when
+   // its response headers arrived earlier. Validate again before exposing it.
+   assertCurrent();
    if(!response.ok){if(value.error?.code==='account_changed'){available.current=false;setReady(false);window.dispatchEvent(new Event('showonce-account-changed'));}throw new LearningError(value.error?.message||'The action could not be completed.',value.error?.code||'service_unavailable',response.status);}
    return value as T;
   }finally{clearTimeout(timeout);options.signal?.removeEventListener('abort',abort);}

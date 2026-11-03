@@ -33,6 +33,7 @@ function fontSizeForWidth(width: number): 56 | 96 | 132 {
 
 export function HeroParticleHeadline() {
   const [particlesLive, setParticlesLive] = useState(false);
+  const [particlesReady, setParticlesReady] = useState(false);
   const [fontSize, setFontSize] = useState<56 | 96 | 132>(132);
   const blockRef = useRef<HTMLDivElement | null>(null);
   const headingRef = useRef<HTMLHeadingElement | null>(null);
@@ -85,7 +86,7 @@ export function HeroParticleHeadline() {
       <h1
         ref={headingRef}
         className={
-          particlesLive
+          particlesReady
             ? "sr-only"
             : "relative font-display text-display uppercase leading-display text-[#52525B]"
         }
@@ -93,8 +94,9 @@ export function HeroParticleHeadline() {
         {s.landingHeadline}
       </h1>
       {particlesLive && (
-        <div aria-hidden="true" className="flex flex-col items-center">
+        <div aria-hidden="true" className={particlesReady ? "flex flex-col items-center" : "hidden"}>
           <TextParticleAnimation
+            onReady={setParticlesReady}
             text={s.landingHeadlineLines[0]}
             fontFamily="Anton, sans-serif"
             fontWeight={400}

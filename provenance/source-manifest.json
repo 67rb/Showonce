@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "created_at": "2026-11-03T04:16:27.017Z",
+  "created_at": "2026-11-03T10:55:45.089Z",
   "owners": {
     "application": "Robé Berry",
     "ui": "Muhammad Hashir (https://github.com/mateir0)"
@@ -90,8 +90,8 @@
     },
     {
       "path": "docs/APP-REVIEW-20261103.md",
-      "bytes": 4414,
-      "sha256": "c7ac3d196d0c078e03799a7c7ccca1e3bb5f02558044c39c029509395901f9cb"
+      "bytes": 6663,
+      "sha256": "1180693f3cdb6dd0c0c80370cea0be20b44e8d394162e778dbf0d806415d765a"
     },
     {
       "path": "docs/COORDINATED-REVIEW.md",
@@ -1540,8 +1540,8 @@
     },
     {
       "path": "src/components/HeroParticleHeadline.tsx",
-      "bytes": 4392,
-      "sha256": "18b7ca4b1ea388dc9094dffd230ec085da37f455cf15f54c7da6f9b2f2b6f14b"
+      "bytes": 4526,
+      "sha256": "26f66c309c94d4ba5c3ef3a054a9ddaac4969be0179472d9fc45cf1fba042376"
     },
     {
       "path": "src/components/HeroVenomCta.tsx",
@@ -1675,13 +1675,13 @@
     },
     {
       "path": "src/components/learning/HomePractice.tsx",
-      "bytes": 3281,
-      "sha256": "cae243d3f24c7cf54983e8ffd5660c21d5136c3ab5608c4a26a7e6feb3809be8"
+      "bytes": 3509,
+      "sha256": "526587fbffc7055558d9f884301650a611f44f1e85f57e566c58f98fcafa713e"
     },
     {
       "path": "src/components/learning/Identity.tsx",
-      "bytes": 11082,
-      "sha256": "7faef747770ddd964dc27994dc9bcb6f2349a41448253df0f32a982725ad8c5f"
+      "bytes": 11482,
+      "sha256": "b37ad6748c799e08467f40a3b1b5a1e984b895434e3d20ee0090d6ae2d2dbd2f"
     },
     {
       "path": "src/components/learning/LiveCamera.tsx",
@@ -1715,8 +1715,8 @@
     },
     {
       "path": "src/components/learning/Workspace.tsx",
-      "bytes": 90396,
-      "sha256": "95ae8ee17d265eed9a27f892cab895065aab58d05648202089d1e2dd354e5bcb"
+      "bytes": 91411,
+      "sha256": "dcbb48f782c841fe26b6923eda6a2290e06d1c7cef1bc0975d000d537db2edac"
     },
     {
       "path": "src/components/lightswind/3d-scroll-trigger.tsx",
@@ -1755,8 +1755,8 @@
     },
     {
       "path": "src/components/lightswind/text-particle-animation.tsx",
-      "bytes": 6686,
-      "sha256": "da7e4e03f8fffabd88aae0e6384cb9dbfb77d96e1b76287548b24be3ca42d088"
+      "bytes": 7172,
+      "sha256": "dfa74ce152c8ce2ed20ea360aec0fc227b5573a9ae683f9ba006a0ad6abfc20c"
     },
     {
       "path": "src/components/lightswind/toggle-theme.tsx",
@@ -1934,6 +1934,11 @@
       "sha256": "bbaa2d095ff20ec72be1765d3bf07a3d39f37fce6bdc22753ae90494e69f0400"
     },
     {
+      "path": "tests/account-isolation.test.tsx",
+      "bytes": 3898,
+      "sha256": "fa9d14f520408f56ae195c26f00e8266a66edea35ace8938193a2cfc1050cb70"
+    },
+    {
       "path": "tests/ai-allowance.test.tsx",
       "bytes": 2078,
       "sha256": "83a98b63046bfbd057b898d2c4d3ba50ab25660ffc90dabbb59e68b57337cafa"
@@ -1952,6 +1957,11 @@
       "path": "tests/grep.test.ts",
       "bytes": 8321,
       "sha256": "9b207553500a411e32ccc51d84082cf32560461eaa2ba809f5f980dda8319743"
+    },
+    {
+      "path": "tests/headline-readiness.test.tsx",
+      "bytes": 2052,
+      "sha256": "74c98e17c640a2b76177780f2f2ee016dca22a7b47671c139919264ad797ef14"
     },
     {
       "path": "tests/horizontal-gallery.test.tsx",
@@ -1975,8 +1985,8 @@
     },
     {
       "path": "tests/learning.test.tsx",
-      "bytes": 41919,
-      "sha256": "38af92cca61c83af481803a35ac01c3cf62ae1383a40e2affd4ed54d9939bffa"
+      "bytes": 44151,
+      "sha256": "e866da0f929c22ce25ce79a0d438d1aa7455bc1f8555d7f772d2e7ef13f50954"
     },
     {
       "path": "tests/live-camera.test.tsx",

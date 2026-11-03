@@ -20,6 +20,8 @@ export interface TextParticleAnimationProps {
   theme?: "light" | "dark";
   padding?: number;
   height?: number;
+  /** Whether a readable particle frame has actually been painted. */
+  onReady?: (ready: boolean) => void;
 }
 
 export function TextParticleAnimation({
@@ -38,6 +40,7 @@ export function TextParticleAnimation({
   theme = "light",
   padding = 150,
   height,
+  onReady,
 }: TextParticleAnimationProps) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
@@ -47,7 +50,7 @@ export function TextParticleAnimation({
     const canvas2 = canvas;
 
     const ctx = canvas.getContext("2d");
-    if (!ctx) return;
+    if (!ctx) { onReady?.(false); return; }
     const ctx2 = ctx;
 
     let particles: Particle[] = [];
@@ -74,7 +77,9 @@ export function TextParticleAnimation({
     ctx.fillStyle = theme === "dark" ? "#ffffff" : "#52525B";
     ctx.fillText(text, canvas.width / 2, canvas.height / 2);
 
-    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    let imageData: ImageData;
+    try { imageData = ctx.getImageData(0, 0, canvas.width, canvas.height); }
+    catch { onReady?.(false); return; }
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     class Particle {
@@ -195,6 +200,10 @@ export function TextParticleAnimation({
     };
 
     initParticles(imageData);
+    if (!particles.length) { onReady?.(false); return; }
+    // Paint before handing visibility over from the real heading. A missing
+    // context, blocked pixel read or delayed frame must never erase the text.
+    if (onReady) { animate(); onReady(true); }
     const animation = visibleAnimation(canvas2, animate);
 
     canvas2.addEventListener("mousemove", handleMouseMove);
@@ -223,6 +232,7 @@ export function TextParticleAnimation({
     theme,
     padding,
     height,
+    onReady,
   ]);
 
   return (

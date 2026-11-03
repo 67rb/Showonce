@@ -10,6 +10,7 @@ import {
 } from "react";
 import { useRouter } from "next/navigation";
 import s from "@/lib/strings";
+import { cn } from "@/lib/utils";
 import { SavedLessonCover } from "./SavedLessonCover";
 import { Magnetic } from "@/components/Magnetic";
 import { AccountBar, useIdentity } from "./Identity";
@@ -959,6 +960,7 @@ function LibraryPanel() {
     const source = identity.guestEntries(),
       results: (Entry | null)[] = new Array(source.length).fill(null);
     let next = 0;
+    const unavailableIDs: string[] = [];
     await Promise.all(
       Array.from({ length: Math.min(4, source.length) }, async () => {
         while (next < source.length) {
@@ -987,12 +989,19 @@ function LibraryPanel() {
               [401, 404].includes(e.status || 0)
             )
               continue;
-            throw e;
+            if (e instanceof LearningError && ['account_changed', 'account_unchecked'].includes(e.code)) throw e;
+            // A temporary outage for one session must not hide every other
+            // saved practice. Keep its browser access untouched for retry.
+            unavailableIDs.push(entry.id);
           }
         }
       }),
     );
-    return results.filter((entry): entry is Entry => entry !== null);
+    return {
+      entries: results.filter((entry): entry is Entry => entry !== null),
+      unavailableIDs,
+      warning: unavailableIDs.length ? `${unavailableIDs.length} saved practice${unavailableIDs.length === 1 ? '' : 's'} could not be refreshed. Your browser access is still saved. Refresh to try again.` : null,
+    };
   }, [identity.guestEntries, identity.request]);
   const load = useCallback(
     async (append = false) => {
@@ -1026,7 +1035,8 @@ function LibraryPanel() {
         } else {
           const verified = await verify();
           if (id !== sequence.current) return;
-          setEntries(verified);
+          setEntries(previous => [...verified.entries, ...previous.filter(entry => verified.unavailableIDs.includes(entry.id))].sort((a, b) => b.updated_at.localeCompare(a.updated_at)));
+          setError(verified.warning);
           setCursor(null);
         }
       } catch (e) {
@@ -1080,8 +1090,7 @@ function LibraryPanel() {
   }
   const shown = entries.filter(
     (entry) =>
-      (identity.account?.user ||
-        filter === "all" ||
+      (filter === "all" ||
         (filter === "completed"
           ? entry.status === "completed"
           : entry.status !== "completed")) &&
@@ -1089,6 +1098,7 @@ function LibraryPanel() {
         .toLowerCase()
         .includes(search.trim().toLowerCase()),
   );
+  const hasFilters = !!search.trim() || filter !== "all";
   return (
     <div className="space-y-8 lg:space-y-12">
       {/* 5.3 (L6) — exactly ONE New lesson action: desktop right-aligned on the
@@ -1102,7 +1112,7 @@ function LibraryPanel() {
         </div>
         <a
           href={workspaceHref("create")}
-          className={primary + " hidden shrink-0 md:inline-flex"}
+          className={cn(primary, "hidden shrink-0 md:inline-flex")}
         >
           {s.newLesson}
         </a>
@@ -1137,6 +1147,7 @@ function LibraryPanel() {
             </select>
           </label>
         </div>
+        {hasFilters && <button type="button" className="mt-3 min-h-11 text-small font-semibold underline" onClick={() => { setSearch(""); setFilter("all"); }}>Clear filters</button>}
       </div>
       {/* 5.3 (L6) — mobile-only sticky bottom bar (removed from the desktop flow) */}
       <div className={stickyBar + " md:hidden"}>
@@ -1234,34 +1245,24 @@ function LibraryPanel() {
           </article>
         ))}
       </div>
-      {!busy && !shown.length && (
+      {!busy && !error && !shown.length && (
         <Card>
           <h2 className="text-xl font-semibold text-site-ink">
-            Your next practice starts here.
+            {hasFilters ? "No matching practices." : "Your next practice starts here."}
           </h2>
           <p className="my-3 text-site-muted">
-            {entries.length
+            {hasFilters
               ? "Try another search or clear the filters."
               : "Try a free example or bring a tutorial."}
           </p>
-          {entries.length > 0 && (
-            <button
-              type="button"
-              className={secondary + " mb-3"}
-              onClick={() => {
-                setSearch("");
-                setFilter("all");
-              }}
-            >
-              Clear filters
-            </button>
-          )}
           <a className={primary} href={workspaceHref("create")}>
             Find something to practice
           </a>
         </Card>
       )}
       {cursor && (
+        <div className="space-y-2">
+        {!!search.trim() && <p className="text-small text-site-muted">More saved practices are available. Load more to include them in your search.</p>}
         <button
           disabled={busy}
           className={secondary}
@@ -1269,6 +1270,7 @@ function LibraryPanel() {
         >
           Load more practices
         </button>
+        </div>
       )}
       <button className={secondary} disabled={busy} onClick={() => void load()}>
         Refresh library
@@ -1280,7 +1282,7 @@ function LibraryPanel() {
             onClick={() => {
               setError(null);
               void verify()
-                .then(setImports)
+                .then(result => { setImports(result.entries); setError(result.warning); })
                 .catch((e) => setError(e.message));
             }}
           >

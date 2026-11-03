@@ -72,3 +72,41 @@ Physical Android/Chrome and iPhone/Safari camera/permission checks and qualified
 instructor curriculum validation remain outstanding. Existing provider
 acceptance evidence is historical; this review did not spend the AI allowance
 to repeat live Meta calls.
+
+## Follow-up reliability pass
+
+Built on deployed commit `93cd489b77950335ad7e62a58037ff549fef91bf`.
+
+- Revalidate the account after streaming JSON or photo bodies. Responses that
+  finish after an account switch are discarded before consumers see them.
+- Bind the homepage Continue card to the account and identity-check generation,
+  hiding the previous account's practice immediately during sign-out/recheck.
+- Refresh browser practices independently. One temporarily unavailable session
+  no longer hides the other practices. Previously verified cards survive a
+  failed refresh, and saved private access remains untouched for retry.
+- Distinguish connection errors, an empty library and empty search results.
+  Keep Clear filters available during errors; explain when older saved
+  practices have not yet been included in a search.
+- Remove conflicting display classes from the desktop New lesson action so
+  phone layouts show only their intended mobile action.
+- Keep the real homepage heading visible until the particle canvas has painted
+  readable text. Missing contexts or blocked pixel reads retain the static
+  fallback; animation settings and interactions are unchanged.
+
+Eight new reproductions failed against the baseline before the fixes.
+The full follow-up checks passed: **363 frontend tests**, **274 Worker tests**,
+authentication fixtures, TypeScript, Vercel build, **499-file credential scan**,
+and **16 routes / 38 assets / 31 API smoke checks**. No additional lint issues
+were introduced. Chrome verified filter reset and the readable homepage in the
+built local app. An independent read-only code review found no release blocker
+in these changes. No paid provider calls or allowance changes were made.
+
+The existing external acceptance requirements above remain. Interrupted
+Professional evidence uploads also need a separate recovery change using
+per-attempt upload leases; this pass does not change that state machine or add
+database migrations.
+
+Browser acceptance also exercised a free sample: start practice, self-review a
+checkpoint, return to the library, and search for the saved lesson. The library
+retained its 1-of-7 progress. A 390-pixel check identified and verified the
+duplicate New lesson action correction.

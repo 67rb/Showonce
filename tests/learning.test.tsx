@@ -64,6 +64,30 @@ describe('working frontend with the actual learning Worker',()=>{
  it('a different signed-in account sees none of the previous account practices',async()=>{
   await worker.fetch(new Request('https://test.example/v1/sessions',{method:'POST',headers:{'Content-Type':'application/json','oai-authenticated-user-id':'alice','oai-authenticated-user-email':'alice@example.test'},body:JSON.stringify({lesson_id:'example_guitar-rhythm',save_to_account:true})}),env);actor='bob';show('library');await screen.findByRole('heading',{name:'Your next practice starts here.'});expect(screen.queryByRole('heading',{name:'Practice a steady guitar rhythm'})).toBeNull();
  });
+ it('keeps accessible browser practices visible when one saved session cannot refresh',async()=>{
+  const unavailable=await preparePractice('example_draw-shading');await preparePractice('example_guitar-rhythm');
+  const original=globalThis.fetch;
+  vi.stubGlobal('fetch',async(...args:Parameters<typeof fetch>)=>String(args[0])==='/v1/sessions/'+unavailable.progress.session_id?Response.json({error:{code:'temporary_failure',message:'Temporary failure'}},{status:503}):original(...args));
+  show('library');
+  await screen.findByRole('heading',{name:'Practice a steady guitar rhythm'});
+  expect(screen.getByRole('alert').textContent).toMatch(/1 saved practice could not be refreshed/);
+  expect(JSON.parse(window.localStorage.getItem('showonce-library-v1')!).entries).toHaveLength(2);
+ });
+ it('offers clear filters when the account has no completed practices',async()=>{
+  actor='alice';await worker.fetch(new Request('https://test.example/v1/sessions',{method:'POST',headers:{'Content-Type':'application/json','oai-authenticated-user-id':actor,'oai-authenticated-user-email':'alice@example.test'},body:JSON.stringify({lesson_id:'example_guitar-rhythm',save_to_account:true})}),env);
+  show('library');await screen.findByRole('heading',{name:'Practice a steady guitar rhythm'});
+  fireEvent.change(screen.getByRole('combobox',{name:'Status'}),{target:{value:'completed'}});
+  await screen.findByRole('heading',{name:'No matching practices.'});
+  fireEvent.click(screen.getByRole('button',{name:'Clear filters'}));
+  await screen.findByRole('heading',{name:'Practice a steady guitar rhythm'});
+ });
+ it('does not mistake a failed account library request for an empty library',async()=>{
+  actor='alice';const original=globalThis.fetch;
+  vi.stubGlobal('fetch',async(...args:Parameters<typeof fetch>)=>String(args[0]).startsWith('/v1/library?')?Response.json({error:{code:'temporary_failure',message:'Saved practices could not be loaded.'}},{status:503}):original(...args));
+  show('library');await screen.findByRole('alert');
+  expect(screen.queryByRole('heading',{name:'Your next practice starts here.'})).toBeNull();
+  expect((screen.getByRole('button',{name:'Refresh library'}) as HTMLButtonElement).disabled).toBe(false);
+ });
  it('rechecks a changed account without sending the previous identity to public configuration',async()=>{
   await worker.fetch(new Request('https://test.example/v1/sessions',{method:'POST',headers:{'Content-Type':'application/json','oai-authenticated-user-id':'alice','oai-authenticated-user-email':'alice@example.test'},body:JSON.stringify({lesson_id:'example_guitar-rhythm',save_to_account:true})}),env);
   actor='alice';show('library');await screen.findByRole('heading',{name:'Practice a steady guitar rhythm'});

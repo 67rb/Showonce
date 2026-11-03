@@ -8,11 +8,14 @@ import s from '@/lib/strings';
 export function HomePractice(){
  const identity=useIdentity(),router=useRouter();
  const {ready,account,request,guestEntries}=identity;
- const [recent,setRecent]=useState<Entry|null>(null),[nextStep,setNextStep]=useState(''),[busy,setBusy]=useState(false),[error,setError]=useState('');
- useEffect(()=>{let active=true;if(!ready)return;
-  const load=async()=>{try{const entries=account?.user?(await request<{entries:Entry[]}>('/v1/library?filter=active')).entries:guestEntries().filter(entry=>entry.status!=='completed');const entry=[...entries].sort((a,b)=>b.updated_at.localeCompare(a.updated_at))[0];if(!entry){if(active){setRecent(null);setNextStep('');}return;}const progress=await request<Progress>('/v1/sessions/'+entry.id,undefined,{token:entry.token});const lesson=await request<Lesson>('/v1/lessons/'+entry.lesson_id,undefined,{token:entry.token});const step=lesson.steps.find(item=>item.id===progress.current_step_id);if(active){setRecent({...entry,completed_steps:progress.completed_step_ids.length});setNextStep(step?.title||step?.instructions||'');}}catch{if(active){setRecent(null);setNextStep('');}}};
+ const [snapshot,setSnapshot]=useState<{entry:Entry;nextStep:string;owner:string}|null>(null),[busy,setBusy]=useState(false),[error,setError]=useState('');
+ const owner=(account?.user?.id||'guest')+':'+identity.epoch();
+ const visible=ready&&!identity.timedOut&&snapshot?.owner===owner?snapshot:null;
+ const recent=visible?.entry,nextStep=visible?.nextStep;
+ useEffect(()=>{let active=true;if(!ready||identity.timedOut)return;
+  const load=async()=>{try{const entries=account?.user?(await request<{entries:Entry[]}>('/v1/library?filter=active')).entries:guestEntries().filter(entry=>entry.status!=='completed');const entry=[...entries].sort((a,b)=>b.updated_at.localeCompare(a.updated_at))[0];if(!entry){if(active)setSnapshot(null);return;}const progress=await request<Progress>('/v1/sessions/'+entry.id,undefined,{token:entry.token});const lesson=await request<Lesson>('/v1/lessons/'+entry.lesson_id,undefined,{token:entry.token});const step=lesson.steps.find(item=>item.id===progress.current_step_id);if(active)setSnapshot({entry:{...entry,completed_steps:progress.completed_step_ids.length},nextStep:step?.title||step?.instructions||'',owner});}catch{if(active)setSnapshot(null);}};
   void load();return()=>{active=false;};
- },[ready,account,request,guestEntries]);
+ },[ready,identity.timedOut,account,request,guestEntries,owner]);
  // 5.1.0 — "Try a sample lesson" always navigates on the first click, straight
  // to the public /lesson/sample overview. It is NOT gated behind the account
  // check or the backend lesson-creation path, and it never posts a request in
