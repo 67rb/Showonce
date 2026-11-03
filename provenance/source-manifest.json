@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "created_at": "2026-11-03T18:13:13.503Z",
+  "created_at": "2026-11-03T18:17:03.113Z",
   "owners": {
     "application": "Robé Berry",
     "ui": "Muhammad Hashir (https://github.com/mateir0)"
@@ -1505,8 +1505,8 @@
     },
     {
       "path": "src/app/professional/page.tsx",
-      "bytes": 9209,
-      "sha256": "683fcb4ee5c10b5e04ab15d7543d55721fef9d951c60762947a69a315345e5de"
+      "bytes": 9637,
+      "sha256": "b2e741b765e5f60093e28f3356d06dbfe3cdd78d9b2d3eeea13bf4418e6d3613"
     },
     {
       "path": "src/app/professional/privacy/page.tsx",

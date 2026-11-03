@@ -47,6 +47,12 @@ export default function ProfessionalPage() {
       <Hero69 />
 
       <div className="mx-auto w-full max-w-6xl px-4">
+        <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 border-b border-site-border py-4 text-center">
+          <p className="text-small text-site-muted">Explore sample learner work without signing in.</p>
+          <Link href="/professional/instructor/demo/" className="inline-flex min-h-11 items-center font-semibold underline">
+            Try the instructor demo
+          </Link>
+        </div>
         {/* HOW IT WORKS — numbered rows, green eyebrow */}
         <section className="bg-site-page pt-20 pb-0 md:pt-28 md:pb-0">
           <RevealGroup>
