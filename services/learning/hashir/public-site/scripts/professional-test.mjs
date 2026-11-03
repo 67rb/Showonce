@@ -336,3 +336,50 @@ test('optional preparation items do not block submission once required ones are 
   const submitted=await f.call(base+'/submit',{expected_version:2,share_evidence:true},'trainee2');assert.equal(submitted.status,200);assert.equal((await submitted.json()).status,'submitted');
  }finally{f.close();}
 });
+
+test('AI assigns course practice with a saved rubric and leaves approval to the instructor', async () => {
+ const f = fixture(), original = globalThis.fetch;
+ const path = '/v1/professional/assignments';
+ const project = {
+  title: 'Identify fittings on a classroom worksheet',
+  practice: 'Complete the course checkpoints, then label the fittings on a printed diagram.',
+  materials: ['Printed diagram'],
+  criteria: ['Fitting names are visible on the worksheet.'],
+  preparation: ['Use a paper diagram.'],
+ };
+ let calls = 0;
+ f.env.MODEL_API_KEY = 'TEST_ONLY';
+ globalThis.fetch = async (url, options) => {
+  if (String(url).endsWith('/input_tokens')) return Response.json({input_tokens: 100});
+  calls++;
+  const input = JSON.parse(options.body).input[1].content[0].text;
+  assert.ok(input.includes('pro_plumbing_parts'));
+  assert.ok(!input.includes('learner@example.test'));
+  return Response.json({
+   status: 'completed',
+   usage: {input_tokens: 100, output_tokens: 100},
+   output: [{type: 'message', content: [{type: 'output_text', text: JSON.stringify(project)}]}],
+  });
+ };
+ try {
+  const enrollment = await enroll(f);
+  const body = {enrollment_id: enrollment.id, generate_with_ai: true, ai_consent: true};
+  assert.equal((await f.call(path, body)).status, 403);
+  assert.equal((await f.call(path, {...body, ai_consent: false}, 'teacher')).status, 422);
+  assert.equal(calls, 0);
+  const response = await f.call(path, body, 'teacher');
+  assert.equal(response.status, 201);
+  const saved = (await (await f.call(path)).json()).assignments[0];
+  assert.equal(saved.brief.title, project.title);
+  assert.equal(saved.brief.outcome, project.practice);
+  assert.equal(saved.criteria[0].label, project.criteria[0]);
+  assert.equal(saved.preparation[0].label, project.preparation[0]);
+  assert.equal(saved.status, 'preparation');
+  assert.equal(saved.criteria[0].latest_decision, null);
+  assert.equal((await f.call(path, body, 'teacher')).status, 409);
+  assert.equal(calls, 1);
+ } finally {
+  globalThis.fetch = original;
+  f.close();
+ }
+});

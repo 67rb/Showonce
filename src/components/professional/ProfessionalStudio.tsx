@@ -772,6 +772,7 @@ function StudioBody({ view }: { view: "create" | "library" | "instructor" }) {
       {view === "instructor" && identity.account?.is_admin && (
         <InstructorAssignments
           assignments={assignments}
+          aiReady={aiChecksAvailable(identity.config)}
           busy={busy}
           run={run}
           post={post}
@@ -1723,12 +1724,14 @@ function AssignmentPanel({
 }
 function InstructorAssignments({
   assignments,
+  aiReady,
   busy,
   run,
   post,
   refresh,
 }: {
   assignments: Assignment[];
+  aiReady: boolean;
   busy: boolean;
   run: (action: () => Promise<void>) => Promise<void>;
   post: <T>(path: string, body: unknown, key?: string) => Promise<T>;
@@ -1797,6 +1800,29 @@ function InstructorAssignments({
               placeholder="enrollment_…"
             />
           </label>
+          <div>
+            <button
+              type="button"
+              className={primary}
+              disabled={busy || !aiReady || !enrollmentID.trim()}
+              onClick={() => void run(async () => {
+                await post("/v1/professional/assignments", {
+                  enrollment_id: enrollmentID.trim(),
+                  generate_with_ai: true,
+                  ai_consent: true,
+                });
+                setEnrollmentID("");
+                await refresh();
+              })}
+            >
+              Assign project and practice with AI · uses allowance
+            </button>
+            <p className="mt-2 text-small text-site-muted">
+              AI creates and assigns the project, practice, and checklist for this enrollment.
+              The instructor reviews the submitted work.
+            </p>
+            {!aiReady && <p className="mt-2 text-small text-site-muted">AI is currently unavailable.</p>}
+          </div>
           <label className="block text-small font-semibold text-site-ink">
             Brief title
             <input
