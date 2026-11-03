@@ -58,6 +58,81 @@ export default function InstructorDemoPage() {
             ? "I updated the worksheet. The elbow, tee and coupling are now labelled."
             : "I labelled the 90-degree elbow and the tee. The third fitting is still blank."}</p>
         </blockquote>
+        <figure className="rounded-xl border border-site-border bg-site-page p-4">
+          <figcaption className="font-semibold text-site-ink">
+            {isRevised ? "Revised sample worksheet" : "Sample worksheet"}
+            <span className="mt-1 block text-sm font-normal text-site-muted">
+              {isRevised ? "All three fittings are labelled." : "The coupling label is left blank."}
+            </span>
+          </figcaption>
+          <svg
+            viewBox="0 0 640 240"
+            role="img"
+            aria-labelledby="sample-worksheet-title sample-worksheet-desc"
+            className="mt-3 h-auto w-full"
+            focusable="false"
+          >
+            <title id="sample-worksheet-title">
+              {isRevised
+                ? "Revised sample worksheet with elbow, tee and coupling labelled"
+                : "Sample worksheet with elbow and tee labelled and coupling left blank"}
+            </title>
+            <desc id="sample-worksheet-desc">
+              {isRevised
+                ? "Schematic diagram of three pipe fittings in a row: a 90-degree elbow turning from horizontal to vertical, a tee with a downward branch, and a straight coupling joining two horizontal pipes. Labels below read Elbow, Tee and Coupling."
+                : "Schematic diagram of three pipe fittings in a row: a 90-degree elbow turning from horizontal to vertical, a tee with a downward branch, and a straight coupling joining two horizontal pipes. Labels below read Elbow and Tee. The coupling has a dashed leader line to a blank dashed label line."}
+            </desc>
+
+            {/* Elbow */}
+            <g fill="none" stroke="#242429" strokeWidth="20">
+              <path d="M 32 68 H 92 Q 120 68 120 96 V 152" />
+            </g>
+            <g fill="none" stroke="#ffffff" strokeWidth="10">
+              <path d="M 32 68 H 92 Q 120 68 120 96 V 152" />
+            </g>
+            <path d="M 82 55 V 81" stroke="#242429" strokeWidth="3" />
+            <path d="M 107 118 H 133" stroke="#242429" strokeWidth="3" />
+
+            {/* Tee */}
+            <g fill="none" stroke="#242429" strokeWidth="20">
+              <path d="M 232 68 H 408" />
+              <path d="M 320 68 V 152" />
+            </g>
+            <g fill="none" stroke="#ffffff" strokeWidth="10">
+              <path d="M 232 68 H 408" />
+              <path d="M 320 68 V 152" />
+            </g>
+            <path d="M 286 55 V 81" stroke="#242429" strokeWidth="3" />
+            <path d="M 354 55 V 81" stroke="#242429" strokeWidth="3" />
+            <path d="M 307 102 H 333" stroke="#242429" strokeWidth="3" />
+
+            {/* Coupling */}
+            <g fill="none" stroke="#242429" strokeWidth="20">
+              <path d="M 448 68 H 608" />
+            </g>
+            <g fill="none" stroke="#ffffff" strokeWidth="10">
+              <path d="M 448 68 H 608" />
+            </g>
+            <rect x="498" y="52" width="60" height="32" rx="4" fill="#ffffff" stroke="#242429" strokeWidth="3" />
+            <path d="M 513 52 V 84 M 543 52 V 84" stroke="#242429" strokeWidth="3" />
+
+            {/* Leader lines and labels */}
+            <path d="M 120 152 V 184" stroke="#71717a" strokeWidth="2" />
+            <path d="M 320 152 V 184" stroke="#71717a" strokeWidth="2" />
+            {isRevised ? (
+              <path d="M 528 84 V 184" stroke="#71717a" strokeWidth="2" />
+            ) : (
+              <path d="M 528 84 V 184" stroke="#71717a" strokeWidth="2" strokeDasharray="6 5" />
+            )}
+            <text x="120" y="208" textAnchor="middle" fontSize="17" fontWeight="600" fill="#16161a">Elbow</text>
+            <text x="320" y="208" textAnchor="middle" fontSize="17" fontWeight="600" fill="#16161a">Tee</text>
+            {isRevised ? (
+              <text x="528" y="208" textAnchor="middle" fontSize="17" fontWeight="600" fill="#16161a">Coupling</text>
+            ) : (
+              <line x1="478" y1="200" x2="578" y2="200" stroke="#71717a" strokeWidth="2" strokeDasharray="6 5" />
+            )}
+          </svg>
+        </figure>
         {decision ? (
           <div className="space-y-3">
             <p ref={statusRef} role="status" tabIndex={-1} className="font-semibold">Demo decision: {decision}.</p>
