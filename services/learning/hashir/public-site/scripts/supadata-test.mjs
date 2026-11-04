@@ -128,6 +128,27 @@ test('disabled Supadata reuses public YouTube captions when the page read fails,
   assert.ok(!calls.some(path=>path.includes('api.supadata.ai')));assert.ok(calls.some(path=>path.includes('/api/timedtext')));
  }finally{e.DB.close();}
 });
+test('disabled spoken-caption mode attempts public captions before accepting a YouTube description',async()=>{
+ const e=env();delete e.SUPADATA_ENABLED;const calls=[];
+ const description='Description only words about a poster image and channel notes, long enough to be accepted as a readable page source on their own.';
+ const captioned='Spoken caption words explain the actual tutorial steps in order, with enough spoken detail to build a complete practice lesson from the narration.';
+ const fetcher=async(input,options)=>{
+  const url=new URL(input);calls.push(url.href);
+  assert.ok(!options?.headers?.['x-api-key']);
+  if(url.href.startsWith('https://youtu.be/'))return new Response('<html><head><meta name="description" content="'+description+'"></head></html>',{headers:{'content-type':'text/html'}});
+  if(url.href.startsWith('https://www.youtube.com/watch'))return new Response('<html><script>{"captionTracks":[{"baseUrl":"https://www.youtube.com/api/timedtext?v=aAxGTnVNJiE&lang=en","languageCode":"en","kind":"asr"}]}</script></html>',{headers:{'content-type':'text/html'}});
+  if(url.href.startsWith('https://www.youtube.com/api/timedtext'))return Response.json({events:[{segs:[{utf8:captioned}]}]});
+  throw new Error('Unexpected fetch '+url.href);
+ };
+ try{
+  const source=await resolveTutorial(e,'https://youtu.be/aAxGTnVNJiE',fetcher);
+  assert.equal(source.origin,'social_transcript');
+  assert.match(source.text,/Spoken caption words/);assert.ok(!source.text.includes('Description only words'));
+  // Captions were attempted (and won) before any youtu.be page/description read.
+  assert.ok(calls[0].startsWith('https://www.youtube.com/watch'));assert.ok(calls.some(href=>href.includes('/api/timedtext')));assert.ok(!calls.some(href=>href.startsWith('https://youtu.be/')));
+  assert.ok(!calls.some(href=>href.includes('api.supadata.ai')));
+ }finally{e.DB.close();}
+});
 test('paid plan appearing after metadata still cannot start transcription',async()=>{
  const e=env(),p=provider();let accountCalls=0;
  const fetcher=async(input,options)=>new URL(input).pathname==='/v1/me'?Response.json(++accountCalls===1?free:{...free,plan:'Pro'}):p.fetcher(input,options);

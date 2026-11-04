@@ -133,12 +133,14 @@ export async function resolveTutorial(env,input,fetcher=fetch,{visualOnly=false}
  const url=sourceURL(input),platform=socialPlatform(url);
  if(!platform)return fetchTutorial(url.href,fetcher);
  if(!socialExtractionEnabled(env)){
-  // Free-only is preserved: no Supadata call is made here. For a non-visual
-  // YouTube link whose public page cannot be read, reuse the existing
-  // keyless caption fallback; without captions the original error stands.
+  // Free-only is preserved: no Supadata call is made here. Non-visual mode
+  // is the explicit spoken/written-instructions mode, so for YouTube try
+  // the existing keyless public captions BEFORE accepting the video page
+  // or description as a social_post_text source. Without usable captions
+  // the page read remains the fallback, with its original error if it fails.
   if(platform!=='YouTube'||visualOnly)return fetchTutorial(url.href,fetcher);
-  try{return await fetchTutorial(url.href,fetcher);}
-  catch(error){const rescued=await youtubeCaptionFallback(env,null,url,fetcher);if(rescued)return rescued;throw error;}
+  const rescued=await youtubeCaptionFallback(env,null,url,fetcher);if(rescued)return rescued;
+  return fetchTutorial(url.href,fetcher);
  }
  if(env.SUPADATA_API_KEY.startsWith('LLM_'))throw new AppError('source_provider_setup','Automatic transcription needs a Supadata API key. A Meta Model API key cannot be used for source extraction.',503);
  if(!env.DB)throw new AppError('source_storage_unavailable','Source-processing storage is unavailable.',503);
