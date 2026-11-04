@@ -163,7 +163,7 @@ export function LearningWorkspace({
     <div
       className={
         "learning-workspace relative min-h-[100svh] " +
-        (professional ? "bg-white" : "bg-site-page")
+        (professional ? "bg-white" : screen === "create" ? "bg-transparent" : "bg-site-page")
       }
     >
       <div
@@ -193,7 +193,7 @@ export function LearningWorkspace({
         )}
         {screen === "create" && !professional && <CreateHeading />}
         {identity.ready ? (
-          <div key={identity.account?.user?.id || "anonymous"}>{body}</div>
+          <div key={identity.account?.user?.id || "anonymous"} className={screen === "create" && !professional ? "rounded-[28px] bg-site-page p-4 shadow-xl md:p-6" : undefined}>{body}</div>
         ) : (
           <LoadingPanel screen={screen} />
         )}
@@ -310,12 +310,12 @@ function CreateHeading() {
      share the container's left edge (the old mx-auto centred subtitle block is
      removed), mirroring the /professional/create heading structure. */
   return (
-    <div className="mb-8">
+    <div className="mx-auto mb-8 max-w-xl pt-4 text-center">
       <header>
-        <h1 className="font-body-ui text-[2.75rem] font-bold tracking-[-0.02em] text-site-ink lg:text-[3.5rem]">
-          {s.createHeading}
+        <h1 className="font-body-ui text-[2.75rem] font-bold tracking-[-0.02em] text-white lg:text-[3.5rem]">
+          Learn something <em className="block font-serif font-normal">new</em>
         </h1>
-        <p className="mt-3 max-w-[560px] font-body-ui text-body font-semibold leading-relaxed text-site-muted">
+        <p className="mx-auto mt-3 max-w-[420px] font-body-ui text-body font-semibold leading-relaxed text-white">
           {s.createScopeNote}
         </p>
       </header>
