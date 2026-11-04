@@ -113,6 +113,8 @@ async function getEnv() {
         MODEL_API_KEY: env.MODEL_API_KEY,
         SUPADATA_API_KEY: env.SUPADATA_API_KEY,
         SUPADATA_ENABLED: env.SUPADATA_ENABLED,
+        VIDEO_DOWNLOADER_URL: env.VIDEO_DOWNLOADER_URL,
+        VIDEO_DOWNLOADER_TOKEN: env.VIDEO_DOWNLOADER_TOKEN,
         ADMIN_EMAILS: env.ADMIN_EMAILS,
       };
     })().catch(error => { runtimePromise = null; throw error; });
@@ -202,7 +204,7 @@ export default async function main(req, res) {
     res.end(payload);
   } catch (error) {
     let diagnostic = String(error?.stack || error?.message || error);
-    for (const key of ['TURSO_URL', 'TURSO_AUTH_TOKEN', 'MODEL_API_KEY', 'SUPADATA_API_KEY', 'AUTH_SECRET', 'AUTH_GITHUB_SECRET']) {
+    for (const key of ['TURSO_URL', 'TURSO_AUTH_TOKEN', 'MODEL_API_KEY', 'SUPADATA_API_KEY', 'VIDEO_DOWNLOADER_TOKEN', 'AUTH_SECRET', 'AUTH_GITHUB_SECRET']) {
       if (env[key]) diagnostic = diagnostic.split(env[key]).join('[REDACTED]');
     }
     console.error('showonce-backend-error', { stage, name: error?.name, code: error?.code, diagnostic: diagnostic.slice(0, 1200) });

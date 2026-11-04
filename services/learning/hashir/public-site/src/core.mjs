@@ -268,28 +268,53 @@ export async function providerJSON(response,signal){
  }catch(error){if(error instanceof AppError)throw error;throw new AppError('invalid_provider_response','AI response was interrupted. Check saved progress before starting another request.',502);}
  finally{signal?.removeEventListener('abort',onAbort);if(!complete)void reader.cancel().catch(()=>{});reader.releaseLock();}
 }
-export async function metaJSON(env,{instructions,content,schema,name,maxOutput=3500}){
+export async function metaJSON(env,{instructions,content,schema,name,maxOutput=3500,tokenLimit=16000,timeoutMs=35000,estimatedInputTokens=0}){
  if(!env.MODEL_API_KEY)throw new AppError('ai_unavailable','AI is not configured. Try an example lesson.',503);
  const budget=await budgetSummary(env.DB);
  if(budget.paused)throw new AppError('budget_paused','Public AI calls are paused while provider usage is reviewed. Free practice remains available.',503);
  if(budget.remaining_usd<=0)throw new AppError('budget_exhausted','The shared public AI trial budget is used up. You can still explore the example lessons.',402);
  const request={model:'muse-spark-1.3',input:[{role:'developer',content:instructions},{role:'user',content}],text:{format:{type:'json_schema',name,strict:true,schema}},reasoning:{effort:'minimal'},max_output_tokens:maxOutput,store:false};
  const post=async path=>{
-  const signal=AbortSignal.timeout(35000);let r;
+  const signal=AbortSignal.timeout(timeoutMs);let r;
   try{r=await fetch('https://api.meta.ai/v1'+path,{method:'POST',headers:{Authorization:'Bearer '+env.MODEL_API_KEY,'Content-Type':'application/json'},body:JSON.stringify(request),signal});}catch{throw new AppError(signal.aborted?'provider_timeout':'provider_failure',signal.aborted?'AI did not finish before the deadline. Check saved progress before starting another request.':'AI could not complete this request. Your current lesson is unchanged.',signal.aborted?504:502);}
+  if(path==='/responses/input_tokens'&&r.status===400&&content.some(part=>part.type==='input_video')){
+   void r.body?.cancel().catch(()=>{});
+   throw new AppError('video_url_preflight_rejected','Meta rejected the video URL before generation.',502);
+  }
   if(!r.ok){void r.body?.cancel().catch(()=>{});throw new AppError(r.status===429?'provider_rate_limited':'provider_failure',r.status===429?'AI is busy. Wait a moment and try again.':'AI could not complete this request. Your current lesson is unchanged.',r.status===429?429:502);}
   return providerJSON(r,signal);
  };
  const count=await post('/responses/input_tokens');const n=count?.input_tokens;
  if(!Number.isSafeInteger(n)||n<1)throw new AppError('invalid_provider_response','AI could not confirm the input size. No generation request was started.',502);
- if(n>16000)throw new AppError('input_too_large','This input is too large. Use a shorter tutorial or a smaller photo.');
- const maximum=cost(n+1024,maxOutput),reservation=await reserve(env.DB,maximum);
+ if(n>tokenLimit)throw new AppError('input_too_large','This input is too large. Use a shorter tutorial or a smaller photo.');
+ // Media inputs are not fully counted by the token-count endpoint (a 60s MP4
+ // counted 171 text tokens but used 16,386 input tokens). Callers that know
+ // the media size must pass estimatedInputTokens so the reservation covers
+ // actual usage; under-reserving would trip settle()'s usage_mismatch pause.
+ const maximum=cost(Math.max(n,estimatedInputTokens)+1024,maxOutput),reservation=await reserve(env.DB,maximum);
  const started=Date.now();const envelope=await post('/responses');const input=envelope?.usage?.input_tokens,output=envelope?.usage?.output_tokens;
  const actual=await settle(env.DB,reservation,input,output);
  if(envelope.status!=='completed')throw new AppError('incomplete_response','AI could not finish within the response limit. Try fewer instructions.',502);
  let value;try{value=JSON.parse(envelope.output.filter(b=>b.type==='message').flatMap(b=>b.content||[]).filter(p=>p.type==='output_text').map(p=>p.text).join(''));}catch{throw new AppError('invalid_provider_response','AI returned an unreadable response.',502);}
  if(!validModelJSON(value,schema))throw new AppError('invalid_provider_response','AI returned a response that did not match its required structure.',502);
  return {value,usage:{estimated_cost_usd:actual/1e6,input_tokens:input,output_tokens:output},latency_ms:Date.now()-started};
+}
+// Upload one MP4 to the Meta Files API for video understanding. The returned
+// file ID is referenced as an input_file block; callers must delete it with
+// deleteMetaFile once inference finishes (uploaded files do not expire by
+// default and count toward team storage).
+export async function uploadMetaVideo(env,bytes){
+ if(!env.MODEL_API_KEY)throw new AppError('ai_unavailable','AI is not configured. Try an example lesson.',503);
+ const form=new FormData();form.append('purpose','user_data');form.append('file',new Blob([bytes],{type:'video/mp4'}),'video.mp4');
+ const signal=AbortSignal.timeout(120000);let r;
+ try{r=await fetch('https://api.meta.ai/v1/files',{method:'POST',headers:{Authorization:'Bearer '+env.MODEL_API_KEY},body:form,signal});}catch{throw new AppError(signal.aborted?'provider_timeout':'provider_failure',signal.aborted?'The video upload did not finish before the deadline.':'The video could not be uploaded for analysis.',signal.aborted?504:502);}
+ if(!r.ok){void r.body?.cancel().catch(()=>{});throw new AppError(r.status===429?'provider_rate_limited':'provider_failure',r.status===429?'AI is busy. Wait a moment and try again.':'The video could not be uploaded for analysis.',r.status===429?429:502);}
+ const value=await providerJSON(r,signal);
+ if(typeof value?.id!=='string'||!/^file-[A-Za-z0-9_-]{1,128}$/.test(value.id))throw new AppError('invalid_provider_response','AI did not confirm the video upload.',502);
+ return value.id;
+}
+export async function deleteMetaFile(env,id){
+ try{const r=await fetch('https://api.meta.ai/v1/files/'+id,{method:'DELETE',headers:{Authorization:'Bearer '+env.MODEL_API_KEY},signal:AbortSignal.timeout(15000)});void r.body?.cancel().catch(()=>{});}catch{/* Expiry/cleanup is best-effort; inference already settled. */}
 }
 export async function makeLesson(env,source){
  const demonstration=source.origin==='video_observations';

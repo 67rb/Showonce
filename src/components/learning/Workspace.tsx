@@ -392,7 +392,8 @@ function CreatePanel() {
   // must offer the paste recovery up front (keeping the link as the source
   // reference) instead of only after a link attempt fails on the server.
   const sourceProcessingDisabled =
-    identity.config?.source_processing?.enabled === false;
+    identity.config?.source_processing?.enabled === false &&
+    identity.config.source_processing.video_downloader?.enabled !== true;
   const sourceCreditsExhausted = errorCode === "source_free_quota_exhausted";
   const linkSourceFailed =
     draft.mode === "link" &&
