@@ -31,10 +31,10 @@ export function StepIllustration({lessonID,step,token,disabled=false,onPrepare}:
  async function generate(){
   const controller=lifetime.current;if(!controller||controller.signal.aborted||inFlight.current||disabled)return;
   inFlight.current=true;setState('generating');setError(null);onPrepare();
-  try{const result=await identity.request<{status:string}>(path,{}, {token,signal:controller.signal});
+  try{await identity.request<{status:string}>(path,{}, {token,signal:controller.signal});
    if(controller.signal.aborted)return;
    for(let attempt=0;attempt<30;attempt++){
-    if(result.status==='ready'||attempt>0){if(await load(controller.signal))return;}
+    if(await load(controller.signal))return;
     if(controller.signal.aborted)return;setState('generating');
     await new Promise<void>(resolve=>{const finish=()=>{clearTimeout(timer);controller.signal.removeEventListener('abort',finish);resolve();};const timer=setTimeout(finish,3000);controller.signal.addEventListener('abort',finish,{once:true});});
    }
@@ -77,13 +77,11 @@ export function StepIllustrationPrefetch({lessonID,step,token}:{lessonID:string;
   const path='/v1/lessons/'+encodeURIComponent(lessonID)+'/steps/'+encodeURIComponent(step.id)+'/illustration';
   void (async()=>{
    try{
-    const result=await identity.request<{status:string}>(path,{},{token,signal:controller.signal});
+    await identity.request<{status:string}>(path,{},{token,signal:controller.signal});
     for(let attempt=0;attempt<30;attempt++){
      if(controller.signal.aborted)return;
-     if(result.status==='ready'||attempt>0){
-      try{const blob=await identity.request<Blob>(path+'/image',undefined,{token,image:true,signal:controller.signal});if(controller.signal.aborted)return;writeIllustration(key,{status:'ready',blob});return;}
-      catch(error){if(error instanceof LearningError&&error.status===404){/* still processing */}else throw error;}
-     }
+     try{const blob=await identity.request<Blob>(path+'/image',undefined,{token,image:true,signal:controller.signal});if(controller.signal.aborted)return;writeIllustration(key,{status:'ready',blob});return;}
+     catch(error){if(error instanceof LearningError&&error.status===404){/* still processing */}else throw error;}
      await new Promise<void>(resolve=>{const timer=setTimeout(resolve,3000);controller.signal.addEventListener('abort',()=>{clearTimeout(timer);resolve();},{once:true});});
     }
    }catch{/* Prefetch is background-only: failures stay with the written target. */}
