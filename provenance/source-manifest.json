@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "created_at": "2026-11-04T12:33:26.366Z",
+  "created_at": "2026-11-04T12:36:27.672Z",
   "owners": {
     "application": "Robé Berry",
     "ui": "Muhammad Hashir (https://github.com/mateir0)"
@@ -1725,8 +1725,8 @@
     },
     {
       "path": "src/components/learning/Workspace.tsx",
-      "bytes": 94020,
-      "sha256": "760de3de03334a521b425eab1fb128c28c1c303d0c3cce437c1408331dc0a30e"
+      "bytes": 95142,
+      "sha256": "a86e82e7a25d8bb23adfa083aa601e8481ff0ee2bd7847473547ac40b49ad654"
     },
     {
       "path": "src/components/lightswind/3d-scroll-trigger.tsx",
@@ -1995,8 +1995,8 @@
     },
     {
       "path": "tests/learning.test.tsx",
-      "bytes": 47072,
-      "sha256": "4e2456599107c341286acea592545540f27342a8baec1f52b5c476d40c6aeb85"
+      "bytes": 47767,
+      "sha256": "6de5d28f5a48a2c01942d9da4645b7a0b2e097b993885784d8569109cec99e87"
     },
     {
       "path": "tests/live-camera.test.tsx",

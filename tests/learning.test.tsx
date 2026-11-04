@@ -200,6 +200,15 @@ describe('working frontend with the actual learning Worker',()=>{
   show();
   const url='https://www.youtube.com/watch?v=abcdefghijk';
   fireEvent.change(await screen.findByRole('textbox',{name:'Tutorial link'}),{target:{value:url}});
+  // The notice offers a YouTube-only spoken-captions action: it stays in
+  // link mode (switching Learning approach to auto), makes no lesson call,
+  // and keeps the manual recoveries alongside it.
+  fireEvent.click(screen.getByRole('button',{name:'Try public YouTube captions'}));
+  expect(screen.getByText(/Spoken captions selected/)).toBeTruthy();
+  expect(screen.getByText(/Creating the AI lesson still uses the existing allowance/)).toBeTruthy();
+  expect(screen.getByRole('textbox',{name:'Tutorial link'})).toBeTruthy();
+  expect(screen.getByRole('button',{name:'Paste instructions instead'})).toBeTruthy();
+  expect(sent).toHaveLength(0);
   // The same notice also offers the explicitly free recovery: switching to
   // numbered steps makes no lesson call and keeps the link as reference.
   fireEvent.click(screen.getByRole('button',{name:'Use numbered steps · free'}));
@@ -217,6 +226,7 @@ describe('working frontend with the actual learning Worker',()=>{
   expect(sent).toHaveLength(1);
   expect(sent[0].source_text).toBe(instructions);
   expect(sent[0].source_url).toBe(url);
+  expect(sent[0].learning_mode).toBe('auto');
  });
  it('refresh failure keeps saved practices visible and library search matches the skill category',async()=>{
   await preparePractice();const original=globalThis.fetch;let fail=false;vi.stubGlobal('fetch',async(...args:Parameters<typeof fetch>)=>{if(fail&&String(args[0]).startsWith('/v1/sessions/'))throw new Error('Offline');return original(...args);});show('library');await screen.findByRole('heading',{name:'Sketch a shaded sphere'});fireEvent.change(screen.getByRole('searchbox',{name:'Find a practice'}),{target:{value:'drawing'}});expect(screen.getByRole('heading',{name:'Sketch a shaded sphere'})).toBeTruthy();fail=true;fireEvent.click(screen.getByRole('button',{name:'Refresh library'}));await screen.findByRole('alert');expect(screen.getByRole('heading',{name:'Sketch a shaded sphere'})).toBeTruthy();fireEvent.change(screen.getByRole('searchbox',{name:'Find a practice'}),{target:{value:'not found'}});fireEvent.click(screen.getByRole('button',{name:'Clear filters'}));expect(screen.getByRole('heading',{name:'Sketch a shaded sphere'})).toBeTruthy();

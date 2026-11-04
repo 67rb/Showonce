@@ -711,6 +711,17 @@ function CreatePanel() {
                       switch to free numbered steps.
                     </p>
                     <div className="mt-3 flex flex-wrap gap-3">
+                      {/(?:youtube\.com|youtu\.be)/i.test(draft.url) &&
+                        draft.learningMode === "visual" && (
+                          <button
+                            type="button"
+                            className="min-h-11 underline"
+                            disabled={busy}
+                            onClick={() => update("learningMode", "auto")}
+                          >
+                            Try public YouTube captions
+                          </button>
+                        )}
                       <button
                         type="button"
                         className="min-h-11 underline"
@@ -728,6 +739,16 @@ function CreatePanel() {
                         Use numbered steps · free
                       </button>
                     </div>
+                    {/(?:youtube\.com|youtu\.be)/i.test(draft.url) &&
+                      draft.learningMode === "auto" && (
+                        <p className="mt-2">
+                          Spoken captions selected. Choose Get the steps to try
+                          reading available public captions. This works only
+                          when the video has usable captions. Creating the AI
+                          lesson still uses the existing allowance. Visual
+                          actions are not analysed.
+                        </p>
+                      )}
                   </div>
                 )}
               </>
