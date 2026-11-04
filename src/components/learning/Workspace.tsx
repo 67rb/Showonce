@@ -2301,23 +2301,16 @@ function LessonPanel({
                         privately with this practice. You can delete it from
                         history.
                       </p>
-                      <label className="block text-site-ink">
-                        Photo of your work
-                        <input
-                          className={field}
-                          type="file"
-                          accept="image/png,image/jpeg,image/webp"
-                          disabled={busy}
-                          onChange={(e) => {
-                            const file = e.target.files?.[0] || null;
-                            setPhoto(file);
-                            setPhotoURL(file ? objectURL(file) : null);
-                            pending.current = null;
-                            setFeedback(null);
-                            setFeedbackID(null);
-                          }}
-                        />
-                      </label>
+                      <PhotoCheckpointInput
+                        disabled={busy}
+                        onPhoto={(file) => {
+                          setPhoto(file);
+                          setPhotoURL(objectURL(file));
+                          pending.current = null;
+                          setFeedback(null);
+                          setFeedbackID(null);
+                        }}
+                      />
                       {photoURL && (
                         <img
                           className="my-4 max-h-80 w-full rounded-2xl object-contain"
@@ -2522,5 +2515,89 @@ function Feedback({ value }: { value: Assessment }) {
         </p>
       </details>
     </div>
+  );
+}
+
+function PhotoCheckpointInput({disabled, onPhoto}: {disabled: boolean; onPhoto: (file: File) => void}) {
+  const video = useRef<HTMLVideoElement>(null);
+  const [open, setOpen] = useState(false);
+  const [ready, setReady] = useState(false);
+  const [cameraError, setCameraError] = useState("");
+  useEffect(() => {
+    if (!open) return;
+    let cancelled = false;
+    let stream: MediaStream | undefined;
+    async function start() {
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({audio: false, video: {facingMode: {ideal: "environment"}}});
+        if (cancelled) {
+          stream.getTracks().forEach(track => track.stop());
+          return;
+        }
+        if (video.current) video.current.srcObject = stream;
+      } catch {
+        if (!cancelled) {
+          setCameraError("Could not open the camera. Check your browser permissions or choose a photo from your library.");
+          setOpen(false);
+        }
+      }
+    }
+    void start();
+    return () => {
+      cancelled = true;
+      stream?.getTracks().forEach(track => track.stop());
+    };
+  }, [open]);
+  function capture() {
+    const frame = video.current;
+    if (!frame?.videoWidth || !frame.videoHeight) return;
+    const scale = Math.min(1, 1600 / Math.max(frame.videoWidth, frame.videoHeight));
+    const canvas = document.createElement("canvas");
+    canvas.width = Math.round(frame.videoWidth * scale);
+    canvas.height = Math.round(frame.videoHeight * scale);
+    const context = canvas.getContext("2d");
+    if (!context) return;
+    context.drawImage(frame, 0, 0, canvas.width, canvas.height);
+    canvas.toBlob(blob => {
+      if (!blob) {
+        setCameraError("Could not capture the photo. Try again or choose one from your library.");
+        return;
+      }
+      onPhoto(new File([blob], "checkpoint.jpg", {type: "image/jpeg"}));
+      setOpen(false);
+    }, "image/jpeg", 0.85);
+  }
+  return (
+    <fieldset className="space-y-3">
+      <legend className="font-semibold text-site-ink">Photo of your work</legend>
+      <label className="block text-small text-site-ink">
+        Choose from photo library
+        <input className={field} type="file" accept="image/png,image/jpeg,image/webp" disabled={disabled} onChange={event => {
+          const file = event.currentTarget.files?.[0];
+          if (file) {
+            setOpen(false);
+            setCameraError("");
+            onPhoto(file);
+          }
+          event.currentTarget.value = "";
+        }} />
+      </label>
+      {open ? (
+        <div className="space-y-3">
+          <video ref={video} autoPlay muted playsInline aria-label="Camera preview" onCanPlay={() => setReady(true)} className="max-h-80 w-full rounded-2xl bg-black object-contain" />
+          <div className="flex flex-wrap gap-2">
+            <button type="button" className={primary} disabled={disabled || !ready} onClick={capture}>Capture photo</button>
+            <button type="button" className={secondary} onClick={() => setOpen(false)}>Close camera</button>
+          </div>
+        </div>
+      ) : (
+        <button type="button" className={secondary} disabled={disabled} onClick={() => {
+          setCameraError("");
+          setReady(false);
+          setOpen(true);
+        }}>Take a photo</button>
+      )}
+      {cameraError && <p role="alert" className="text-small text-site-muted">{cameraError}</p>}
+    </fieldset>
   );
 }
