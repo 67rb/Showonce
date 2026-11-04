@@ -1750,6 +1750,13 @@ function InstructorAssignments({
     [prepText, setPrepText] = useState(""),
     [notes, setNotes] = useState<Record<string, string>>({}),
     [aiError, setAiError] = useState("");
+  // If a refresh reveals the kept enrollment now has an assignment, the
+  // failure alert (and its paid-retry invitation) no longer applies.
+  useEffect(() => {
+    const id = enrollmentID.trim();
+    if (id && assignments.some((item) => item.enrollment_id === id))
+      setAiError("");
+  }, [assignments, enrollmentID]);
   const lines = (value: string) =>
     value
       .split("\n")
@@ -1791,6 +1798,7 @@ function InstructorAssignments({
               setMaterials("");
               setCriteriaText("");
               setPrepText("");
+              setAiError("");
               await refresh();
             });
           }}
@@ -1850,8 +1858,8 @@ function InstructorAssignments({
                 className="mt-2 rounded-xl border border-danger/30 bg-danger/10 p-3 text-small text-site-ink"
               >
                 {aiError} Your enrollment ID is kept. Refresh saved data to
-                check whether an assignment was created before using the same
-                AI button to try again.
+                check whether an assignment was created, and correct the
+                enrollment ID if needed, before trying again.
               </p>
             )}
           </div>

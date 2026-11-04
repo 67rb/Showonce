@@ -1,7 +1,7 @@
 /* Copyright © 2026 Robé Berry. All rights reserved. See COPYRIGHT.md. */
 // @vitest-environment jsdom
 import {afterEach,beforeEach,expect,it,vi} from 'vitest';
-import {cleanup,fireEvent,render,screen,waitFor} from '@testing-library/react';
+import {cleanup,fireEvent,render,screen,waitFor,within} from '@testing-library/react';
 import {ProfessionalStudio} from '@/components/professional/ProfessionalStudio';
 const {request,identity}=vi.hoisted(()=>{const request=vi.fn();return {request,identity:{ready:true,account:{authenticated:true,user:{id:'learner'},is_admin:false},config:{ai_available:true,budget:{limit_usd:5,remaining_usd:4.5,paused:false}},request}};});
 vi.mock('@/components/learning/Identity',()=>({useIdentity:()=>identity,AccountBar:()=> <p>Account controls</p>}));
@@ -104,6 +104,64 @@ it('instructor assesses criteria one by one and learners see the decision',async
   fireEvent.change((await screen.findAllByLabelText('Criterion feedback'))[0],{target:{value:'Label the stop valve too.'}});
   fireEvent.click(screen.getAllByRole('button',{name:'Request changes'})[0]);
   await waitFor(()=>expect(request).toHaveBeenCalledWith('/v1/professional/assignments/assignment_one/assess',{criterion_id:'fittings',decision:'changes_requested',notes:'Label the stop valve too.',expected_version:2},expect.any(Object)));
+ }finally{identity.account.is_admin=false;}
+});
+it('shows AI assignment failure beside the AI action, keeps the enrollment, and retries with the same button',async()=>{
+ identity.account.is_admin=true;
+ let attempts=0;
+ const base=request.getMockImplementation()!;
+ request.mockImplementation(async(path:string,body?:unknown,options?:unknown)=>{
+  if(path==='/v1/professional/assignments'&&(body as {generate_with_ai?:boolean}|undefined)?.generate_with_ai){attempts++;if(attempts===1)throw Error('AI could not complete this request.');return {id:'assignment_ai'};}
+  if(path==='/v1/professional/assignments'&&!body)return {assignments:[]};
+  if(path==='/v1/professional/review-queue')return {enrollments:[]};
+  return base(path,body,options);});
+ try{
+  render(<ProfessionalStudio view="instructor"/>);
+  const form=await screen.findByRole('form',{name:'Create assignment'});
+  fireEvent.change(screen.getByLabelText('Learner enrollment ID'),{target:{value:'enrollment_123'}});
+  const button=within(form).getByRole('button',{name:'Assign project and practice with AI · uses allowance'});
+  fireEvent.click(button);
+  const alert=await within(form).findByRole('alert');
+  expect(alert.textContent).toContain('AI could not complete this request.');
+  expect(alert.textContent).toContain('correct the enrollment ID if needed');
+  // Beside the AI action itself, not merely somewhere in the form.
+  expect(button.parentElement?.contains(alert)).toBe(true);
+  expect((screen.getByLabelText('Learner enrollment ID') as HTMLInputElement).value).toBe('enrollment_123');
+  expect((button as HTMLButtonElement).disabled).toBe(false);
+  expect(attempts).toBe(1);
+  fireEvent.click(button);
+  await waitFor(()=>expect(attempts).toBe(2));
+  const aiCalls=request.mock.calls.filter(([path,body])=>path==='/v1/professional/assignments'&&(body as {generate_with_ai?:boolean}|undefined)?.generate_with_ai);
+  expect(aiCalls.map(([,body])=>body)).toEqual([
+   {enrollment_id:'enrollment_123',generate_with_ai:true,ai_consent:true},
+   {enrollment_id:'enrollment_123',generate_with_ai:true,ai_consent:true},
+  ]);
+  await waitFor(()=>expect((screen.getByLabelText('Learner enrollment ID') as HTMLInputElement).value).toBe(''));
+  expect(within(form).queryByRole('alert')).toBeNull();
+ }finally{identity.account.is_admin=false;}
+});
+it('clears the stale AI assignment error after a successful manual assignment',async()=>{
+ identity.account.is_admin=true;
+ const base=request.getMockImplementation()!;
+ request.mockImplementation(async(path:string,body?:unknown,options?:unknown)=>{
+  if(path==='/v1/professional/assignments'&&(body as {generate_with_ai?:boolean}|undefined)?.generate_with_ai)throw Error('AI could not complete this request.');
+  if(path==='/v1/professional/assignments'&&body)return {id:'assignment_manual'};
+  if(path==='/v1/professional/assignments'&&!body)return {assignments:[]};
+  if(path==='/v1/professional/review-queue')return {enrollments:[]};
+  return base(path,body,options);});
+ try{
+  render(<ProfessionalStudio view="instructor"/>);
+  const form=await screen.findByRole('form',{name:'Create assignment'});
+  fireEvent.change(screen.getByLabelText('Learner enrollment ID'),{target:{value:'enrollment_123'}});
+  fireEvent.click(within(form).getByRole('button',{name:'Assign project and practice with AI · uses allowance'}));
+  expect(await within(form).findByRole('alert')).toBeTruthy();
+  fireEvent.change(screen.getByLabelText('Brief title'),{target:{value:'Manual brief'}});
+  fireEvent.change(screen.getByLabelText('Expected outcome'),{target:{value:'Label every fitting'}});
+  fireEvent.change(screen.getByLabelText('Observable criteria (one per line)'),{target:{value:'Fittings identified'}});
+  fireEvent.change(screen.getByLabelText('Preparation checks (one per line)'),{target:{value:'Worksheet printed'}});
+  fireEvent.click(within(form).getByRole('button',{name:'Create assignment · free'}));
+  await waitFor(()=>expect(within(form).queryByRole('alert')).toBeNull());
+  expect((screen.getByLabelText('Learner enrollment ID') as HTMLInputElement).value).toBe('');
  }finally{identity.account.is_admin=false;}
 });
 it('instructor sees submitted evidence beside each criterion before deciding',async()=>{

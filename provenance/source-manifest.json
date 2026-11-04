@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "created_at": "2026-11-03T18:58:05.634Z",
+  "created_at": "2026-11-04T04:45:00.856Z",
   "owners": {
     "application": "Robé Berry",
     "ui": "Muhammad Hashir (https://github.com/mateir0)"
@@ -1865,8 +1865,8 @@
     },
     {
       "path": "src/components/professional/ProfessionalStudio.tsx",
-      "bytes": 78618,
-      "sha256": "d18ccd2caf2f0628636ee5871c28e50c05d5b21456328418b3aeed3c4c466f46"
+      "bytes": 78990,
+      "sha256": "3051a4ebc2ec3481328470cc731233ed4167bab3d3bcc1ed079359eff1843ba0"
     },
     {
       "path": "src/components/ui/resizable-navbar.tsx",
@@ -2015,8 +2015,8 @@
     },
     {
       "path": "tests/professional-studio.test.tsx",
-      "bytes": 30799,
-      "sha256": "676122d09f25ea1a9485bae88c1091555985e01f9a8881f7096da903b6a59b5b"
+      "bytes": 33143,
+      "sha256": "f6a7df7baad43daedbda9c9ad8c628e99ff36b65074342a7948499082eb010d5"
     },
     {
       "path": "tests/public-secrets.test.ts",
