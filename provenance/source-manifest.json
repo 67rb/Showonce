@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "created_at": "2026-11-04T12:23:31.128Z",
+  "created_at": "2026-11-04T12:29:08.821Z",
   "owners": {
     "application": "Robé Berry",
     "ui": "Muhammad Hashir (https://github.com/mateir0)"
@@ -2040,8 +2040,8 @@
     },
     {
       "path": "tests/step-illustration.test.tsx",
-      "bytes": 4144,
-      "sha256": "f143f7a8651707f60101ea9cd4c76b1e7821f575f3989f9b8cd651f964d2b4d1"
+      "bytes": 5033,
+      "sha256": "4e506ab1090f73a54c56fb0b2fe5d6a075215832574375a317f3545f684c2a2e"
     },
     {
       "path": "tests/step-questions.test.tsx",

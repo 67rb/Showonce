@@ -1,7 +1,7 @@
 /* Copyright © 2026 Robé Berry. All rights reserved. See COPYRIGHT.md. */
 // @vitest-environment jsdom
 import {describe,it,expect,vi,beforeEach,afterEach} from 'vitest';
-import {render,screen,cleanup,waitFor} from '@testing-library/react';
+import {act,render,screen,cleanup,waitFor} from '@testing-library/react';
 import {StepIllustration,StepIllustrationPrefetch} from '@/components/learning/StepIllustration';
 import {LearningError,type Step} from '@/lib/learning';
 import {illustrationKey,readIllustration,clearIllustrationCache,writeIllustration} from '@/lib/illustration-cache';
@@ -32,6 +32,29 @@ describe('step illustration timing',()=>{
   const posts=request.mock.calls.filter(call=>call[1]!==undefined);
   expect(posts).toHaveLength(1);
   expect(posts[0][0]).toBe('/v1/lessons/lesson_1/steps/step_1/illustration');
+ });
+ it('fetches the image immediately when generation returns processing',async()=>{
+  let imageCalls=0;
+  request.mockImplementation(async(path:string,body?:unknown)=>{
+   if(path.endsWith('/image')){
+    imageCalls++;
+    if(imageCalls===1)throw new LearningError('No image yet','image_not_ready',404);
+    return new Blob(['img'],{type:'image/png'});
+   }
+   if(body!==undefined)return {status:'processing'};
+   throw new Error('Unexpected '+path);
+  });
+  vi.useFakeTimers();
+  try {
+   render(<StepIllustration lessonID="lesson_1" step={step} token={null} onPrepare={()=>{}}/>);
+   await act(async()=>{await vi.advanceTimersByTimeAsync(0);});
+   const img=screen.getByRole('img',{name:'AI illustration: One light circle is visible.'});
+   expect(img.getAttribute('src')).toBe('blob:target');
+   expect(imageCalls).toBe(2);
+  } finally {
+   cleanup();
+   vi.useRealTimers();
+  }
  });
  it('does not generate when the AI allowance is unavailable',async()=>{
   config.ai_available=false;
