@@ -1,6 +1,7 @@
 /* Copyright © 2026 Robé Berry. All rights reserved. See COPYRIGHT.md. */
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import {AI_BUDGET_MICRO} from '../src/core.mjs';
 import {readFile,readdir} from 'node:fs/promises';
 import {DatabaseSync} from 'node:sqlite';
 import {localDB,localBucket} from './d1-local.mjs';
@@ -58,7 +59,7 @@ test('the question migration preserves existing practices and the shared spendin
 });
 
 test('exhausted AI budget still permits saved answers and never starts another provider request',async()=>{
- const f=fixture(),p=provider();try{const x=await practice(f);await f.call(x.path,x.body,x.token,'saved-first');await f.env.DB.prepare('UPDATE ai_budget SET charged_micro=5000000 WHERE id=1').run();const before=p.seen.length;const response=await f.call(x.path,{...x.body,question:'Can you explain another detail?'},x.token,'out-of-budget');assert.equal(response.status,402);assert.equal(p.seen.length,before);const history=await(await f.call(x.path+'?step_id='+x.body.step_id,undefined,x.token)).json();assert.equal(history.questions.find(item=>item.request_key==='saved-first').answer.answer,answer.answer);assert.equal((await f.env.DB.prepare('SELECT calls FROM ai_budget WHERE id=1').first()).calls,1);
+ const f=fixture(),p=provider();try{const x=await practice(f);await f.call(x.path,x.body,x.token,'saved-first');await f.env.DB.prepare('UPDATE ai_budget SET charged_micro=? WHERE id=1').bind(AI_BUDGET_MICRO).run();const before=p.seen.length;const response=await f.call(x.path,{...x.body,question:'Can you explain another detail?'},x.token,'out-of-budget');assert.equal(response.status,402);assert.equal(p.seen.length,before);const history=await(await f.call(x.path+'?step_id='+x.body.step_id,undefined,x.token)).json();assert.equal(history.questions.find(item=>item.request_key==='saved-first').answer.answer,answer.answer);assert.equal((await f.env.DB.prepare('SELECT calls FROM ai_budget WHERE id=1').first()).calls,1);
  }finally{p.restore();f.close();}
 });
 test('the bounded question history rejects a fifty-first question before contacting AI',async()=>{

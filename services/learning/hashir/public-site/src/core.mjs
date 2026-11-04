@@ -1,6 +1,6 @@
 /* Copyright © 2026 Robé Berry. All rights reserved. See COPYRIGHT.md. */
 export const VERSION='hashir.ai.v2-proposed';
-export const AI_BUDGET_MICRO=5_000_000;
+export const AI_BUDGET_MICRO=35_000_000;
 export const SAFETY='Visual feedback cannot certify physical safety, hidden properties, or professional competence.';
 export const HOSTS=new Set(['origami.me','www.origami.me','instructables.com','www.instructables.com','developer.mozilla.org','www.freecodecamp.org','freecodecamp.org','learn.adafruit.com']);
 export class AppError extends Error {constructor(code,message,status=422){super(message);this.code=code;this.status=status;}}
