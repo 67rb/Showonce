@@ -702,17 +702,27 @@ function CreatePanel() {
                     <p>
                       Automatic link reading is not connected. Only publicly
                       readable captions and descriptions can be extracted from
-                      a link, so pasting the tutorial instructions is the
-                      reliable way to continue.
+                      a link, so you can paste the tutorial instructions or
+                      switch to free numbered steps.
                     </p>
-                    <button
-                      type="button"
-                      className="mt-3 min-h-11 underline"
-                      disabled={busy}
-                      onClick={pasteInstructions}
-                    >
-                      Paste instructions instead
-                    </button>
+                    <div className="mt-3 flex flex-wrap gap-3">
+                      <button
+                        type="button"
+                        className="min-h-11 underline"
+                        disabled={busy}
+                        onClick={pasteInstructions}
+                      >
+                        Paste instructions instead
+                      </button>
+                      <button
+                        type="button"
+                        className="min-h-11 underline"
+                        disabled={busy}
+                        onClick={useFree}
+                      >
+                        Use numbered steps · free
+                      </button>
+                    </div>
                   </div>
                 )}
               </>

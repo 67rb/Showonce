@@ -189,6 +189,13 @@ describe('working frontend with the actual learning Worker',()=>{
   show();
   const url='https://www.youtube.com/watch?v=abcdefghijk';
   fireEvent.change(await screen.findByRole('textbox',{name:'Tutorial link'}),{target:{value:url}});
+  // The same notice also offers the explicitly free recovery: switching to
+  // numbered steps makes no lesson call and keeps the link as reference.
+  fireEvent.click(screen.getByRole('button',{name:'Use numbered steps · free'}));
+  expect(sent).toHaveLength(0);
+  expect(screen.getByRole('button',{name:'Create free practice'})).toBeTruthy();
+  expect((screen.getByRole('textbox',{name:'Source reference (optional)'}) as HTMLInputElement).value).toBe(url);
+  fireEvent.click(screen.getByRole('button',{name:'Tutorial link'}));
   fireEvent.click(screen.getByRole('button',{name:'Paste instructions instead'}));
   expect(sent).toHaveLength(0);
   expect((screen.getByRole('textbox',{name:'Source reference (optional)'}) as HTMLInputElement).value).toBe(url);
