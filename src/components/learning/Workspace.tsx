@@ -1,5 +1,7 @@
 /* Copyright © 2026 Muhammad Hashir (https://github.com/mateir0). All rights reserved. See COPYRIGHT.md. */
 "use client";
+
+import { SerifAccent } from "@/components/Reveal";
 import { AiAllowance } from "./AiAllowance";
 import {
   useCallback,
@@ -305,23 +307,10 @@ function AllowancePanel() {
     </section>
   );
 }
-function CreateHeading() {
-  /* 5.3 (L1) — one stacked header block: eyebrow row, H1 and subtitle all
-     share the container's left edge (the old mx-auto centred subtitle block is
-     removed), mirroring the /professional/create heading structure. */
-  return (
-    <div className="mx-auto mb-8 max-w-xl pt-4 text-center">
-      <header>
-        <h1 className="font-body-ui text-[2.75rem] font-bold tracking-[-0.02em] text-white lg:text-[3.5rem]">
-          Learn something <em className="block font-serif font-normal">new</em>
-        </h1>
-        <p className="mx-auto mt-3 max-w-[420px] font-body-ui text-body font-semibold leading-relaxed text-white">
-          {s.createScopeNote}
-        </p>
-      </header>
-    </div>
-  );
-}
+function CreateHeading(){return <div className="mb-8"><header className="text-center">
+   <h1 className="font-display-ui text-[2.75rem] font-extrabold leading-tight tracking-tight text-white"><SerifAccent text={s.createHeading}/></h1>
+   <p className="mx-auto mt-3 max-w-[320px] font-body-ui text-body font-semibold leading-relaxed text-white/90">{s.createScopeNote}</p>
+  </header></div>;}
 function CreatePanel() {
   const identity = useIdentity(),
     router = useRouter(),

@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { PublicNavbar } from "@/components/PublicNavbar";
 import { PublicFooter } from "@/components/PublicFooter";
 import { InteriorHeader } from "@/components/InteriorHeader";
-import ShaderBackground from "@/components/lightswind/shader-background";
+import { SatinBackdrop } from "@/components/create/SatinBackdrop";
 import type { ReactNode } from "react";
 
 // P1 — the (public) group serves the Hobby landing page (/) and every Hobby
@@ -24,8 +24,8 @@ export function PublicShell({ children }: { children: ReactNode }) {
     <div className="dark relative isolate flex min-h-dvh flex-col">
       {create && (
         <div aria-hidden className="pointer-events-none fixed inset-0 -z-10 bg-[#57412a]">
-          <ShaderBackground color="#B58B55" className="motion-reduce:hidden" />
-          <div className="absolute inset-0 bg-black/30" />
+          <SatinBackdrop />
+          <div className="absolute inset-0 bg-[radial-gradient(120%_120%_at_50%_0%,rgba(18,10,2,0.28),rgba(8,4,1,0.62)_78%)]" />
         </div>
       )}
       {floatingHeader ? <PublicNavbar /> : <InteriorHeader />}
