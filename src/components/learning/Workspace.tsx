@@ -387,6 +387,22 @@ function CreatePanel() {
           : draft.linkTranscript),
     });
   };
+  // When /api/config says automatic source processing is off, link mode
+  // must offer the paste recovery up front (keeping the link as the source
+  // reference) instead of only after a link attempt fails on the server.
+  const sourceProcessingDisabled =
+    identity.config?.source_processing?.enabled === false;
+  const pasteInstructions = () => {
+    setError(null);
+    setErrorCode("");
+    setFieldError("");
+    identity.setDraft({
+      ...draft,
+      mode: "text",
+      reference: draft.mode === "link" ? draft.url : draft.reference,
+      text: draft.text || draft.linkTranscript,
+    });
+  };
   const textKey = draft.mode === "steps" ? "stepsText" : "text",
     referenceKey = draft.mode === "steps" ? "stepsReference" : "reference";
   const update = (key: keyof typeof draft, value: string) =>
@@ -677,6 +693,27 @@ function CreatePanel() {
                   <p role="alert" className="mt-3 text-small text-danger">
                     {fieldError}
                   </p>
+                )}
+                {sourceProcessingDisabled && (
+                  <div
+                    role="status"
+                    className="mt-4 rounded-2xl border border-[#F59E0B]/30 bg-[#F59E0B]/10 p-4 text-small text-site-ink"
+                  >
+                    <p>
+                      Automatic link reading is not connected. Only publicly
+                      readable captions and descriptions can be extracted from
+                      a link, so pasting the tutorial instructions is the
+                      reliable way to continue.
+                    </p>
+                    <button
+                      type="button"
+                      className="mt-3 min-h-11 underline"
+                      disabled={busy}
+                      onClick={pasteInstructions}
+                    >
+                      Paste instructions instead
+                    </button>
+                  </div>
                 )}
               </>
             ) : (

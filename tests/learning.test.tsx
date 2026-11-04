@@ -178,6 +178,28 @@ describe('working frontend with the actual learning Worker',()=>{
   const original=globalThis.fetch;vi.stubGlobal('fetch',async(...args:Parameters<typeof fetch>)=>{if(String(args[0])==='/v1/lessons'&&JSON.parse(String(args[1]?.body)).processing_mode==='ai')return Response.json({error:{code:'source_free_quota_exhausted',message:'Free source credits are used up.'}},{status:429});const response=await original(...args);if(String(args[0])==='/api/config'){const value=await response.json();return Response.json({...value,ai_available:true});}return response;});
   show();await screen.findByRole('button',{name:'Start free'});fireEvent.change(screen.getByRole('textbox',{name:'Tutorial link'}),{target:{value:'https://www.youtube.com/watch?v=abcdefghijk'}});fireEvent.click(screen.getByRole('button',{name:'Get the steps'}));fireEvent.click(await screen.findByRole('button',{name:'Use numbered steps · free'}));expect((screen.getByRole('textbox',{name:'Source reference (optional)'}) as HTMLInputElement).value).toBe('https://www.youtube.com/watch?v=abcdefghijk');expect(screen.getByRole('button',{name:'Create free practice'})).toBeTruthy();expect((await env.DB.prepare('SELECT calls FROM ai_budget WHERE id=1').first())?.calls).toBe(0);
  });
+ it('offers paste recovery without a link attempt when source processing is disabled',async()=>{
+  const original=globalThis.fetch,sent:Record<string,unknown>[]=[];
+  vi.stubGlobal('fetch',async(...args:Parameters<typeof fetch>)=>{
+   const body=typeof args[1]?.body==='string'?JSON.parse(args[1].body):null;
+   if(String(args[0])==='/api/config'){const response=await original(...args);const value=await response.json();return Response.json({...value,ai_available:true,source_processing:{enabled:false},budget:{...(value.budget||{}),remaining_usd:4,paused:false}});}
+   if(String(args[0])==='/v1/lessons'&&body?.processing_mode==='ai'){sent.push(body);return Response.json({id:'lesson_pasted',title:'Pasted tutorial lesson',category:'Test',materials:['Paper'],steps:[{id:'s1',position:1,title:'Step one',instructions:'Fold the paper carefully.',expected_visual_result:'A folded sheet.',assessment_criteria:[],visual_limits:['Self-review only.'],photo_assessable:false}]});}
+   return original(...args);
+  });
+  show();
+  const url='https://www.youtube.com/watch?v=abcdefghijk';
+  fireEvent.change(await screen.findByRole('textbox',{name:'Tutorial link'}),{target:{value:url}});
+  fireEvent.click(screen.getByRole('button',{name:'Paste instructions instead'}));
+  expect(sent).toHaveLength(0);
+  expect((screen.getByRole('textbox',{name:'Source reference (optional)'}) as HTMLInputElement).value).toBe(url);
+  const instructions='Fold the paper in half carefully, then open it again and fold each corner into the centre line slowly and neatly today.';
+  fireEvent.change(screen.getByRole('textbox',{name:'Instructions or transcript'}),{target:{value:instructions}});
+  fireEvent.click(screen.getByRole('button',{name:'Get the steps'}));
+  await screen.findByRole('button',{name:'3 · Start practicing'});
+  expect(sent).toHaveLength(1);
+  expect(sent[0].source_text).toBe(instructions);
+  expect(sent[0].source_url).toBe(url);
+ });
  it('refresh failure keeps saved practices visible and library search matches the skill category',async()=>{
   await preparePractice();const original=globalThis.fetch;let fail=false;vi.stubGlobal('fetch',async(...args:Parameters<typeof fetch>)=>{if(fail&&String(args[0]).startsWith('/v1/sessions/'))throw new Error('Offline');return original(...args);});show('library');await screen.findByRole('heading',{name:'Sketch a shaded sphere'});fireEvent.change(screen.getByRole('searchbox',{name:'Find a practice'}),{target:{value:'drawing'}});expect(screen.getByRole('heading',{name:'Sketch a shaded sphere'})).toBeTruthy();fail=true;fireEvent.click(screen.getByRole('button',{name:'Refresh library'}));await screen.findByRole('alert');expect(screen.getByRole('heading',{name:'Sketch a shaded sphere'})).toBeTruthy();fireEvent.change(screen.getByRole('searchbox',{name:'Find a practice'}),{target:{value:'not found'}});fireEvent.click(screen.getByRole('button',{name:'Clear filters'}));expect(screen.getByRole('heading',{name:'Sketch a shaded sphere'})).toBeTruthy();
  });
