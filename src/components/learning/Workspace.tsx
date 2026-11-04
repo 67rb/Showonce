@@ -376,6 +376,7 @@ function CreatePanel() {
   const useFree = () => {
     setError(null);
     setErrorCode("");
+    setFieldError("");
     identity.setDraft({
       ...draft,
       mode: "steps",
@@ -392,6 +393,10 @@ function CreatePanel() {
   // reference) instead of only after a link attempt fails on the server.
   const sourceProcessingDisabled =
     identity.config?.source_processing?.enabled === false;
+  const sourceCreditsExhausted = errorCode === "source_free_quota_exhausted";
+  const linkSourceFailed =
+    draft.mode === "link" &&
+    /^(transcript_required|source_|unsupported_source|insufficient_source)/.test(errorCode);
   const pasteInstructions = () => {
     setError(null);
     setErrorCode("");
@@ -694,7 +699,7 @@ function CreatePanel() {
                     {fieldError}
                   </p>
                 )}
-                {sourceProcessingDisabled && (
+                {sourceProcessingDisabled && !linkSourceFailed && (
                   <div
                     role="status"
                     className="mt-4 rounded-2xl border border-[#F59E0B]/30 bg-[#F59E0B]/10 p-4 text-small text-site-ink"
@@ -891,22 +896,25 @@ function CreatePanel() {
           {error && draft.mode !== "steps" && (
             <div className="mt-4 rounded-2xl border border-site-border p-4 text-small text-site-ink">
               <p>
-                {errorCode === "source_free_quota_exhausted"
-                  ? "Video-reading credits are used up. You can still practice for free."
+                {sourceCreditsExhausted
+                  ? "Automatic video-reading credits are used up. Keep this link as a reference and write your own steps to practice for free."
                   : "You can continue with your own instructions."}
               </p>
               {draft.mode === "link" && /(?:youtube\.com|youtu\.be)/i.test(draft.url) && ["source_free_quota_exhausted", "source_paid_usage_disabled", "source_rate_limited", "source_provider_setup", "source_visual_quota"].includes(errorCode) && (
                 <div className="mt-3">
-                  {draft.learningMode === "visual" ? <button type="button" className="min-h-11 underline" onClick={() => update("learningMode", "auto")}>Use spoken captions instead</button> : <p role="status">Spoken captions selected. Choose Get the steps to retry. Caption extraction is free; creating the AI lesson still uses the existing allowance. Visual actions are not analysed.</p>}
+                  {draft.learningMode === "visual" ? <button type="button" className="min-h-11 underline" onClick={() => update("learningMode", "auto")}>Use spoken captions instead</button> : <p role="status">Spoken captions selected. Choose Get the steps to try reading available public captions. This works only when the video has usable captions. Creating the AI lesson still uses the existing allowance. Visual actions are not analysed.</p>}
                 </div>
               )}
-              <button
-                type="button"
-                className="mt-3 min-h-11 underline"
-                onClick={useFree}
-              >
-                Use numbered steps · free
-              </button>
+              <div className="mt-3 flex flex-wrap gap-x-4">
+                <button type="button" className="min-h-11 underline" onClick={useFree}>
+                  Use numbered steps · free
+                </button>
+                {linkSourceFailed && aiReady && (
+                  <button type="button" className="min-h-11 underline" onClick={pasteInstructions}>
+                    Paste instructions or a transcript · uses AI allowance
+                  </button>
+                )}
+              </div>
               <p className="mt-3 text-site-muted">
                 Write 2–18 steps. Your source link stays attached; no AI request
                 is needed.

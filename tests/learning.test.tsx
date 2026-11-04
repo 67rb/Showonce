@@ -176,7 +176,18 @@ describe('working frontend with the actual learning Worker',()=>{
  });
  it('a source quota failure offers free steps and keeps the original reference',async()=>{
   const original=globalThis.fetch;vi.stubGlobal('fetch',async(...args:Parameters<typeof fetch>)=>{if(String(args[0])==='/v1/lessons'&&JSON.parse(String(args[1]?.body)).processing_mode==='ai')return Response.json({error:{code:'source_free_quota_exhausted',message:'Free source credits are used up.'}},{status:429});const response=await original(...args);if(String(args[0])==='/api/config'){const value=await response.json();return Response.json({...value,ai_available:true});}return response;});
-  show();await screen.findByRole('button',{name:'Start free'});fireEvent.change(screen.getByRole('textbox',{name:'Tutorial link'}),{target:{value:'https://www.youtube.com/watch?v=abcdefghijk'}});fireEvent.click(screen.getByRole('button',{name:'Get the steps'}));fireEvent.click(await screen.findByRole('button',{name:'Use numbered steps · free'}));expect((screen.getByRole('textbox',{name:'Source reference (optional)'}) as HTMLInputElement).value).toBe('https://www.youtube.com/watch?v=abcdefghijk');expect(screen.getByRole('button',{name:'Create free practice'})).toBeTruthy();expect((await env.DB.prepare('SELECT calls FROM ai_budget WHERE id=1').first())?.calls).toBe(0);
+  const url='https://www.youtube.com/watch?v=abcdefghijk';
+  show();await screen.findByRole('button',{name:'Start free'});
+  fireEvent.change(screen.getByRole('textbox',{name:'Tutorial link'}),{target:{value:url}});
+  fireEvent.click(screen.getByRole('button',{name:'Get the steps'}));
+  expect(await screen.findByRole('button',{name:'Paste instructions or a transcript · uses AI allowance'})).toBeTruthy();
+  fireEvent.click(screen.getByRole('button',{name:'Use numbered steps · free'}));
+  expect((screen.getByRole('textbox',{name:'Source reference (optional)'}) as HTMLInputElement).value).toBe(url);
+  fireEvent.change(screen.getByRole('textbox',{name:'2–18 numbered instructions'}),{target:{value:'1. Draw a circle on paper.\n2. Shade its lower edge.'}});
+  fireEvent.click(screen.getByRole('button',{name:'Create free practice'}));
+  await screen.findByRole('button',{name:'3 · Start practicing'});
+  expect(calls.find(call=>call.path==='/v1/lessons')?.body).toMatchObject({processing_mode:'structured_text',source_url:url});
+  expect((await env.DB.prepare('SELECT calls FROM ai_budget WHERE id=1').first())?.calls).toBe(0);
  });
  it('offers paste recovery without a link attempt when source processing is disabled',async()=>{
   const original=globalThis.fetch,sent:Record<string,unknown>[]=[];

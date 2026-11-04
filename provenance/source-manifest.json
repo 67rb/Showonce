@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "created_at": "2026-11-04T04:54:28.061Z",
+  "created_at": "2026-11-04T05:00:04.710Z",
   "owners": {
     "application": "Robé Berry",
     "ui": "Muhammad Hashir (https://github.com/mateir0)"
@@ -930,8 +930,8 @@
     },
     {
       "path": "services/learning/hashir/public-site/scripts/illustration-test.mjs",
-      "bytes": 6192,
-      "sha256": "cddea260659cbb5158f7000be4c1b0d787c4478ea80c97f502061c62eb71d59d"
+      "bytes": 6293,
+      "sha256": "77eaaec7072457d2020e3622864f17622363f839a2f842f8a7c1e7be3647eba9"
     },
     {
       "path": "services/learning/hashir/public-site/scripts/large-source-smoke.mjs",
@@ -1040,8 +1040,8 @@
     },
     {
       "path": "services/learning/hashir/public-site/src/illustrations.mjs",
-      "bytes": 7727,
-      "sha256": "957a37249e5f474cdd2bfd22dbb492b9043a323799c6cdca8311152b885323ec"
+      "bytes": 7960,
+      "sha256": "97b989ce395b4dfaf2a58634c8bafff1e6a747c073dcb727e2448ec48e7ae342"
     },
     {
       "path": "services/learning/hashir/public-site/src/professional-evidence.mjs",
@@ -1725,8 +1725,8 @@
     },
     {
       "path": "src/components/learning/Workspace.tsx",
-      "bytes": 93368,
-      "sha256": "bb96d96d5320fd3cece7077781dd9a3e0c97f17d5aca6cf259969b90ab6d4554"
+      "bytes": 94020,
+      "sha256": "760de3de03334a521b425eab1fb128c28c1c303d0c3cce437c1408331dc0a30e"
     },
     {
       "path": "src/components/lightswind/3d-scroll-trigger.tsx",
@@ -1995,8 +1995,8 @@
     },
     {
       "path": "tests/learning.test.tsx",
-      "bytes": 46613,
-      "sha256": "8dd00af5b66d3c77b2089c9d8dcda0ca06da01bb70f1ca2d983ee333bddfbfea"
+      "bytes": 47072,
+      "sha256": "4e2456599107c341286acea592545540f27342a8baec1f52b5c476d40c6aeb85"
     },
     {
       "path": "tests/live-camera.test.tsx",
