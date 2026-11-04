@@ -45,3 +45,12 @@ test('Google access checks do not mislabel a valid YouTube link or get fetched',
   assert.equal(calls,1);
  }
 });
+
+test('YouTube boilerplate alone requests a transcript instead of generating a lesson',async()=>{
+ const tagline='Enjoy the videos and music you love, upload original content, and share it all with friends, family, and the world on YouTube.';
+ const url='https://www.youtube.com/watch?v=YTUKCGtGY2s';
+ const meta='<meta name="description" content="'+tagline+'">';
+ await assert.rejects(()=>fetchTutorial(url,async()=>page(meta)),error=>error.code==='transcript_required');
+ const result=await fetchTutorial(url,async()=>page(meta+'<meta property="og:description" content="'+instructions+'">'));
+ assert.equal(result.text,instructions);
+});

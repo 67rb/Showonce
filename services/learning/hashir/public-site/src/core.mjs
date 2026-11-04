@@ -46,7 +46,11 @@ export function socialText(html,platform=null){
   try{const visit=(v,depth=0)=>{if(depth>8||!v||typeof v!=='object')return;if(Array.isArray(v)){v.slice(0,50).forEach(x=>visit(x,depth+1));return;}for(const key of ['description','articleBody','caption'])if(typeof v[key]==='string')passages.push(readableHTML(v[key].replace(/</g,'&lt;')));if(v['@graph'])visit(v['@graph'],depth+1);};visit(JSON.parse(match[1]));}catch{}
  }
  if(platform==='YouTube')for(const match of html.matchAll(/"shortDescription"\s*:\s*("(?:[^"\\]|\\.)*")/g)){try{passages.push(JSON.parse(match[1]));}catch{}}
- return [...new Set(passages.map(x=>x.trim()).filter(Boolean))].join('\n');
+ const descriptions=passages.map(x=>x.trim()).filter(Boolean);
+ const relevant=platform==='YouTube'
+  ? descriptions.filter(text=>!/^enjoy the videos and music you love, upload original content, and share it all with friends, family, and the world on youtube[.!]?$/i.test(text.replace(/\s+/g,' ')))
+  : descriptions;
+ return [...new Set(relevant)].join('\n');
 }
 export function readableHTML(html){
  const text=html.replace(/<(script|style|nav|footer|header|noscript|svg)\b[\s\S]*?<\/\1\s*>/gi,' ').replace(/<!--[^]*?-->/g,' ').replace(/<\/(p|li|h[1-6]|pre|div|section|article)>/gi,'\n').replace(/<[^>]*>/g,' ').replace(/&nbsp;/g,' ').replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"').replace(/&#39;|&apos;/g,"'").replace(/&#(\d+);/g,(_,n)=>Number(n)<=0x10ffff?String.fromCodePoint(Number(n)):' ');
@@ -85,14 +89,14 @@ class TutorialHTMLStream {
   else this.youtube=candidate.length<=SOURCE_TOKEN_LIMIT?candidate:'';
  }
  finishRaw(){
-  if(this.json!==null){const value=socialText('<script type="application/ld+json">'+this.json+'</script>');if(value)this.addPassage(value);}
+  if(this.json!==null){const value=socialText('<script type="application/ld+json">'+this.json+'</script>',this.platform);if(value)this.addPassage(value);}
   this.json=null;this.youtube='';this.raw=null;
  }
  handleTag(tag){
   const match=tag.match(/^<\s*(\/?)\s*([a-z0-9]+)/i);if(!match)return;
   const closing=!!match[1],name=match[2].toLowerCase();
   if(closing){if(/^(p|li|h[1-6]|pre|div|section|article)$/.test(name))this.newline();return;}
-  if(this.platform&&name==='meta'){const value=socialText(tag);if(value)this.addPassage(value);}
+  if(this.platform&&name==='meta'){const value=socialText(tag,this.platform);if(value)this.addPassage(value);}
   if(['script','style','nav','footer','header','noscript','svg'].includes(name)){
    this.raw=name;this.json=this.platform&&name==='script'&&/\btype\s*=\s*["']application\/ld\+json["']/i.test(tag)?'':null;
   }
