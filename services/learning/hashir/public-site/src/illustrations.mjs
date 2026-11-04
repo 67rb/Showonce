@@ -30,8 +30,8 @@ async function stepIllustration(env,lesson,step,generate=false,fetcher=fetch){
      n:1,
      response_format:'b64_json',
      size:'1536x1024',
-     // Start with one generation pass. Use refinement if review requests a correction.
-     reasoning_strength:attempt===0?'low':'high',
+     // Keep corrections to one generation pass as well. Both candidates still pass picture review.
+     reasoning_strength:'low',
     }),
     signal:AbortSignal.timeout(150000),
    });
