@@ -112,6 +112,22 @@ test('uncertain starts are not automatically repeated and keys never leave the f
 test('disabled integration never sends a Supadata key anywhere',async()=>{
  const e=env();delete e.SUPADATA_ENABLED;let calls=0;try{const result=await resolveTutorial(e,'https://instagram.com/p/ABC/',async(url,options)=>{calls++;assert.ok(url.startsWith('https://instagram.com/'));assert.ok(!Object.values(options.headers).includes(e.SUPADATA_API_KEY));return new Response('<meta name="description" content="'+speech+'">',{headers:{'content-type':'text/html'}});});assert.equal(result.origin,'social_post_text');assert.equal(calls,1);}finally{e.DB.close();}
 });
+test('disabled Supadata reuses public YouTube captions when the page read fails, with no provider call',async()=>{
+ const e=env();delete e.SUPADATA_ENABLED;const calls=[];
+ const fetcher=async(input,options)=>{
+  const url=new URL(input);calls.push(url.origin+url.pathname);
+  assert.ok(!options?.headers?.['x-api-key']);
+  if(url.href.startsWith('https://youtu.be/'))return new Response('<html><body>Sign in to continue</body></html>',{headers:{'content-type':'text/html'}});
+  if(url.href.startsWith('https://www.youtube.com/watch'))return new Response('<html><script>{"captionTracks":[{"baseUrl":"https://www.youtube.com/api/timedtext?v=aAxGTnVNJiE&lang=en","languageCode":"en","kind":"asr"}]}</script></html>',{headers:{'content-type':'text/html'}});
+  if(url.href.startsWith('https://www.youtube.com/api/timedtext'))return Response.json({events:[{segs:[{utf8:speech}]}]});
+  throw new Error('Unexpected fetch '+url.href);
+ };
+ try{
+  const source=await resolveTutorial(e,'https://youtu.be/aAxGTnVNJiE',fetcher);
+  assert.equal(source.origin,'social_transcript');assert.match(source.text,/Draw a circle/);assert.match(source.limitations.at(-1),/free source-processing allowance is unavailable/);
+  assert.ok(!calls.some(path=>path.includes('api.supadata.ai')));assert.ok(calls.some(path=>path.includes('/api/timedtext')));
+ }finally{e.DB.close();}
+});
 test('paid plan appearing after metadata still cannot start transcription',async()=>{
  const e=env(),p=provider();let accountCalls=0;
  const fetcher=async(input,options)=>new URL(input).pathname==='/v1/me'?Response.json(++accountCalls===1?free:{...free,plan:'Pro'}):p.fetcher(input,options);

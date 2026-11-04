@@ -119,7 +119,10 @@ async function youtubeCaptionFallback(env,rowID,url,fetcher){
    if(text.length<100||text.length>30000)continue;
    const source=sourceFromData(url.href,'',text);
    source.limitations=[...source.limitations,'Captions were read directly from the public video because the free source-processing allowance is unavailable.'];
-   await env.DB.prepare("UPDATE source_extractions SET status='ready',source_json=?,updated_at=? WHERE id=?").bind(JSON.stringify(source),Date.now(),rowID).run();
+   // rowID is the Supadata extraction cache row when one exists. Disabled
+   // installs may have no such row (or table), so persistence is optional:
+   // the public source just read is still usable without it.
+   if(rowID)await env.DB.prepare("UPDATE source_extractions SET status='ready',source_json=?,updated_at=? WHERE id=?").bind(JSON.stringify(source),Date.now(),rowID).run();
    return source;
   }
   return null;
@@ -128,7 +131,15 @@ async function youtubeCaptionFallback(env,rowID,url,fetcher){
 
 export async function resolveTutorial(env,input,fetcher=fetch,{visualOnly=false}={}){
  const url=sourceURL(input),platform=socialPlatform(url);
- if(!platform||!socialExtractionEnabled(env))return fetchTutorial(url.href,fetcher);
+ if(!platform)return fetchTutorial(url.href,fetcher);
+ if(!socialExtractionEnabled(env)){
+  // Free-only is preserved: no Supadata call is made here. For a non-visual
+  // YouTube link whose public page cannot be read, reuse the existing
+  // keyless caption fallback; without captions the original error stands.
+  if(platform!=='YouTube'||visualOnly)return fetchTutorial(url.href,fetcher);
+  try{return await fetchTutorial(url.href,fetcher);}
+  catch(error){const rescued=await youtubeCaptionFallback(env,null,url,fetcher);if(rescued)return rescued;throw error;}
+ }
  if(env.SUPADATA_API_KEY.startsWith('LLM_'))throw new AppError('source_provider_setup','Automatic transcription needs a Supadata API key. A Meta Model API key cannot be used for source extraction.',503);
  if(!env.DB)throw new AppError('source_storage_unavailable','Source-processing storage is unavailable.',503);
  const id=await digest(url.href),now=Date.now(),claim=crypto.randomUUID();
