@@ -98,10 +98,12 @@ async function captionBody(response,signal,maxBytes){
 function publicCaptionURL(track,videoID){
  try{const url=new URL(track?.baseUrl);if(url.protocol!=='https:'||url.username||url.password||url.port||!['youtube.com','www.youtube.com','m.youtube.com'].includes(url.hostname)||url.pathname!=='/api/timedtext'||url.searchParams.get('v')!==videoID)return null;url.searchParams.set('fmt','json3');return url.href;}catch{return null;}
 }
-async function youtubeCaptionFallback(env,rowID,url,fetcher){
+const CAPTION_FALLBACK_TIMEOUT_MS=20000;
+const DISABLED_CAPTION_PROBE_TIMEOUT_MS=5000;
+async function youtubeCaptionFallback(env,rowID,url,fetcher,timeoutMs=CAPTION_FALLBACK_TIMEOUT_MS){
  try{
   const videoID=youtubeVideoID(url);if(!videoID)return null;
-  const signal=AbortSignal.timeout(20000);
+  const signal=AbortSignal.timeout(timeoutMs);
   const page=await fetcher('https://www.youtube.com/watch?v='+videoID,{redirect:'manual',signal,headers:{Accept:'text/html','User-Agent':'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124 Safari/537.36','Accept-Language':'en'}});
   if(!page.ok){void page.body?.cancel().catch(()=>{});return null;}
   const html=await captionBody(page,signal,3000000);
@@ -139,7 +141,7 @@ export async function resolveTutorial(env,input,fetcher=fetch,{visualOnly=false}
   // or description as a social_post_text source. Without usable captions
   // the page read remains the fallback, with its original error if it fails.
   if(platform!=='YouTube'||visualOnly)return fetchTutorial(url.href,fetcher);
-  const rescued=await youtubeCaptionFallback(env,null,url,fetcher);if(rescued)return rescued;
+  const rescued=await youtubeCaptionFallback(env,null,url,fetcher,DISABLED_CAPTION_PROBE_TIMEOUT_MS);if(rescued)return rescued;
   return fetchTutorial(url.href,fetcher);
  }
  if(env.SUPADATA_API_KEY.startsWith('LLM_'))throw new AppError('source_provider_setup','Automatic transcription needs a Supadata API key. A Meta Model API key cannot be used for source extraction.',503);

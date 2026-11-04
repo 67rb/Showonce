@@ -149,6 +149,28 @@ test('disabled spoken-caption mode attempts public captions before accepting a Y
   assert.ok(!calls.some(href=>href.includes('api.supadata.ai')));
  }finally{e.DB.close();}
 });
+test('disabled caption probe has a short budget and falls back to a usable YouTube description',async(t)=>{
+ const e=env();delete e.SUPADATA_ENABLED;const calls=[];
+ const deadline=new AbortController();
+ const timeout=t.mock.method(AbortSignal,'timeout',()=>deadline.signal);
+ const fetcher=async(input,options)=>{
+  calls.push(new URL(input).hostname);
+  assert.ok(!options?.headers?.['x-api-key']);
+  if(calls.length===1){
+   assert.equal(options.signal,deadline.signal);
+   deadline.abort(new DOMException('Caption probe timed out','TimeoutError'));
+   throw deadline.signal.reason;
+  }
+  return new Response('<meta name="description" content="'+speech+'">',{headers:{'content-type':'text/html'}});
+ };
+ try{
+  const source=await resolveTutorial(e,'https://youtu.be/aAxGTnVNJiE',fetcher);
+  assert.deepEqual(timeout.mock.calls.map(call=>call.arguments),[[5000]]);
+  assert.equal(source.origin,'social_post_text');assert.match(source.text,/Draw a circle/);
+  assert.equal(calls.length,2);
+  assert.ok(!calls.includes('api.supadata.ai'));
+ }finally{e.DB.close();}
+});
 test('paid plan appearing after metadata still cannot start transcription',async()=>{
  const e=env(),p=provider();let accountCalls=0;
  const fetcher=async(input,options)=>new URL(input).pathname==='/v1/me'?Response.json(++accountCalls===1?free:{...free,plan:'Pro'}):p.fetcher(input,options);
